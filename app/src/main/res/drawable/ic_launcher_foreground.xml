@@ -1,0 +1,55 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="160dp"
+    android:height="160dp"
+    android:viewportWidth="160"
+    android:viewportHeight="160">
+
+    <path
+        android:name="steam_left"
+        android:fillColor="#00000000"
+        android:pathData="M70,55 C65,45 75,35 70,25"
+        android:strokeColor="#C5A081"
+        android:strokeLineCap="round"
+        android:strokeWidth="3.5" />
+
+    <path
+        android:name="steam_right"
+        android:fillColor="#00000000"
+        android:pathData="M90,55 C95,45 85,35 90,25"
+        android:strokeColor="#C5A081"
+        android:strokeLineCap="round"
+        android:strokeWidth="3.5" />
+
+    <path
+        android:name="cup_body"
+        android:fillColor="#4A2E1B"
+        android:pathData="M48,65 L112,65 C112,98 94,116 80,116 C66,116 48,98 48,65 Z" />
+
+    <path
+        android:name="cup_handle"
+        android:fillColor="#00000000"
+        android:pathData="M110,72 C122,72 126,88 110,95"
+        android:strokeColor="#4A2E1B"
+        android:strokeLineCap="round"
+        android:strokeWidth="4.5" />
+
+    <path
+        android:name="cup_saucer"
+        android:fillColor="#00000000"
+        android:pathData="M40,124 L120,124"
+        android:strokeColor="#8D5B36"
+        android:strokeLineCap="round"
+        android:strokeWidth="4" />
+
+    <path
+        android:name="coffee_bean"
+        android:fillColor="#D8A880"
+        android:pathData="M80,82 C84,82 87,85 87,89 C87,93 84,96 80,96 C76,96 73,93 73,89 C73,85 76,82 80,82 Z" />
+    <path
+        android:name="bean_cut"
+        android:fillColor="#00000000"
+        android:pathData="M80,83 C78,86 82,92 80,95"
+        android:strokeColor="#4A2E1B"
+        android:strokeLineCap="round"
+        android:strokeWidth="1.2" />
+</vector>
