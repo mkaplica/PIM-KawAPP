@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "pl.betoniarze.kawapp.feature.home"
+    namespace = "pl.betoniarze.kawapp.feature.feed"
     compileSdk = 35
 
     defaultConfig {
