@@ -52,6 +52,7 @@ class AppState(
         when (topLevelDestination) {
             TopLevelDestination.FEED -> navController.navigate(topLevelDestination.route, topLevelNavOptions)
             TopLevelDestination.RECIPES -> navController.navigate(topLevelDestination.route, topLevelNavOptions)
+            TopLevelDestination.JOURNAL -> navController.navigate(topLevelDestination.route, topLevelNavOptions)
             TopLevelDestination.PROFILE -> navController.navigate(topLevelDestination.route, topLevelNavOptions)
         }
     }

@@ -47,6 +47,7 @@ dependencies {
     implementation(project(":feature:feed"))
     implementation(project(":feature:recipes"))
     implementation(project(":feature:profile"))
+    implementation(project(":feature:journal"))
     implementation(project(":core:ui"))
     implementation(project(":core:model"))
     implementation(project(":core:data"))

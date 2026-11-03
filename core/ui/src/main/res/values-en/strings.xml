@@ -5,6 +5,7 @@
     <!-- Navigation -->
     <string name="feature_feed_title">Community</string>
     <string name="feature_recipe_title">Recipes</string>
+    <string name="feature_journal_title">Journal</string>
     <string name="feature_profile_title">Profile</string>
 
     <!-- Recipes -->

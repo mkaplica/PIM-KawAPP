@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import pl.betoniarze.kawapp.feature.feed.FeedScreen
+import pl.betoniarze.kawapp.feature.journal.JournalScreen
 import pl.betoniarze.kawapp.feature.profile.ProfileScreen
 import pl.betoniarze.kawapp.feature.recipes.RecipeDetailScreen
 import pl.betoniarze.kawapp.feature.recipes.RecipesScreen
@@ -30,6 +31,9 @@ fun AppNavHost(
                     navController.navigate("recipe_detail/$recipeId")
                 }
             )
+        }
+        composable(route = TopLevelDestination.JOURNAL.route) {
+            JournalScreen()
         }
         composable(route = TopLevelDestination.PROFILE.route) {
             ProfileScreen()
