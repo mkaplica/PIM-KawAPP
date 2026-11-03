@@ -71,10 +71,6 @@ fun FeedScreenContent(
                         }
                     }
                 }
-                /*Text(
-                    text = stringResource(R.string.feed_posts_count, uiState.posts.size),
-                    style = MaterialTheme.typography.headlineLarge,
-                )*/
             }
         }
     }

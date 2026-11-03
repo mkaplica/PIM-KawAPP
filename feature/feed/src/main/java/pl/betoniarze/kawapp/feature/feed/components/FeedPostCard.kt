@@ -2,8 +2,14 @@ package pl.betoniarze.kawapp.feature.feed.components
 
 
 import android.R
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.gestures.snapping.snapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +30,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -76,9 +83,24 @@ fun FeedPostCard(
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
-            var listState = rememberLazyListState()
+
+            val listState = rememberLazyListState()
+            val snapLayoutInfoProvider = remember(listState) {
+                SnapLayoutInfoProvider(listState, SnapPosition.Start)
+            }
+            val decay = rememberSplineBasedDecay<Float>()
+            val flingBehavior = remember(snapLayoutInfoProvider, decay) {
+                snapFlingBehavior(
+                    snapLayoutInfoProvider = snapLayoutInfoProvider,
+                    decayAnimationSpec = decay,
+                    snapAnimationSpec = spring(stiffness = Spring.StiffnessMedium)
+                )
+            }
 
             LazyRow(
+                state = listState,
+                flingBehavior = flingBehavior,
+
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
