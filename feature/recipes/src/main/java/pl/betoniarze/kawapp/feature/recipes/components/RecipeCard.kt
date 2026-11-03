@@ -68,7 +68,6 @@ fun RecipeCard(
                 }
             )
 
-
             Text(
                 text = buildAnnotatedString {
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {

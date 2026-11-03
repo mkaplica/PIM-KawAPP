@@ -1,4 +1,4 @@
-package pl.betoniarze.kawapp.feature.home
+package pl.betoniarze.kawapp.feature.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,20 +10,20 @@ import pl.betoniarze.kawapp.core.data.repository.FakeFeedRepository
 import pl.betoniarze.kawapp.core.data.repository.FeedRepository
 import pl.betoniarze.kawapp.core.model.FeedPost
 
-sealed interface HomeUiState {
-    data object Loading : HomeUiState
-    data class Success(val posts: List<FeedPost>) : HomeUiState
+sealed interface FeedUiState {
+    data object Loading : FeedUiState
+    data class Success(val posts: List<FeedPost>) : FeedUiState
 }
 
-class HomeViewModel(
+class FeedViewModel(
     private val feedRepository: FeedRepository = FakeFeedRepository()
 ) : ViewModel() {
 
-    val uiState: StateFlow<HomeUiState> = feedRepository.getFeedPosts()
-        .map { posts -> HomeUiState.Success(posts) }
+    val uiState: StateFlow<FeedUiState> = feedRepository.getFeedPosts()
+        .map { posts -> FeedUiState.Success(posts) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = HomeUiState.Loading
+            initialValue = FeedUiState.Loading
         )
 }

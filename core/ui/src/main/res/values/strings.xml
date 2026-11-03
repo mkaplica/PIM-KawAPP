@@ -3,7 +3,7 @@
     <string name="app_name">KawAPP</string>
 
     <!-- Navigation -->
-    <string name="feature_home_title">Aktualności</string>
+    <string name="feature_feed_title">Społeczność</string>
     <string name="feature_recipe_title">Przepisy</string>
     <string name="feature_profile_title">Profil</string>
 
@@ -18,7 +18,7 @@
     <string name="recipe_steps">Kroki parzenia:</string>
     <string name="back">Wróć</string>
 
-    <!-- Home -->
+    <!-- Feed -->
     <string name="feed_posts_count">Liczba postów w feedzie: %1$d</string>
 
     <!-- Profile & Language Switcher -->

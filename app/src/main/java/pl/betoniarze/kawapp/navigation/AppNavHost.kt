@@ -5,7 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import pl.betoniarze.kawapp.feature.home.HomeScreen
+import pl.betoniarze.kawapp.feature.feed.FeedScreen
 import pl.betoniarze.kawapp.feature.profile.ProfileScreen
 import pl.betoniarze.kawapp.feature.recipes.RecipeDetailScreen
 import pl.betoniarze.kawapp.feature.recipes.RecipesScreen
@@ -14,15 +14,15 @@ import pl.betoniarze.kawapp.feature.recipes.RecipesScreen
 fun AppNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = TopLevelDestination.HOME.route
+    startDestination: String = TopLevelDestination.FEED.route
 ) {
     NavHost(
         navController = navController,
         startDestination = startDestination,
         modifier = modifier
     ) {
-        composable(route = TopLevelDestination.HOME.route) {
-            HomeScreen()
+        composable(route = TopLevelDestination.FEED.route) {
+            FeedScreen()
         }
         composable(route = TopLevelDestination.RECIPES.route) {
             RecipesScreen(

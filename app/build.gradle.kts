@@ -44,7 +44,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":feature:home"))
+    implementation(project(":feature:feed"))
     implementation(project(":feature:recipes"))
     implementation(project(":feature:profile"))
     implementation(project(":core:ui"))

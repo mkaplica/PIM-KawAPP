@@ -1,4 +1,4 @@
-package pl.betoniarze.kawapp.feature.home
+package pl.betoniarze.kawapp.feature.feed
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,21 +17,21 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import pl.betoniarze.kawapp.core.ui.R
 
 @Composable
-fun HomeScreen(
+fun FeedScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = viewModel()
+    viewModel: FeedViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    HomeScreenContent(
+    FeedScreenContent(
         uiState = uiState,
         modifier = modifier
     )
 }
 
 @Composable
-fun HomeScreenContent(
-    uiState: HomeUiState,
+fun FeedScreenContent(
+    uiState: FeedUiState,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -41,8 +41,8 @@ fun HomeScreenContent(
         contentAlignment = Alignment.Center
     ) {
         when (uiState) {
-            is HomeUiState.Loading -> CircularProgressIndicator()
-            is HomeUiState.Success -> {
+            is FeedUiState.Loading -> CircularProgressIndicator()
+            is FeedUiState.Success -> {
                 Text(
                     text = stringResource(R.string.feed_posts_count, uiState.posts.size),
                     style = MaterialTheme.typography.headlineLarge
