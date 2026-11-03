@@ -1,6 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">KawAPP</string>
-    <string name="feature_home_title">Feed</string>
-    <string name="feature_recipe_title">Recipes</string>
-    <string name="feature_profile_title">Profile</string>
 </resources>

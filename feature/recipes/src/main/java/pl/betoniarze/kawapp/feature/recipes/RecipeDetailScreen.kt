@@ -22,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import pl.betoniarze.kawapp.core.ui.R
 
 @Composable
 fun RecipeDetailScreen(
@@ -61,6 +63,13 @@ fun RecipeDetailScreenContent(
     uiState: RecipeDetailUiState,
     onBackClick: () -> Unit
 ) {
+    val recipeNotFoundText = stringResource(R.string.recipe_not_found)
+    val backText = stringResource(R.string.back)
+    val descriptionLabel = stringResource(R.string.recipe_description)
+    val methodLabel = stringResource(R.string.brew_method)
+    val proportionsLabel = stringResource(R.string.proportions)
+    val stepsLabel = stringResource(R.string.recipe_steps)
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -70,12 +79,17 @@ fun RecipeDetailScreenContent(
         when (uiState) {
             is RecipeDetailUiState.Loading -> CircularProgressIndicator()
             is RecipeDetailUiState.NotFound -> Text(
-                text = "Nie znaleziono przepisu",
+                text = recipeNotFoundText,
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.error
             )
             is RecipeDetailUiState.Success -> {
                 val recipe = uiState.recipe
+                val proportionsText = stringResource(
+                    R.string.recipe_proportions_format,
+                    recipe.coffeeGrams,
+                    recipe.totalWaterMl
+                )
 
                 Column(
                     modifier = Modifier
@@ -89,7 +103,8 @@ fun RecipeDetailScreenContent(
                         IconButton(onClick = onBackClick) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Wróć")
+                                contentDescription = backText
+                            )
                         }
                     }
 
@@ -106,7 +121,8 @@ fun RecipeDetailScreenContent(
                         Text(
                             text = buildAnnotatedString {
                                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                    append("Opis: \n")
+                                    append(descriptionLabel)
+                                    append("\n")
                                 }
                                 withStyle(style = SpanStyle(fontStyle = FontStyle.Italic)) {
                                     append(recipe.notes)
@@ -117,7 +133,8 @@ fun RecipeDetailScreenContent(
                         Text(
                             text = buildAnnotatedString {
                                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                    append("Metoda parzenia: ")
+                                    append(methodLabel)
+                                    append(" ")
                                 }
                                 append(recipe.brewMethod.displayName)
                             },
@@ -126,16 +143,18 @@ fun RecipeDetailScreenContent(
                         Text(
                             text = buildAnnotatedString {
                                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                    append("Gramatura: ")
+                                    append(proportionsLabel)
+                                    append(" ")
                                 }
-                                append("${recipe.coffeeGrams}g kawy / ${recipe.totalWaterMl}ml wody")
+                                append(proportionsText)
                             },
                             style = MaterialTheme.typography.bodyMedium
                         )
                         Text(
                             text = buildAnnotatedString {
                                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                    append("Kroki parzenia: \n")
+                                    append(stepsLabel)
+                                    append("\n")
                                 }
                                 recipe.steps.forEachIndexed { index, step ->
                                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {

@@ -9,12 +9,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
+import pl.betoniarze.kawapp.core.ui.R
 
 @Composable
 fun RecipeCard(
@@ -22,6 +24,15 @@ fun RecipeCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val ratioLabel = stringResource(R.string.ratio)
+    val methodLabel = stringResource(R.string.brew_method)
+    val proportionsLabel = stringResource(R.string.proportions)
+    val proportionsText = stringResource(
+        R.string.recipe_proportions_format,
+        recipe.coffeeGrams,
+        recipe.totalWaterMl
+    )
+
     Card(
         onClick = onClick,
         modifier = modifier.fillMaxWidth()
@@ -37,7 +48,8 @@ fun RecipeCard(
             Text(
                 text = buildAnnotatedString {
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Metoda parzenia: ")
+                        append(methodLabel)
+                        append(" ")
                     }
                     append(recipe.brewMethod.displayName)
                 },
@@ -47,13 +59,26 @@ fun RecipeCard(
             Text(
                 text = buildAnnotatedString {
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Gramatura: ")
+                        append(ratioLabel)
+                        append(" ")
                     }
-                    append("${recipe.coffeeGrams}g kawy / ${recipe.totalWaterMl}ml wody")
+                    append("1:")
+                    val ratio = recipe.totalWaterMl / recipe.coffeeGrams
+                    append(ratio.toString())
+                }
+            )
+
+
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(proportionsLabel)
+                        append(" ")
+                    }
+                    append(proportionsText)
                 },
                 style = MaterialTheme.typography.bodyMedium
             )
         }
     }
 }
-

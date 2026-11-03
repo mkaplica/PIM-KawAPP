@@ -9,7 +9,7 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Collections
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.ui.graphics.vector.ImageVector
-import pl.betoniarze.kawapp.R
+import pl.betoniarze.kawapp.core.ui.R
 
 enum class TopLevelDestination(
     val selectedIcon: ImageVector,

@@ -11,8 +11,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import pl.betoniarze.kawapp.core.ui.R
 
 @Composable
 fun HomeScreen(
@@ -41,9 +43,8 @@ fun HomeScreenContent(
         when (uiState) {
             is HomeUiState.Loading -> CircularProgressIndicator()
             is HomeUiState.Success -> {
-                //Tutaj lazy column z listą komponentów FeedPostCard
                 Text(
-                    text = "Liczba postów w feedzie: ${uiState.posts.size}",
+                    text = stringResource(R.string.feed_posts_count, uiState.posts.size),
                     style = MaterialTheme.typography.headlineLarge
                 )
             }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">KawAPP</string>
+
+    <!-- Navigation -->
+    <string name="feature_home_title">Feed</string>
+    <string name="feature_recipe_title">Recipes</string>
+    <string name="feature_profile_title">Profile</string>
+
+    <!-- Recipes -->
+    <string name="no_recipes_found">No recipes</string>
+    <string name="recipe_not_found">Recipe not found</string>
+    <string name="ratio">Ratio:</string>
+    <string name="brew_method">Brew method:</string>
+    <string name="proportions">Proportions:</string>
+    <string name="recipe_proportions_format">%1$d g of coffee / %2$d ml of water</string>
+    <string name="recipe_description">Description:</string>
+    <string name="recipe_steps">Brewing steps:</string>
+    <string name="back">Back</string>
+
+    <!-- Home -->
+    <string name="feed_posts_count">Posts count in feed: %1$d</string>
+
+    <!-- Profile & Language Switcher -->
+    <string name="profile_language_setting">App Language</string>
+    <string name="language_polish">Polski</string>
+    <string name="language_english">English</string>
+</resources>

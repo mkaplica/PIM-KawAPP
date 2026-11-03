@@ -8,6 +8,10 @@ android {
     namespace = "pl.betoniarze.kawapp"
     compileSdk = 35
 
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     defaultConfig {
         applicationId = "pl.betoniarze.kawapp"
         minSdk = 26
@@ -48,6 +52,7 @@ dependencies {
     implementation(project(":core:data"))
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
