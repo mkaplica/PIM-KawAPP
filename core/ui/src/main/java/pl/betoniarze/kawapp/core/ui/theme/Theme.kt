@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -12,53 +13,76 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val LightColorScheme = lightColorScheme(
-    primary = CoffeeEspresso,
-    onPrimary = CoffeeOnEspresso,
-    primaryContainer = CoffeeEspressoContainer,
-    onPrimaryContainer = CoffeeOnEspressoContainer,
-    secondary = CaramelBrown,
-    onSecondary = OnCaramel,
-    secondaryContainer = CaramelContainer,
-    onSecondaryContainer = OnCaramelContainer,
-    tertiary = CinnamonAccent,
-    onTertiary = OnCinnamon,
-    tertiaryContainer = CinnamonContainer,
-    onTertiaryContainer = OnCinnamonContainer,
-    background = WarmBeigeBackground,
-    onBackground = WarmOnSurface,
-    surface = WarmBeigeSurface,
-    onSurface = WarmOnSurface,
-    surfaceVariant = WarmBeigeSurfaceVariant,
-    onSurfaceVariant = WarmOnSurfaceVariant,
-    outline = WarmOutline
+    primary = LightPrimaryComponent,
+    onPrimary = LightOnPrimary,
+    primaryContainer = LightPrimaryContainer,
+    onPrimaryContainer = LightOnPrimaryContainer,
+    secondary = LightSecondaryComponent,
+    onSecondary = LightOnSecondary,
+    secondaryContainer = LightSecondaryContainer,
+    onSecondaryContainer = LightOnSecondaryContainer,
+    tertiary = LightFirstDetailColor,
+    onTertiary = LightOnTertiary,
+    tertiaryContainer = LightTertiaryContainer,
+    onTertiaryContainer = LightOnTertiaryContainer,
+    error = LightSecondDetailColor,
+    onError = LightOnError,
+    errorContainer = LightErrorContainer,
+    onErrorContainer = LightOnErrorContainer,
+    background = LightBackgroundColor,
+    onBackground = LightOnBackground,
+    surface = LightBackgroundColor,
+    onSurface = LightOnSurface,
+    surfaceVariant = LightNavbarColor,
+    onSurfaceVariant = LightOnSurfaceVariant,
+    surfaceContainer = LightNavbarColor,
+    surfaceContainerLow = LightNavbarColor,
+    surfaceContainerHigh = LightNavbarColor,
+    outline = LightOutline,
 )
 
 private val DarkColorScheme = darkColorScheme(
-    primary = DarkCoffeePrimary,
-    onPrimary = DarkCoffeeOnPrimary,
-    primaryContainer = DarkCoffeePrimaryContainer,
-    onPrimaryContainer = DarkCoffeeOnPrimaryContainer,
-    secondary = DarkCaramelSecondary,
+    primary = DarkPrimaryComponent,
+    onPrimary = DarkOnPrimary,
+    primaryContainer = DarkPrimaryContainer,
+    onPrimaryContainer = DarkOnPrimaryContainer,
+    secondary = DarkSecondaryComponent,
     onSecondary = DarkOnSecondary,
-    secondaryContainer = DarkCaramelContainer,
+    secondaryContainer = DarkSecondaryContainer,
     onSecondaryContainer = DarkOnSecondaryContainer,
-    tertiary = DarkCinnamonTertiary,
+    tertiary = DarkFirstDetailColor,
     onTertiary = DarkOnTertiary,
-    tertiaryContainer = DarkCinnamonContainer,
+    tertiaryContainer = DarkTertiaryContainer,
     onTertiaryContainer = DarkOnTertiaryContainer,
-    background = DarkCoffeeBackground,
-    onBackground = DarkOnSurface,
-    surface = DarkCoffeeSurface,
+    error = DarkSecondDetailColor,
+    onError = DarkOnError,
+    errorContainer = DarkErrorContainer,
+    onErrorContainer = DarkOnErrorContainer,
+    background = DarkBackgroundColor,
+    onBackground = DarkOnBackground,
+    surface = DarkBackgroundColor,
     onSurface = DarkOnSurface,
-    surfaceVariant = DarkCoffeeSurfaceVariant,
+    surfaceVariant = DarkNavbarColor,
     onSurfaceVariant = DarkOnSurfaceVariant,
-    outline = DarkOutline
+    surfaceContainer = DarkNavbarColor,
+    surfaceContainerLow = DarkNavbarColor,
+    surfaceContainerHigh = DarkNavbarColor,
+    outline = DarkOutline,
 )
+
+// Convenient color scheme extension accessors
+val ColorScheme.backgroundColor: Color get() = background
+val ColorScheme.navbarColor: Color get() = surfaceContainer
+val ColorScheme.primaryComponent: Color get() = primary
+val ColorScheme.secondaryComponent: Color get() = secondary
+val ColorScheme.firstDetailColor: Color get() = tertiary
+val ColorScheme.secondDetailColor: Color get() = error
 
 @Composable
 fun KawAPPTheme(

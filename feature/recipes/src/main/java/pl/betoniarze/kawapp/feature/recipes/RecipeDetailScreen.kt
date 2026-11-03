@@ -1,5 +1,6 @@
 package pl.betoniarze.kawapp.feature.recipes
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import pl.betoniarze.kawapp.core.ui.R
+import pl.betoniarze.kawapp.core.ui.theme.navbarColor
 
 @Composable
 fun RecipeDetailScreen(
@@ -73,6 +75,7 @@ fun RecipeDetailScreenContent(
     Box(
         modifier = modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.navbarColor)
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
