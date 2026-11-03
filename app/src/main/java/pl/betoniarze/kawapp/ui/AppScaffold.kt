@@ -12,6 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import pl.betoniarze.kawapp.navigation.AppNavHost
 
+import androidx.compose.material3.MaterialTheme
+import pl.betoniarze.kawapp.core.ui.theme.navbarColor
+
 @Composable
 fun AppScaffold(
     appState: AppState = rememberAppState()
@@ -20,7 +23,9 @@ fun AppScaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             if (appState.shouldShowBottomBar) {
-                NavigationBar {
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.navbarColor
+                ) {
                     appState.topLevelDestinations.forEach { destination ->
                         val selected = appState.currentDestination.isRouteInHierarchy(destination.route)
                         val icon = if (selected) destination.selectedIcon else destination.unselectedIcon

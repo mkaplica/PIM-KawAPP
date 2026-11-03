@@ -2,9 +2,11 @@ package pl.betoniarze.kawapp.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.CoffeeMaker
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Book
 import androidx.compose.material.icons.outlined.CoffeeMaker
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Person
@@ -28,6 +30,12 @@ enum class TopLevelDestination(
         unselectedIcon = Icons.Outlined.CoffeeMaker,
         titleTextId = R.string.feature_recipe_title,
         route = "recipes_route"
+    ),
+    JOURNAL(
+        selectedIcon = Icons.Filled.Book,
+        unselectedIcon = Icons.Outlined.Book,
+        titleTextId = R.string.feature_journal_title,
+        route = "journal_route"
     ),
     PROFILE(
         selectedIcon = Icons.Filled.Person,

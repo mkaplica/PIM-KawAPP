@@ -2,48 +2,60 @@ package pl.betoniarze.kawapp.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Light Theme
-val CoffeeEspresso = Color(0xFF3E2723)
-val CoffeeEspressoContainer = Color(0xFFF3E9DF)
-val CoffeeOnEspresso = Color(0xFFFFFFFF)
-val CoffeeOnEspressoContainer = Color(0xFF24140E)
+// ==========================================
+// Light Theme Palette
+// ==========================================
+val LightBackgroundColor = Color(0xFFFAF6EE)    // Warm cream / beige background
+val LightNavbarColor = Color(0xFFEFE7DA)        // Warm light-beige container for navigation & cards
+val LightPrimaryComponent = Color(0xFF3D2314)   // Deep roasted espresso dark brown
+val LightSecondaryComponent = Color(0xFF825232) // Warm caramel brown
 
-val CaramelBrown = Color(0xFF795548)
-val CaramelContainer = Color(0xFFEDE0D4)
-val OnCaramel = Color(0xFFFFFFFF)
-val OnCaramelContainer = Color(0xFF2B170B)
+val LightFirstDetailColor = Color(0xFFC88A10)   // Yellow - Warm golden honey amber
+val LightSecondDetailColor = Color(0xFFB83A2A)  // Red - Coffee cherry / roasted terracotta
 
-val CinnamonAccent = Color(0xFFA0522D)
-val CinnamonContainer = Color(0xFFFFDBCF)
-val OnCinnamon = Color(0xFFFFFFFF)
-val OnCinnamonContainer = Color(0xFF380D00)
+// Light Theme Content & Utility Colors
+val LightOnBackground = Color(0xFF241C18)
+val LightOnSurface = Color(0xFF241C18)
+val LightOnPrimary = Color(0xFFFFFFFF)
+val LightPrimaryContainer = Color(0xFFF3E8DE)
+val LightOnPrimaryContainer = Color(0xFF2A150A)
+val LightOnSecondary = Color(0xFFFFFFFF)
+val LightSecondaryContainer = Color(0xFFEDE0D4)
+val LightOnSecondaryContainer = Color(0xFF2E1A0E)
+val LightOnTertiary = Color(0xFFFFFFFF)
+val LightTertiaryContainer = Color(0xFFFFF0D6)
+val LightOnTertiaryContainer = Color(0xFF362200)
+val LightOnError = Color(0xFFFFFFFF)
+val LightErrorContainer = Color(0xFFFDE8E5)
+val LightOnErrorContainer = Color(0xFF410E0B)
+val LightOnSurfaceVariant = Color(0xFF53453A)
+val LightOutline = Color(0xFF887568)
 
-val WarmBeigeBackground = Color(0xFFFAF7F2)
-val WarmBeigeSurface = Color(0xFFFFFDF9)
-val WarmBeigeSurfaceVariant = Color(0xFFEBE3D5)
-val WarmOnSurface = Color(0xFF1E1B18)
-val WarmOnSurfaceVariant = Color(0xFF4E463E)
-val WarmOutline = Color(0xFF80756B)
+// ==========================================
+// Dark Theme Palette (Cozy Warm Mocha)
+// ==========================================
+val DarkBackgroundColor = Color(0xFF1E1915)     // Warm dark mocha background (reduced glare)
+val DarkNavbarColor = Color(0xFF28211B)         // Elevated warm dark brown for navbar & cards
+val DarkPrimaryComponent = Color(0xFFD4A373)    // Soft warm caramel gold primary
+val DarkSecondaryComponent = Color(0xFFA67C52)  // Soft warm cinnamon brown secondary
 
-// Dark Theme
-val DarkCoffeePrimary = Color(0xFFD7CCC8)
-val DarkCoffeePrimaryContainer = Color(0xFF4E342E)
-val DarkCoffeeOnPrimary = Color(0xFF2E1C16)
-val DarkCoffeeOnPrimaryContainer = Color(0xFFF7EBE1)
+val DarkFirstDetailColor = Color(0xFFE6BA55)    // Yellow - Soft golden honey gold
+val DarkSecondDetailColor = Color(0xFFE07A5F)   // Red - Soft warm terracotta red
 
-val DarkCaramelSecondary = Color(0xFFBCAAA4)
-val DarkCaramelContainer = Color(0xFF3E2723)
-val DarkOnSecondary = Color(0xFF2C1913)
+// Dark Theme Content & Utility Colors
+val DarkOnBackground = Color(0xFFE8DFD8)        // Soft warm cream text (non-harsh)
+val DarkOnSurface = Color(0xFFE8DFD8)
+val DarkOnPrimary = Color(0xFF3B2312)
+val DarkPrimaryContainer = Color(0xFF4F331E)
+val DarkOnPrimaryContainer = Color(0xFFF7EBE1)
+val DarkOnSecondary = Color(0xFF2B180C)
+val DarkSecondaryContainer = Color(0xFF442D1C)
 val DarkOnSecondaryContainer = Color(0xFFEFE2DB)
-
-val DarkCinnamonTertiary = Color(0xFFFFB59D)
-val DarkCinnamonContainer = Color(0xFF5C2612)
-val DarkOnTertiary = Color(0xFF561F0B)
-val DarkOnTertiaryContainer = Color(0xFFFFDBCF)
-
-val DarkCoffeeBackground = Color(0xFF141110)
-val DarkCoffeeSurface = Color(0xFF1C1816)
-val DarkCoffeeSurfaceVariant = Color(0xFF2F2926)
-val DarkOnSurface = Color(0xFFEDE6E2)
-val DarkOnSurfaceVariant = Color(0xFFD0C4BC)
-val DarkOutline = Color(0xFF998E86)
+val DarkOnTertiary = Color(0xFF3E2C00)
+val DarkTertiaryContainer = Color(0xFF5B4308)
+val DarkOnTertiaryContainer = Color(0xFFFFE19C)
+val DarkOnError = Color(0xFF410E0B)
+val DarkErrorContainer = Color(0xFF63211B)
+val DarkOnErrorContainer = Color(0xFFFFDAD6)
+val DarkOnSurfaceVariant = Color(0xFFC2B4A7)    // Soft warm taupe for secondary text
+val DarkOutline = Color(0xFF9B8A7E)
