@@ -43,7 +43,7 @@ fun FeedScreenContent(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(4.dp),
         contentAlignment = Alignment.Center
     ) {
         when (uiState) {
@@ -57,7 +57,9 @@ fun FeedScreenContent(
                 }
                 else {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(4.dp),
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {

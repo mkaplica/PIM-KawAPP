@@ -2,19 +2,26 @@ package pl.betoniarze.kawapp.feature.feed.components
 
 
 import android.R
+import android.renderscript.Allocation
+import android.widget.Button
+import android.widget.Space
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.gestures.snapping.snapFlingBehavior
+import androidx.compose.foundation.indication
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,8 +32,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.materialIcon
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.AlertDialogDefaults.shape
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +49,20 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Coffee
+import androidx.compose.material.icons.filled.LocalCafe
+import androidx.compose.material.icons.outlined.LocalCafe
+import androidx.compose.material.icons.outlined.ModeComment
+import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+
 import pl.betoniarze.kawapp.core.model.FeedPost
 
 
@@ -52,11 +76,12 @@ fun FeedPostCard(
         modifier = modifier.fillMaxWidth(),
     ) {
         Column(
-            modifier = Modifier.padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(
-                modifier = Modifier.padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
@@ -73,8 +98,12 @@ fun FeedPostCard(
                     style = MaterialTheme.typography.titleLarge,
                 )
             }
+
+            Spacer(
+                modifier = Modifier.height(8.dp),
+            )
+
             Row(
-                modifier = Modifier.padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
@@ -83,6 +112,10 @@ fun FeedPostCard(
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
+
+            Spacer(
+                modifier = Modifier.height(8.dp),
+            )
 
             val listState = rememberLazyListState()
             val snapLayoutInfoProvider = remember(listState) {
@@ -100,8 +133,7 @@ fun FeedPostCard(
             LazyRow(
                 state = listState,
                 flingBehavior = flingBehavior,
-
-                contentPadding = PaddingValues(horizontal = 16.dp),
+                modifier = modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
 
@@ -118,6 +150,73 @@ fun FeedPostCard(
                 }
             }
 
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly,
+            ) {
+                var defaultColor = MaterialTheme.colorScheme.onSurfaceVariant
+
+                var isLiked by remember { mutableStateOf(false) }
+                var likeColor = if (isLiked) MaterialTheme.colorScheme.primary else defaultColor
+                TextButton(
+                    onClick = { isLiked = !isLiked }
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Icon(
+                            imageVector = if (isLiked) Icons.Filled.LocalCafe else Icons.Outlined.LocalCafe,
+                            tint = likeColor,
+                            contentDescription = null,
+                        )
+                        Text(
+                            text = "123",
+                            color = likeColor,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                }
+
+                TextButton(
+                    onClick = {}
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.ModeComment,
+                            contentDescription = null,
+                            tint = defaultColor
+                        )
+                        Text(
+                            text = "123",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = defaultColor,
+                        )
+                    }
+                }
+
+                TextButton(
+                    onClick = {},
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Share,
+                            contentDescription = null,
+                            tint = defaultColor
+
+                        )
+                    }
+                }
+            }
         }
     }
 }
