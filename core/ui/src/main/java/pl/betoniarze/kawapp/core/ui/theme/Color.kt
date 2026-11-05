@@ -20,7 +20,7 @@ val LightOnPrimary = Color(0xFFFFFFFF)
 val LightPrimaryContainer = Color(0xFFF3E8DE)
 val LightOnPrimaryContainer = Color(0xFF2A150A)
 val LightOnSecondary = Color(0xFFFFFFFF)
-val LightSecondaryContainer = Color(0xFFEDE0D4)
+val LightSecondaryContainer = Color(0xFFE0C99C)
 val LightOnSecondaryContainer = Color(0xFF2E1A0E)
 val LightOnTertiary = Color(0xFFFFFFFF)
 val LightTertiaryContainer = Color(0xFFFFF0D6)
@@ -34,8 +34,8 @@ val LightOutline = Color(0xFF887568)
 // ==========================================
 // Dark Theme Palette (Cozy Warm Mocha)
 // ==========================================
-val DarkBackgroundColor = Color(0xFF1E1915)     // Warm dark mocha background (reduced glare)
-val DarkNavbarColor = Color(0xFF28211B)         // Elevated warm dark brown for navbar & cards
+val DarkBackgroundColor = Color(0xFF171003)     // Warm dark mocha background (reduced glare)
+val DarkNavbarColor = Color(0xFF261B13)         // Elevated warm dark brown for navbar & cards
 val DarkPrimaryComponent = Color(0xFFD4A373)    // Soft warm caramel gold primary
 val DarkSecondaryComponent = Color(0xFFA67C52)  // Soft warm cinnamon brown secondary
 
@@ -49,8 +49,8 @@ val DarkOnPrimary = Color(0xFF3B2312)
 val DarkPrimaryContainer = Color(0xFF4F331E)
 val DarkOnPrimaryContainer = Color(0xFFF7EBE1)
 val DarkOnSecondary = Color(0xFF2B180C)
-val DarkSecondaryContainer = Color(0xFF442D1C)
-val DarkOnSecondaryContainer = Color(0xFFEFE2DB)
+val DarkSecondaryContainer = Color(0xFFD2A272)
+val DarkOnSecondaryContainer = Color(0xFF171003)
 val DarkOnTertiary = Color(0xFF3E2C00)
 val DarkTertiaryContainer = Color(0xFF5B4308)
 val DarkOnTertiaryContainer = Color(0xFFFFE19C)
