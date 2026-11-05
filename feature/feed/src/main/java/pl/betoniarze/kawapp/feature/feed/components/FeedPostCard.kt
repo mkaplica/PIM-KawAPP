@@ -141,7 +141,13 @@ fun FeedPostCard(
                 var isLiked by remember { mutableStateOf(false) }
                 var likeColor = if (isLiked) MaterialTheme.colorScheme.primary else defaultColor
                 TextButton(
-                    onClick = { isLiked = !isLiked }
+                    onClick = {
+                        isLiked = !isLiked
+
+                        if (isLiked) post.kavosCount += 1 else post .kavosCount -=1
+                    }
+
+
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -153,7 +159,7 @@ fun FeedPostCard(
                             contentDescription = null,
                         )
                         Text(
-                            text = "123",
+                            text = post.kavosCount.toString(),
                             color = likeColor,
                             style = MaterialTheme.typography.bodyMedium,
                         )
@@ -173,7 +179,7 @@ fun FeedPostCard(
                             tint = defaultColor
                         )
                         Text(
-                            text = "123",
+                            text = post.comments.count().toString(),
                             style = MaterialTheme.typography.bodyMedium,
                             color = defaultColor,
                         )
