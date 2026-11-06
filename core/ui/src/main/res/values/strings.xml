@@ -21,6 +21,7 @@
 
     <!-- Feed -->
     <string name="feed_posts_count">Liczba postów w feedzie: %1$d</string>
+    <string name="feed_empty_text">Trochę tu pusto...</string>
 
     <!-- Profile & Language Switcher -->
     <string name="profile_language_setting">Język aplikacji</string>

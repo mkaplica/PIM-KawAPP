@@ -21,6 +21,7 @@
 
     <!-- Feed -->
     <string name="feed_posts_count">Posts count in feed: %1$d</string>
+    <string name="feed_empty_text">It\'s a bit empty here...</string>
 
     <!-- Profile & Language Switcher -->
     <string name="profile_language_setting">App Language</string>

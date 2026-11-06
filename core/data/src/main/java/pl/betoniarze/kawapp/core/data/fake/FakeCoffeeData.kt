@@ -19,7 +19,14 @@ object FakeCoffeeData {
             imageUrls = listOf(
                 "https://picsum.photos/seed/coffee1/800/600",
                 "https://picsum.photos/seed/coffee2/800/600"
+            ),
+            kavosCount = 42,
+            comments = listOf(
+                "Brzmi sztos! Jaka temperatura wody?",
+                "22 kliki to pod V60 czy Kalitę?",
+                "Też mam te ziarna, spróbuję dzisiaj tego ustawienia!"
             )
+
         ),
         FeedPost(
             id = "post_2",
@@ -28,6 +35,11 @@ object FakeCoffeeData {
             content = "Poranny AeroPress w plenerze smakuje zupełnie inaczej. Korzystam dziś z przepisu Hoffmanna, bez odwracania (standardowa metoda) – zero stresu o poparzenie!",
             imageUrls = listOf(
                 "https://picsum.photos/seed/aeropress1/800/600"
+            ),
+            kavosCount = 18,
+            comments = listOf(
+                "AeroPress w terenie to najlepsza rzecz na świecie 😍",
+                "Standardowa metoda > odwrócona, zmieniłem zdanie w zeszłym roku."
             )
         ),
         FeedPost(
@@ -35,7 +47,13 @@ object FakeCoffeeData {
             authorName = "Bartek Wiśniewski (CoffeeGeek)",
             authorAvatarUrl = "https://picsum.photos/seed/avatar3/200/200",
             content = "Testuję dzisiaj metodę 4:6 od Tetsu Katsuyi na nowej Kenii. Zmniejszyłem pierwsze zalanie do 45 ml i kwasowość wystrzeliła w kosmos. Próbował ktoś?",
-            imageUrls = emptyList() // Post tekstowy bez zdjęć - warto testować taki przypadek w UI!
+            imageUrls = emptyList(),// Post tekstowy bez zdjęć - warto testować taki przypadek w UI!
+            kavosCount = 95,
+            comments = listOf(
+                "Metoda 4:6 uratowała mi już niejedną Kenię!",
+                "Dla mnie za dużo zabawy z wagą z rana, ale efekty szanuję.",
+                "Próbowałem, ale przy drobniejszym mieleniu mocno mi zatykało filtr."
+            )
         ),
         FeedPost(
             id = "post_4",
@@ -46,6 +64,12 @@ object FakeCoffeeData {
                 "https://picsum.photos/seed/beans1/800/600",
                 "https://picsum.photos/seed/beans2/800/600",
                 "https://picsum.photos/seed/beans3/800/600"
+            ),
+            kavosCount = 127,
+            comments = listOf(
+                "Z jakiej palarni te ziarna?",
+                "Anaerobiki to ostatnio mój ulubiony profil 🍓",
+                "Wyślij trochę na spróbowanie!"
             )
         ),
         FeedPost(
@@ -55,6 +79,11 @@ object FakeCoffeeData {
             content = "Szybkie porównanie papierowych filtrów Hario z fabryki w Japonii vs Holandii. Różnica w czasie przepływu to prawie 25 sekund przy tym samym mieleniu.",
             imageUrls = listOf(
                 "https://picsum.photos/seed/v60filter/800/600"
+            ),
+            kavosCount = 63,
+            comments = listOf(
+                "Dzięki za test, od dawna podejrzewałem, że te holenderskie są wolniejsze.",
+                "Przepłukujesz je wrzątkiem przed zasypaniem?"
             )
         )
     )
