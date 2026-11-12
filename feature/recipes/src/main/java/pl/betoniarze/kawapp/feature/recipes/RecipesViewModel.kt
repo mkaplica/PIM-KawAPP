@@ -1,19 +1,16 @@
 package pl.betoniarze.kawapp.feature.recipes
 
-import android.R.attr.query
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import pl.betoniarze.kawapp.core.data.repository.FakeRecipeRepository
+import pl.betoniarze.kawapp.core.data.repository.fake.FakeRecipeRepository
 import pl.betoniarze.kawapp.core.data.repository.RecipeRepository
 import pl.betoniarze.kawapp.core.model.BrewMethod
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe

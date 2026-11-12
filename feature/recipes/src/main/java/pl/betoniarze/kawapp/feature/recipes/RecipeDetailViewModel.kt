@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import pl.betoniarze.kawapp.core.data.repository.FakeRecipeRepository
+import pl.betoniarze.kawapp.core.data.repository.fake.FakeRecipeRepository
 import pl.betoniarze.kawapp.core.data.repository.RecipeRepository
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
 

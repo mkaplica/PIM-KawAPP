@@ -7,11 +7,9 @@ import pl.betoniarze.kawapp.core.database.model.FeedPostEntity
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import pl.betoniarze.kawapp.core.database.dao.BrewLogDao
-import pl.betoniarze.kawapp.core.database.dao.BrewStepDao
 import pl.betoniarze.kawapp.core.database.dao.CoffeeRecipeDao
 import pl.betoniarze.kawapp.core.database.dao.FeedPostDao
 import pl.betoniarze.kawapp.core.database.model.BrewLogEntity
-import pl.betoniarze.kawapp.core.database.model.CoffeeBagEntity
 import pl.betoniarze.kawapp.core.database.utils.Converters
 
 
@@ -27,9 +25,8 @@ import pl.betoniarze.kawapp.core.database.utils.Converters
 )
 
 @TypeConverters(Converters::class)
-abstract class AppDatabase : RoomDatabase() {
+abstract class KawAppDatabase : RoomDatabase() {
     abstract fun feedPostDao(): FeedPostDao
     abstract fun coffeeRecipeDao(): CoffeeRecipeDao
     abstract fun brewLogDao(): BrewLogDao
-    abstract fun brewStepDao(): BrewStepDao
 }

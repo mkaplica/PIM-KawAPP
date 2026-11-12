@@ -1,9 +1,10 @@
-package pl.betoniarze.kawapp.core.data.repository
+package pl.betoniarze.kawapp.core.data.repository.fake
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import pl.betoniarze.kawapp.core.data.fake.FakeCoffeeData
+import pl.betoniarze.kawapp.core.data.repository.FeedRepository
 import pl.betoniarze.kawapp.core.model.FeedPost
 
 class FakeFeedRepository : FeedRepository {

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import pl.betoniarze.kawapp.core.data.repository.BrewLogRepository
-import pl.betoniarze.kawapp.core.data.repository.FakeBrewLogRepository
+import pl.betoniarze.kawapp.core.data.repository.fake.FakeBrewLogRepository
 import pl.betoniarze.kawapp.core.model.BrewLog
 import java.time.LocalDate
 

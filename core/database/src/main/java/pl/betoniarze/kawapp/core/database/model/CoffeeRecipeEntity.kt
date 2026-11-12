@@ -64,5 +64,7 @@ fun CoffeeRecipeWithSteps.asExternalModel() = CoffeeRecipe(
     coffeeGrams = recipe.coffeeGrams,
     totalWaterMl = recipe.totalWaterMl,
     notes = recipe.notes,
-    steps = steps.map { it.asExternalModel() }
+    steps = steps
+        .sortedBy { it.stepNumber }
+        .map { it.asExternalModel() }
 )
