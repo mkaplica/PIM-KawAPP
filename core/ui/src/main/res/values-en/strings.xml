@@ -27,4 +27,9 @@
     <string name="profile_language_setting">App Language</string>
     <string name="language_polish">Polski</string>
     <string name="language_english">English</string>
+
+    <!-- Search bar -->
+    <string name="search_placeholder">Search recipe</string>
+    <string name="clear_search_query">Clear</string>
+    <string name="all_brewing_methods">All</string>
 </resources>
