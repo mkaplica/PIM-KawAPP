@@ -3,17 +3,21 @@ package pl.betoniarze.kawapp.feature.recipes
 import android.R.attr.query
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import pl.betoniarze.kawapp.core.data.repository.FakeRecipeRepository
 import pl.betoniarze.kawapp.core.data.repository.RecipeRepository
 import pl.betoniarze.kawapp.core.model.BrewMethod
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
+import kotlin.time.Duration.Companion.milliseconds
 
 sealed interface RecipesUiState {
     data object Loading : RecipesUiState
@@ -30,22 +34,27 @@ class RecipesViewModel(
 
     private val _searchQuery = MutableStateFlow("")
     private val _selectedBrewMethod = MutableStateFlow<BrewMethod?>(null)
+    @OptIn(FlowPreview::class)
+    private val debouncedQuery = _searchQuery
+        .debounce(300.milliseconds)
+        .distinctUntilChanged()
 
     val uiState: StateFlow<RecipesUiState> = combine(
         recipeRepository.getRecipes(),
         _searchQuery,
+        debouncedQuery,
         _selectedBrewMethod
-    ) { recipes, query, selectedMethod ->
+    ) { recipes, immediateQuery, queryToFilter, selectedMethod ->
         val filteredRecipes = recipes.filter { recipe ->
-            val matchesQuery = recipe.title.contains(query, ignoreCase = true) ||
-                    recipe.notes.contains(query, ignoreCase = true)
+            val matchesQuery = recipe.title.contains(queryToFilter, ignoreCase = true) ||
+                    recipe.notes.contains(queryToFilter, ignoreCase = true)
             val matchesBrewMethod =
                 selectedMethod == null || recipe.brewMethod == selectedMethod
             matchesQuery && matchesBrewMethod
         }
         RecipesUiState.Success(
             recipes = filteredRecipes,
-            searchQuery = query,
+            searchQuery = immediateQuery,
             selectedBrewMethod = selectedMethod
         )
     }.stateIn(
