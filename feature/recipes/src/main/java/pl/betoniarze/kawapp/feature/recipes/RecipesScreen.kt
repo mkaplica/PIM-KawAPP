@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -67,7 +68,7 @@ fun RecipesScreenContent(
                     value = uiState.searchQuery,
                     onValueChange = onSearchQueryChange,
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = CircleShape,
                     placeholder = { Text(text = stringResource(R.string.search_placeholder)) },
                     leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = null) },
                     trailingIcon = {
