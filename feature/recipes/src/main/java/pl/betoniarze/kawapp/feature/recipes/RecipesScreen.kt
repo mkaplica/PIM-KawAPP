@@ -28,7 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import pl.betoniarze.kawapp.core.model.BrewMethod
 import pl.betoniarze.kawapp.core.ui.R
 import pl.betoniarze.kawapp.feature.recipes.components.RecipeCard
@@ -37,7 +37,7 @@ import pl.betoniarze.kawapp.feature.recipes.components.RecipeCard
 fun RecipesScreen(
     modifier: Modifier = Modifier,
     onRecipeClick: (String) -> Unit = {},
-    viewModel: RecipesViewModel = viewModel()
+    viewModel: RecipesViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

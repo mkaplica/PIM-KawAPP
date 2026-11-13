@@ -15,7 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import pl.betoniarze.kawapp.feature.journal.components.BrewLogSummaryCard
 import pl.betoniarze.kawapp.feature.journal.components.WeeklyCalendarStrip
 import java.time.LocalDate
@@ -24,7 +24,7 @@ import java.time.LocalDate
 fun JournalScreen(
     modifier: Modifier = Modifier,
     onBrewClick: (String) -> Unit = {},
-    viewModel: JournalViewModel = viewModel()
+    viewModel: JournalViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

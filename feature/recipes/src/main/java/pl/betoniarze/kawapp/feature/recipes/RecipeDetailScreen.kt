@@ -30,24 +30,15 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.hilt.navigation.compose.hiltViewModel
 import pl.betoniarze.kawapp.core.ui.R
 import pl.betoniarze.kawapp.core.ui.theme.navbarColor
 
 @Composable
 fun RecipeDetailScreen(
     modifier: Modifier = Modifier,
-    recipeId: String,
-    viewModel: RecipeDetailViewModel = viewModel(
-        key = recipeId,
-        factory = viewModelFactory {
-            initializer {
-                RecipeDetailViewModel(recipeId = recipeId)
-            }
-        }
-    ),
+    recipeId: String = "",
+    viewModel: RecipeDetailViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()

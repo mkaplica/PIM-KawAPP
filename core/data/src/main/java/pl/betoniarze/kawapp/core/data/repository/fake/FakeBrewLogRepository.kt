@@ -1,4 +1,4 @@
-package pl.betoniarze.kawapp.core.data.repository
+package pl.betoniarze.kawapp.core.data.repository.fake
 
 import pl.betoniarze.kawapp.core.model.BrewLog
 import pl.betoniarze.kawapp.core.data.fake.FakeCoffeeData
@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import pl.betoniarze.kawapp.core.data.repository.BrewLogRepository
 import java.time.LocalDate
 
 class FakeBrewLogRepository : BrewLogRepository {

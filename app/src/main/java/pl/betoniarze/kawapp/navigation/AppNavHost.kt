@@ -39,10 +39,8 @@ fun AppNavHost(
             ProfileScreen()
         }
 
-        composable(route = "recipe_detail/{recipeId}") { backStackEntry ->
-            val recipeId = backStackEntry.arguments?.getString("recipeId") ?: ""
+        composable(route = "recipe_detail/{recipeId}") {
             RecipeDetailScreen(
-                recipeId = recipeId,
                 onBackClick = {
                     navController.popBackStack()
                 }

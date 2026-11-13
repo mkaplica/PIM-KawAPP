@@ -3,13 +3,16 @@ package pl.betoniarze.kawapp.feature.profile
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Locale
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import pl.betoniarze.kawapp.core.model.AppLanguage
 
-class ProfileViewModel : ViewModel() {
+@HiltViewModel
+class ProfileViewModel @Inject constructor() : ViewModel() {
 
     private val _selectedLanguage = MutableStateFlow(getCurrentAppLanguage())
     val selectedLanguage: StateFlow<AppLanguage> = _selectedLanguage.asStateFlow()

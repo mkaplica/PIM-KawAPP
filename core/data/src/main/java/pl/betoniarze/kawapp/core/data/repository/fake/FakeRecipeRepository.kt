@@ -1,4 +1,4 @@
-package pl.betoniarze.kawapp.core.data.repository
+package pl.betoniarze.kawapp.core.data.repository.fake
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import pl.betoniarze.kawapp.core.data.fake.FakeCoffeeData
+import pl.betoniarze.kawapp.core.data.repository.RecipeRepository
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
 
 class FakeRecipeRepository : RecipeRepository {
