@@ -3,7 +3,6 @@ package pl.betoniarze.kawapp.core.database.dao
 import pl.betoniarze.kawapp.core.database.model.BrewLogEntity
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -19,7 +18,7 @@ interface BrewLogDao {
     fun getBrewLogById(id: String): Flow<BrewLogEntity?>
 
     @Query("SELECT DISTINCT date FROM brew_logs")
-    fun getDatesWithBrews(): Flow<Set<LocalDate>>
+    fun getDatesWithBrews(): Flow<List<LocalDate>>
 
     @Query("SELECT * FROM brew_logs WHERE date = :date ORDER BY date DESC, time DESC")
     fun getBrewLogsForDate(date: LocalDate): Flow<List<BrewLogEntity>>
@@ -27,6 +26,6 @@ interface BrewLogDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBrewLog(brewLog: BrewLogEntity)
 
-    @Delete
+    @Query("DELETE FROM brew_logs WHERE id = :id")
     suspend fun deleteBrewLog(id: String)
 }

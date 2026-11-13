@@ -1,5 +1,6 @@
 package pl.betoniarze.kawapp.core.data.repository
 
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import pl.betoniarze.kawapp.core.database.dao.BrewLogDao
@@ -7,7 +8,7 @@ import pl.betoniarze.kawapp.core.database.model.asExternalModel
 import pl.betoniarze.kawapp.core.model.BrewLog
 import java.time.LocalDate
 
-class LocalBrewLogRepository (
+class LocalBrewLogRepository @Inject constructor(
     private val brewLogDao: BrewLogDao
 ) : BrewLogRepository {
     override fun getAllBrewLogs(): Flow<List<BrewLog>> =

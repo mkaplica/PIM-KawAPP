@@ -10,7 +10,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
-import pl.betoniarze.kawapp.core.data.repository.fake.FakeRecipeRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import pl.betoniarze.kawapp.core.data.repository.RecipeRepository
 import pl.betoniarze.kawapp.core.model.BrewMethod
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
@@ -25,8 +26,9 @@ sealed interface RecipesUiState {
     ) : RecipesUiState
 }
 
-class RecipesViewModel(
-    private val recipeRepository: RecipeRepository = FakeRecipeRepository()
+@HiltViewModel
+class RecipesViewModel @Inject constructor(
+    private val recipeRepository: RecipeRepository
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")

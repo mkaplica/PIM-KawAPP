@@ -17,7 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import pl.betoniarze.kawapp.core.model.FeedPost
 import pl.betoniarze.kawapp.core.ui.R
 import pl.betoniarze.kawapp.feature.feed.components.FeedPostCard
@@ -25,7 +25,7 @@ import pl.betoniarze.kawapp.feature.feed.components.FeedPostCard
 @Composable
 fun FeedScreen(
     modifier: Modifier = Modifier,
-    viewModel: FeedViewModel = viewModel()
+    viewModel: FeedViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

@@ -1,7 +1,6 @@
 package pl.betoniarze.kawapp.core.database.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -19,6 +18,6 @@ interface FeedPostDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFeedPost(feedPost: FeedPostEntity)
 
-    @Delete
+    @Query("DELETE FROM feed_posts WHERE id = :id")
     suspend fun deleteFeedPost(id: String)
 }
