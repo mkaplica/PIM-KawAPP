@@ -40,6 +40,7 @@ import pl.betoniarze.kawapp.feature.recipes.components.RecipeCard
 fun RecipesScreen(
     modifier: Modifier = Modifier,
     onRecipeClick: (String) -> Unit = {},
+    onAddRecipeClick: () -> Unit = {},
     viewModel: RecipesViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -48,6 +49,7 @@ fun RecipesScreen(
         uiState = uiState,
         modifier = modifier,
         onRecipeClick = onRecipeClick,
+        onAddRecipeClick = onAddRecipeClick,
         onSearchQueryChange = viewModel::onSearchQueryChange,
         onBrewMethodChange = viewModel::onBrewMethodChange
     )
