@@ -27,7 +27,6 @@ import pl.betoniarze.kawapp.feature.recipes.brew.components.TimerControls
 fun BrewTimerSection(
     recipe: CoffeeRecipe,
     modifier: Modifier = Modifier,
-    showLaterSteps: Boolean = true,
     vm: BrewTimerViewModel = hiltViewModel(key = "brew-timer-${recipe.id}"),
 ) {
     LaunchedEffect(recipe.id) { vm.bind(recipe) }
@@ -58,13 +57,6 @@ fun BrewTimerSectionContent(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         TimerControls(state, onToggle = onToggle, onReset = onReset, onSkip = onSkip)
-/*
-        TimerDisplay(state)
-        if (state.hasSteps) {
-            StepsFocusView(state, showLaterSteps = showLaterSteps)
-        } else {
-            Text("NIC")
-        }*/
     }
 }
 

@@ -26,11 +26,6 @@ object TimeRangeParser {
     }
 }
 
-fun formatTime(ms: Long): String {
-    val totalSec = ms / 1000
-    return "%d:%02d".format(totalSec / 60, totalSec % 60)
-}
-
 data class TimedStep(
     val step: BrewStep,
     val startSec: Int,
@@ -79,11 +74,7 @@ data class BrewTimerState(
             ((elapsedMs - s.startSec * 1000f) / (s.durationSec * 1000f)).coerceIn(0f, 1f)
         } ?: 1f
 
-    val totalProgress: Float
-        get() = if (totalMs == 0L) 0f else (elapsedMs.toFloat() / totalMs).coerceIn(0f, 1f)
-
     val secondsLeftInStep: Int? get() = currentStep?.let { secondsUntil(it.endSec) }
-    val secondsToNextStep: Int? get() = nextStep?.let { secondsUntil(it.startSec) }
 
     private fun secondsUntil(sec: Int): Int =
         ceil((sec * 1000L - elapsedMs) / 1000.0).toInt().coerceAtLeast(0)
