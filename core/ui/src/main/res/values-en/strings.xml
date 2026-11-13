@@ -32,4 +32,7 @@
     <string name="search_placeholder">Search recipe</string>
     <string name="clear_search_query">Clear</string>
     <string name="all_brewing_methods">All</string>
+
+    <!-- Add Recipe -->
+    <string name="add_recipe">Add recipe</string>
 </resources>
