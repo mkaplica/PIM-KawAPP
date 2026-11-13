@@ -41,10 +41,18 @@ private val LightColorScheme = lightColorScheme(
     onSurface = LightOnSurface,
     surfaceVariant = LightNavbarColor,
     onSurfaceVariant = LightOnSurfaceVariant,
-    surfaceContainer = LightNavbarColor,
+    surfaceContainerLowest = LightSurfaceContainerLowest,
     surfaceContainerLow = LightNavbarColor,
-    surfaceContainerHigh = LightNavbarColor,
+    surfaceContainer = LightNavbarColor,
+    surfaceContainerHigh = LightSurfaceContainerHigh,
+    surfaceContainerHighest = LightSurfaceContainerHighest,
+    surfaceBright = LightBackgroundColor,
+    surfaceDim = LightSurfaceDim,
     outline = LightOutline,
+    outlineVariant = LightOutlineVariant,
+    inverseSurface = LightInverseSurface,
+    inverseOnSurface = LightInverseOnSurface,
+    inversePrimary = LightInversePrimary,
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -70,10 +78,18 @@ private val DarkColorScheme = darkColorScheme(
     onSurface = DarkOnSurface,
     surfaceVariant = DarkNavbarColor,
     onSurfaceVariant = DarkOnSurfaceVariant,
-    surfaceContainer = DarkNavbarColor,
+    surfaceContainerLowest = DarkSurfaceContainerLowest,
     surfaceContainerLow = DarkNavbarColor,
-    surfaceContainerHigh = DarkNavbarColor,
+    surfaceContainer = DarkNavbarColor,
+    surfaceContainerHigh = DarkSurfaceContainerHigh,
+    surfaceContainerHighest = DarkSurfaceContainerHighest,
+    surfaceBright = DarkSurfaceBright,
+    surfaceDim = DarkBackgroundColor,
     outline = DarkOutline,
+    outlineVariant = DarkOutlineVariant,
+    inverseSurface = DarkInverseSurface,
+    inverseOnSurface = DarkInverseOnSurface,
+    inversePrimary = DarkInversePrimary,
 )
 
 // Convenient color scheme extension accessors

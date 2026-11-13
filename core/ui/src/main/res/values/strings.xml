@@ -19,6 +19,19 @@
     <string name="recipe_steps">Kroki parzenia:</string>
     <string name="back">Wróć</string>
 
+    <!-- Brew Timer-->
+    <string name="start_timer">Start</string>
+    <string name="reset_timer">Reset</string>
+    <string name="resume_timer">Wznów</string>
+    <string name="pause_timer">Pauza</string>
+    <string name="force_next_step">Dalej</string>
+    <string name="next_step">Następny krok</string>
+    <string name="later_steps">Później</string>
+    <string name="brew_step_info">Krok %1$d z %2$d</string>
+    <string name="brew_next_step_seconds">za %1$d s</string>
+    <string name="brew_finished">Gotowe do picia!</string>
+    <string name="brew_enjoy_coffee_message">Smacznej kawusi ;)</string>
+
     <!-- Feed -->
     <string name="feed_posts_count">Liczba postów w feedzie: %1$d</string>
     <string name="feed_empty_text">Trochę tu pusto...</string>

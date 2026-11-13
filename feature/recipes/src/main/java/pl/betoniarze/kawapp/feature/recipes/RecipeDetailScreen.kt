@@ -31,8 +31,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pl.betoniarze.kawapp.core.ui.R
 import pl.betoniarze.kawapp.core.ui.theme.navbarColor
+import pl.betoniarze.kawapp.feature.recipes.brew.BrewTimerSection
+import pl.betoniarze.kawapp.feature.recipes.brew.BrewTimerViewModel
+import pl.betoniarze.kawapp.feature.recipes.brew.components.BrewStepsList
 
 @Composable
 fun RecipeDetailScreen(
@@ -84,6 +88,9 @@ fun RecipeDetailScreenContent(
                     recipe.coffeeGrams,
                     recipe.totalWaterMl
                 )
+
+                val timerVm: BrewTimerViewModel = hiltViewModel(key = "brew-timer-${recipe.id}")
+                val timerState by timerVm.state.collectAsStateWithLifecycle()
 
                 Column(
                     modifier = Modifier
@@ -144,25 +151,14 @@ fun RecipeDetailScreenContent(
                             },
                             style = MaterialTheme.typography.bodyMedium
                         )
-                        Text(
-                            text = buildAnnotatedString {
-                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                    append(stepsLabel)
-                                    append("\n")
-                                }
-                                recipe.steps.forEachIndexed { index, step ->
-                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                        append("${index + 1}")
-                                    }
-                                    withStyle(style = SpanStyle(fontStyle = FontStyle.Italic)) {
-                                        append(". ${step.description}")
-                                    }
-                                    append("\n")
-                                }
-                            },
-                            style = MaterialTheme.typography.bodyMedium
-                        )
                     }
+                    Spacer(modifier = Modifier.padding(16.dp))
+
+                    Text(text = stepsLabel,
+                        fontWeight = FontWeight.Bold,)
+                    BrewStepsList(steps = recipe.steps, timerState = timerState)
+
+                    BrewTimerSection(recipe = recipe, vm = timerVm)
                 }
             }
         }
