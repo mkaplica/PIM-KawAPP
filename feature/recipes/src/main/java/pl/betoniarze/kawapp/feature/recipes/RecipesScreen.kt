@@ -13,13 +13,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -37,6 +40,7 @@ import pl.betoniarze.kawapp.feature.recipes.components.RecipeCard
 fun RecipesScreen(
     modifier: Modifier = Modifier,
     onRecipeClick: (String) -> Unit = {},
+    onAddRecipeClick: () -> Unit = {},
     viewModel: RecipesViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -45,6 +49,7 @@ fun RecipesScreen(
         uiState = uiState,
         modifier = modifier,
         onRecipeClick = onRecipeClick,
+        onAddRecipeClick = onAddRecipeClick,
         onSearchQueryChange = viewModel::onSearchQueryChange,
         onBrewMethodChange = viewModel::onBrewMethodChange
     )
@@ -56,70 +61,105 @@ fun RecipesScreenContent(
     uiState: RecipesUiState,
     onSearchQueryChange: (String) -> Unit = {},
     onBrewMethodChange: (BrewMethod?) -> Unit = {},
-    onRecipeClick: (String) -> Unit = {}
+    onRecipeClick: (String) -> Unit = {},
+    onAddRecipeClick: () -> Unit = {}
 ) {
-    Column(
-        modifier = modifier.fillMaxSize().padding(16.dp)
-    ) {
-        when (uiState) {
-            is RecipesUiState.Loading -> CircularProgressIndicator()
-            is RecipesUiState.Success -> {
-                OutlinedTextField(
-                    value = uiState.searchQuery,
-                    onValueChange = onSearchQueryChange,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = CircleShape,
-                    placeholder = { Text(text = stringResource(R.string.search_placeholder)) },
-                    leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = null) },
-                    trailingIcon = {
-                        if (uiState.searchQuery.isNotEmpty()) {
-                            IconButton(onClick = {onSearchQueryChange("")}) {
-                                Icon(imageVector = Icons.Default.Clear, contentDescription = stringResource(R.string.clear_search_query))
-                            }
-                        }
-                    },
-                    singleLine = true
-                )
-
-                Spacer(modifier = Modifier.padding(8.dp))
-
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        floatingActionButton = {
+            if (uiState is RecipesUiState.Success) {
+                FloatingActionButton(
+                    onClick = onAddRecipeClick,
+                    shape = RoundedCornerShape(16.dp)
                 ) {
-                    item {
-                        FilterChip(
-                            selected = uiState.selectedBrewMethod == null,
-                            onClick = { onBrewMethodChange(null) },
-                            label = { Text(text = stringResource(R.string.all_brewing_methods)) }
-                        )
-                    }
-                    items(BrewMethod.entries.toTypedArray()) { method ->
-                        FilterChip(
-                            selected = uiState.selectedBrewMethod == method,
-                            onClick = { onBrewMethodChange(method) },
-                            label = { Text(text = method.displayName) }
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.add_recipe)
+                    )
                 }
-
-                Spacer(modifier = Modifier.padding(8.dp))
-
-                if(uiState.recipes.isEmpty()) {
-                    Text(text = stringResource(R.string.no_recipes_found))
-                }
-                else {
-                    LazyColumn(
+            }
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp)
+        ) {
+            when (uiState) {
+                is RecipesUiState.Loading -> {
+                    Box(
                         modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        contentAlignment = Alignment.Center
                     ) {
-                        items(
-                            items = uiState.recipes,
-                            key = { recipe -> recipe.id }
-                        ) { recipe ->
-                            RecipeCard(
-                                recipe = recipe,
-                                onClick = { onRecipeClick(recipe.id) }
+                        CircularProgressIndicator()
+                    }
+                }
+                is RecipesUiState.Success -> {
+                    OutlinedTextField(
+                        value = uiState.searchQuery,
+                        onValueChange = onSearchQueryChange,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = CircleShape,
+                        placeholder = { Text(text = stringResource(R.string.search_placeholder)) },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = null
                             )
+                        },
+                        trailingIcon = {
+                            if (uiState.searchQuery.isNotEmpty()) {
+                                IconButton(onClick = { onSearchQueryChange("") }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Clear,
+                                        contentDescription = stringResource(R.string.clear_search_query)
+                                    )
+                                }
+                            }
+                        },
+                        singleLine = true
+                    )
+
+                    Spacer(modifier = Modifier.padding(8.dp))
+
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        item {
+                            FilterChip(
+                                selected = uiState.selectedBrewMethod == null,
+                                onClick = { onBrewMethodChange(null) },
+                                label = { Text(text = stringResource(R.string.all_brewing_methods)) }
+                            )
+                        }
+                        items(BrewMethod.entries.toTypedArray()) { method ->
+                            FilterChip(
+                                selected = uiState.selectedBrewMethod == method,
+                                onClick = { onBrewMethodChange(method) },
+                                label = { Text(text = method.displayName) }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.padding(8.dp))
+
+                    if (uiState.recipes.isEmpty()) {
+                        Text(text = stringResource(R.string.no_recipes_found))
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(
+                                items = uiState.recipes,
+                                key = { recipe -> recipe.id }
+                            ) { recipe ->
+                                RecipeCard(
+                                    recipe = recipe,
+                                    onClick = { onRecipeClick(recipe.id) }
+                                )
+                            }
                         }
                     }
                 }

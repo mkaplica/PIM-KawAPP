@@ -1,6 +1,6 @@
 package pl.betoniarze.kawapp.core.model
 
-data class CoffeeRecipe(
+data class  CoffeeRecipe(
     val id: String,
     val title: String,
     val brewMethod: BrewMethod,
