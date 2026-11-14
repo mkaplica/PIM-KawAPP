@@ -2,9 +2,6 @@ package pl.betoniarze.kawapp.feature.recipes.brew
 
 import android.media.AudioManager
 import android.media.ToneGenerator
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -17,8 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
 import pl.betoniarze.kawapp.feature.recipes.brew.components.TimerControls
@@ -26,8 +21,9 @@ import pl.betoniarze.kawapp.feature.recipes.brew.components.TimerControls
 @Composable
 fun BrewTimerSection(
     recipe: CoffeeRecipe,
+    vm: BrewTimerViewModel,
     modifier: Modifier = Modifier,
-    vm: BrewTimerViewModel = hiltViewModel(key = "brew-timer-${recipe.id}"),
+    showControls: Boolean = false,
 ) {
     LaunchedEffect(recipe.id) { vm.bind(recipe) }
     val state by vm.state.collectAsStateWithLifecycle()
@@ -35,28 +31,14 @@ fun BrewTimerSection(
     KeepScreenOn(enabled = state.isRunning)
     StepChangeFeedback(state)
 
-    BrewTimerSectionContent(
-        state = state,
-        onToggle = vm::toggle,
-        onReset = vm::reset,
-        onSkip = vm::skipToNextStep,
-        modifier = modifier,
-    )
-}
-
-@Composable
-fun BrewTimerSectionContent(
-    state: BrewTimerState,
-    onToggle: () -> Unit,
-    onReset: () -> Unit,
-    onSkip: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        TimerControls(state, onToggle = onToggle, onReset = onReset, onSkip = onSkip)
+    if (showControls) {
+        TimerControls(
+            state = state,
+            onToggle = vm::toggle,
+            onReset = vm::reset,
+            onSkip = vm::skipToNextStep,
+            modifier = modifier,
+        )
     }
 }
 
