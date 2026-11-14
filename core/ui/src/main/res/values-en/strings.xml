@@ -32,4 +32,19 @@
     <string name="search_placeholder">Search recipe</string>
     <string name="clear_search_query">Clear</string>
     <string name="all_brewing_methods">All</string>
+
+    <!-- Add Recipe -->
+    <string name="add_recipe">Add recipe</string>
+    <string name="new_recipe">New recipe</string>
+    <string name="save">Save</string>
+    <string name="name">Recipe name</string>
+    <string name="coffee_grams">Coffee (g)</string>"
+    <string name="water_ml">Water (ml)</string>
+    <string name="notes">Notes (optional)</string>
+    <string name="brew_steps">Brew Steps</string>
+    <string name="step">Step</string>
+    <string name="delete_step">Delete step</string>
+    <string name="description">Description (e.g Preinfusion)</string>
+    <string name="time">Time (e.g 0:00 – 0:45)</string>
+    <string name="add_step">Add next step</string>
 </resources>

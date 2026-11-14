@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import pl.betoniarze.kawapp.feature.feed.FeedScreen
 import pl.betoniarze.kawapp.feature.journal.JournalScreen
 import pl.betoniarze.kawapp.feature.profile.ProfileScreen
+import pl.betoniarze.kawapp.feature.recipes.RecipeAddScreen
 import pl.betoniarze.kawapp.feature.recipes.RecipeDetailScreen
 import pl.betoniarze.kawapp.feature.recipes.RecipesScreen
 
@@ -29,9 +30,11 @@ fun AppNavHost(
             RecipesScreen(
                 onRecipeClick = { recipeId ->
                     navController.navigate("recipe_detail/$recipeId")
-                }
+                },
+                onAddRecipeClick = { navController.navigate("add_recipe") }
             )
         }
+
         composable(route = TopLevelDestination.JOURNAL.route) {
             JournalScreen()
         }
@@ -44,6 +47,12 @@ fun AppNavHost(
                 onBackClick = {
                     navController.popBackStack()
                 }
+            )
+        }
+
+        composable(route = "add_recipe") {
+            RecipeAddScreen(
+                onBackClick = { navController.popBackStack() }
             )
         }
     }
