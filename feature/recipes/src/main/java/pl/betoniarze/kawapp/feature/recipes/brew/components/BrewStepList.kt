@@ -78,7 +78,7 @@ private fun BrewFinishedMessage(modifier: Modifier = Modifier) {
         modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .background(colors.surfaceContainerHigh)
+            .background(colors.primary.copy(alpha = 0.18f))
             .padding(horizontal = 12.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
@@ -91,7 +91,7 @@ private fun BrewFinishedMessage(modifier: Modifier = Modifier) {
         Text(
             text = stringResource(R.string.brew_enjoy_coffee_message),
             style = MaterialTheme.typography.bodyLarge,
-            color = colors.onSurface,
+            color = colors.primary,
         )
     }
 }
@@ -107,7 +107,7 @@ private fun BrewStepRow(
     val isActive = status == BrewStepStatus.ACTIVE
 
     val background by animateColorAsState(
-        if (isActive) colors.surfaceContainerHigh else Color.Transparent,
+        if (isActive) colors.primary.copy(alpha = 0.18f) else Color.Transparent,
         label = "stepBackground",
     )
     val textColor by animateColorAsState(
