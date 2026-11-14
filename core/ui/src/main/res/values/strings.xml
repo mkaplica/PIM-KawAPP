@@ -45,4 +45,19 @@
     <string name="search_placeholder">Szukaj przepisu</string>
     <string name="clear_search_query">Wyczyść</string>
     <string name="all_brewing_methods">Wszystkie</string>
+
+    <!-- Add Recipe -->
+    <string name="add_recipe">Dodaj przepis</string>
+    <string name="new_recipe">Nowy przepis</string>
+    <string name="save">Zapisz</string>
+    <string name="name">Nazwa przepisu</string>
+    <string name="coffee_grams">Kawa (g)</string>"
+    <string name="water_ml">Woda (ml)</string>
+    <string name="notes">Notatki (opcjonalnie)</string>
+    <string name="brew_steps">Kroki parzenia</string>
+    <string name="step">Krok</string>
+    <string name="delete_step">Usuń krok</string>
+    <string name="description">Opis (np. Preinfuzja)</string>
+    <string name="time">Czas (np. 0:00 – 0:45)</string>
+    <string name="add_step">Dodaj kolejny krok</string>
 </resources>
