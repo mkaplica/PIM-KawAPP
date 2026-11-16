@@ -17,7 +17,7 @@ val LightSecondDetailColor = Color(0xFFB83A2A)  // Red - Coffee cherry / roasted
 val LightOnBackground = Color(0xFF241C18)
 val LightOnSurface = Color(0xFF241C18)
 val LightOnPrimary = Color(0xFFFFFFFF)
-val LightPrimaryContainer = Color(0xFFF3E8DE)
+val LightPrimaryContainer = Color(0xFFEBD9C6)
 val LightOnPrimaryContainer = Color(0xFF2A150A)
 val LightOnSecondary = Color(0xFFFFFFFF)
 val LightSecondaryContainer = Color(0xFFE0C99C)
@@ -30,6 +30,16 @@ val LightErrorContainer = Color(0xFFFDE8E5)
 val LightOnErrorContainer = Color(0xFF410E0B)
 val LightOnSurfaceVariant = Color(0xFF53453A)
 val LightOutline = Color(0xFF887568)
+
+
+val LightSurfaceContainerLowest = Color(0xFFFFFFFF)
+val LightSurfaceContainerHigh = Color(0xFFE9DFD0)
+val LightSurfaceContainerHighest = Color(0xFFE3D7C6)
+val LightSurfaceDim = Color(0xFFE2D9CC)
+val LightOutlineVariant = Color(0xFFD6C7B8)
+val LightInverseSurface = Color(0xFF3A2F27)
+val LightInverseOnSurface = Color(0xFFF8EFE7)
+val LightInversePrimary = Color(0xFFD4A373)
 
 // ==========================================
 // Dark Theme Palette (Cozy Warm Mocha)
@@ -59,3 +69,13 @@ val DarkErrorContainer = Color(0xFF63211B)
 val DarkOnErrorContainer = Color(0xFFFFDAD6)
 val DarkOnSurfaceVariant = Color(0xFFC2B4A7)    // Soft warm taupe for secondary text
 val DarkOutline = Color(0xFF9B8A7E)
+
+
+val DarkSurfaceContainerLowest = Color(0xFF120B02)
+val DarkSurfaceContainerHigh = Color(0xFF31241A)
+val DarkSurfaceContainerHighest = Color(0xFF3C2D21)
+val DarkSurfaceBright = Color(0xFF3E3024)
+val DarkOutlineVariant = Color(0xFF4E3F33)
+val DarkInverseSurface = Color(0xFFE8DFD8)
+val DarkInverseOnSurface = Color(0xFF2A2018)
+val DarkInversePrimary = Color(0xFF7A4E2A)
