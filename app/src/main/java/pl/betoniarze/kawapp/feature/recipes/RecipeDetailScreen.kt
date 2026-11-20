@@ -34,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -44,6 +45,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -55,7 +58,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pl.betoniarze.kawapp.core.ui.R
-import pl.betoniarze.kawapp.core.ui.theme.navbarColor
 import pl.betoniarze.kawapp.feature.recipes.brew.BrewTimerSection
 import pl.betoniarze.kawapp.feature.recipes.brew.BrewTimerState
 import pl.betoniarze.kawapp.feature.recipes.brew.BrewTimerViewModel
@@ -147,7 +149,16 @@ fun RecipeDetailScreenContent(
     }
 
     Scaffold(
-        modifier = modifier,
+        containerColor = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = modifier.background(
+            Brush.verticalGradient(
+                listOf(
+                    MaterialTheme.colorScheme.background,
+                    MaterialTheme.colorScheme.surfaceContainer,
+                )
+            )
+        ),
         topBar = {
             TopAppBar(
                 title = {},
@@ -172,6 +183,10 @@ fun RecipeDetailScreenContent(
                         }
                     }
                 },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent,
+                    scrolledContainerColor = Color.Transparent,
+                ),
             )
         },
         floatingActionButton = {
@@ -201,7 +216,6 @@ fun RecipeDetailScreenContent(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.navbarColor)
                 .padding(innerPadding)
                 .padding(16.dp),
             contentAlignment = Alignment.Center
@@ -226,6 +240,7 @@ fun RecipeDetailScreenContent(
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState())
+                            .padding(8.dp)
                     ) {
 
                         Column(
@@ -246,7 +261,7 @@ fun RecipeDetailScreenContent(
                                         append(recipe.notes)
                                     }
                                 },
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodyLarge,
                             )
                             Text(
                                 text = buildAnnotatedString {
@@ -256,7 +271,7 @@ fun RecipeDetailScreenContent(
                                     }
                                     append(recipe.brewMethod.displayName)
                                 },
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodyLarge,
                             )
                             Text(
                                 text = buildAnnotatedString {
@@ -266,7 +281,7 @@ fun RecipeDetailScreenContent(
                                     }
                                     append(proportionsText)
                                 },
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodyLarge,
                             )
                         }
                         Spacer(modifier = Modifier.padding(16.dp))

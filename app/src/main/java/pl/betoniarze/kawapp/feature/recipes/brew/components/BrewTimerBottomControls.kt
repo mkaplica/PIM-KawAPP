@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import pl.betoniarze.kawapp.core.ui.R
@@ -47,7 +48,8 @@ fun BrewTimerBottomBar(
 ) {
     BottomAppBar(
         modifier = modifier,
-        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        containerColor = Color.Transparent,
+        tonalElevation = 0.dp,
     ) {
         TimerControls(
             state = state,
