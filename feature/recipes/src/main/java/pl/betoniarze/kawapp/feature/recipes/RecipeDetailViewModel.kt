@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import pl.betoniarze.kawapp.core.data.repository.RecipeRepository
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
 
@@ -39,4 +40,11 @@ class RecipeDetailViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = RecipeDetailUiState.Loading
         )
+
+    fun deleteRecipe(onDeleted: () -> Unit) {
+        viewModelScope.launch {
+            recipeRepository.deleteRecipe(recipeId)
+            onDeleted()
+        }
+    }
 }

@@ -25,7 +25,7 @@ fun BrewTimerSection(
     modifier: Modifier = Modifier,
     showControls: Boolean = false,
 ) {
-    LaunchedEffect(recipe.id) { vm.bind(recipe) }
+    LaunchedEffect(recipe) { vm.bind(recipe) }
     val state by vm.state.collectAsStateWithLifecycle()
 
     KeepScreenOn(enabled = state.isRunning)

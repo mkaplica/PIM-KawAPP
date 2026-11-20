@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import pl.betoniarze.kawapp.core.database.model.BrewStepEntity
 import pl.betoniarze.kawapp.core.database.model.CoffeeRecipeEntity
@@ -30,6 +31,16 @@ interface CoffeeRecipeDao {
     @Transaction
     suspend fun insertCoffeeRecipeWithSteps(recipe: CoffeeRecipeEntity, steps: List<BrewStepEntity>) {
         insertCoffeeRecipe(recipe)
+        insertBrewSteps(steps)
+    }
+
+    @Update
+    suspend fun updateCoffeeRecipe(recipe: CoffeeRecipeEntity)
+
+    @Transaction
+    suspend fun updateCoffeeRecipeWithSteps(recipe: CoffeeRecipeEntity, steps: List<BrewStepEntity>) {
+        updateCoffeeRecipe(recipe)
+        deleteStepsByRecipeId(recipe.id)
         insertBrewSteps(steps)
     }
 

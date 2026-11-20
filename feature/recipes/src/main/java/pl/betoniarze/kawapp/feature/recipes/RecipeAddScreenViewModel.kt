@@ -1,10 +1,12 @@
 package pl.betoniarze.kawapp.feature.recipes
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pl.betoniarze.kawapp.core.data.repository.RecipeRepository
@@ -22,7 +24,9 @@ data class RecipeAddUiState(
     val notes: String = "",
     val steps: List<BrewStepInput> = listOf(BrewStepInput(stepNumber = 1)),
     val isSaving: Boolean = false,
-    val isSaveSuccess: Boolean = false
+    val isSaveSuccess: Boolean = false,
+    val isEditMode: Boolean = false,
+    val isLoading: Boolean = false
 ) {
     val isValid: Boolean
         get() = title.isNotBlank() &&
@@ -41,10 +45,48 @@ data class BrewStepInput(
 
 @HiltViewModel
 class RecipeAddScreenViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val recipeRepository: RecipeRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(RecipeAddUiState())
+    // Present only when opened via the edit_recipe/{recipeId} route.
+    private val editedRecipeId: String? = savedStateHandle.get<String>("recipeId")
+
+    private val _uiState = MutableStateFlow(
+        RecipeAddUiState(isEditMode = editedRecipeId != null, isLoading = editedRecipeId != null)
+    )
     val uiState: StateFlow<RecipeAddUiState> = _uiState
+
+    init {
+        editedRecipeId?.let(::loadRecipe)
+    }
+
+    private fun loadRecipe(id: String) {
+        viewModelScope.launch {
+            val recipe = recipeRepository.getRecipeById(id).first()
+            _uiState.update { state ->
+                if (recipe == null) {
+                    state.copy(isLoading = false)
+                } else {
+                    state.copy(
+                        title = recipe.title,
+                        brewMethod = recipe.brewMethod,
+                        coffeeGrams = recipe.coffeeGrams.toString(),
+                        totalWaterMl = recipe.totalWaterMl.toString(),
+                        notes = recipe.notes,
+                        steps = recipe.steps.map { step ->
+                            BrewStepInput(
+                                stepNumber = step.stepNumber,
+                                description = step.description,
+                                waterAmountMl = step.waterAmountMl.toString(),
+                                timeRange = step.timeRange
+                            )
+                        }.ifEmpty { listOf(BrewStepInput(stepNumber = 1)) },
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
 
     fun onTitleChange(title: String) {
         _uiState.update { it.copy(title = title) }
@@ -98,13 +140,13 @@ class RecipeAddScreenViewModel @Inject constructor(
 
     fun saveRecipe() {
         val currentState = _uiState.value
-        if (!currentState.isValid || currentState.isSaving) return
+        if (!currentState.isValid || currentState.isSaving || currentState.isLoading) return
 
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
 
-            val newRecipe = CoffeeRecipe(
-                id = UUID.randomUUID().toString(),
+            val recipe = CoffeeRecipe(
+                id = editedRecipeId ?: UUID.randomUUID().toString(),
                 title = currentState.title.trim(),
                 brewMethod = currentState.brewMethod,
                 coffeeGrams = currentState.coffeeGrams.toInt(),
@@ -120,7 +162,11 @@ class RecipeAddScreenViewModel @Inject constructor(
                 }
             )
 
-            recipeRepository.addRecipe(newRecipe)
+            if (editedRecipeId != null) {
+                recipeRepository.updateRecipe(recipe)
+            } else {
+                recipeRepository.addRecipe(recipe)
+            }
             _uiState.update { it.copy(isSaving = false, isSaveSuccess = true) }
         }
     }

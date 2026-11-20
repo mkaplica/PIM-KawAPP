@@ -22,6 +22,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,11 +32,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,7 +69,9 @@ fun RecipeDetailScreen(
     recipeId: String = "",
     viewModel: RecipeDetailViewModel = hiltViewModel(),
     timerVm: BrewTimerViewModel = hiltViewModel(),
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    onEditClick: (recipeId: String) -> Unit = {},
+    onRecipeDeleted: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val timerState by timerVm.state.collectAsStateWithLifecycle()
@@ -76,6 +85,10 @@ fun RecipeDetailScreen(
         timerState = timerState,
         modifier = modifier,
         onBackClick = onBackClick,
+        onEditClick = {
+            (uiState as? RecipeDetailUiState.Success)?.let { onEditClick(it.recipe.id) }
+        },
+        onDeleteConfirm = { viewModel.deleteRecipe(onDeleted = onRecipeDeleted) },
         onStartTimer = timerVm::start,
         onToggleTimer = timerVm::toggle,
         onResetTimer = timerVm::reset,
@@ -90,6 +103,8 @@ fun RecipeDetailScreenContent(
     uiState: RecipeDetailUiState,
     timerState: BrewTimerState = BrewTimerState(),
     onBackClick: () -> Unit,
+    onEditClick: () -> Unit = {},
+    onDeleteConfirm: () -> Unit = {},
     onStartTimer: () -> Unit = {},
     onToggleTimer: () -> Unit = {},
     onResetTimer: () -> Unit = {},
@@ -113,6 +128,21 @@ fun RecipeDetailScreenContent(
     fabState.targetState = wantFab && barState.isIdle && !barState.currentState
     barState.targetState = wantBar && fabState.isIdle && !fabState.currentState
 
+    // Editing or deleting mid-brew would pull the recipe out from under the timer.
+    val showRecipeActions = isRecipeLoaded && timerState.isIdle
+    var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
+
+    if (showDeleteDialog && uiState is RecipeDetailUiState.Success) {
+        DeleteRecipeDialog(
+            recipeTitle = uiState.recipe.title,
+            onConfirm = {
+                showDeleteDialog = false
+                onDeleteConfirm()
+            },
+            onDismiss = { showDeleteDialog = false }
+        )
+    }
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -121,6 +151,22 @@ fun RecipeDetailScreenContent(
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = backText)
+                    }
+                },
+                actions = {
+                    if (showRecipeActions) {
+                        IconButton(onClick = onEditClick) {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = stringResource(R.string.edit_recipe)
+                            )
+                        }
+                        IconButton(onClick = { showDeleteDialog = true }) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = stringResource(R.string.delete_recipe)
+                            )
+                        }
                     }
                 },
             )
@@ -235,4 +281,29 @@ fun RecipeDetailScreenContent(
             }
         }
     }
+}
+@Composable
+private fun DeleteRecipeDialog(
+    recipeTitle: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = stringResource(R.string.delete_recipe_confirm_title)) },
+        text = { Text(text = stringResource(R.string.delete_recipe_confirm_text, recipeTitle)) },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(
+                    text = stringResource(R.string.delete),
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(R.string.cancel))
+            }
+        }
+    )
 }

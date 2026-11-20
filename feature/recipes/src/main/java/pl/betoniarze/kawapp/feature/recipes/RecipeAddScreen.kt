@@ -91,7 +91,13 @@ fun RecipeAddScreenContent(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(R.string.new_recipe)) },
+                title = {
+                    Text(
+                        text = stringResource(
+                            if (uiState.isEditMode) R.string.edit_recipe else R.string.new_recipe
+                        )
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
@@ -100,7 +106,7 @@ fun RecipeAddScreenContent(
                 actions = {
                     TextButton(
                         onClick = onSaveClick,
-                        enabled = uiState.isValid && !uiState.isSaving
+                        enabled = uiState.isValid && !uiState.isSaving && !uiState.isLoading
                     ) {
                         Text(text = stringResource(R.string.save))
                     }

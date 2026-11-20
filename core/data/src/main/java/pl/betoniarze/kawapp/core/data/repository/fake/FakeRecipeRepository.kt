@@ -20,4 +20,14 @@ class FakeRecipeRepository : RecipeRepository {
     override suspend fun addRecipe(recipe: CoffeeRecipe) {
         recipesFlow.update { currentList -> currentList + recipe }
     }
+
+    override suspend fun updateRecipe(recipe: CoffeeRecipe) {
+        recipesFlow.update { currentList ->
+            currentList.map { if (it.id == recipe.id) recipe else it }
+        }
+    }
+
+    override suspend fun deleteRecipe(id: String) {
+        recipesFlow.update { currentList -> currentList.filterNot { it.id == id } }
+    }
 }

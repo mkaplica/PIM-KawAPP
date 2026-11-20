@@ -21,25 +21,34 @@ class LocalRecipeRepository @Inject constructor(
             .map { it?.asExternalModel() }
 
     override suspend fun addRecipe(recipe: CoffeeRecipe) {
-        val recipeEntity = CoffeeRecipeEntity(
-            id = recipe.id,
-            title = recipe.title,
-            brewMethod = recipe.brewMethod,
-            coffeeGrams = recipe.coffeeGrams,
-            totalWaterMl = recipe.totalWaterMl,
-            notes = recipe.notes
-        )
-
-        val stepEntity = recipe.steps.map { step ->
-            BrewStepEntity(
-                recipeId = recipe.id,
-                stepNumber = step.stepNumber,
-                description = step.description,
-                waterAmountMl = step.waterAmountMl,
-                timeRange = step.timeRange
-            )
-        }
-
-        coffeeRecipeDao.insertCoffeeRecipeWithSteps(recipeEntity, stepEntity)
+        coffeeRecipeDao.insertCoffeeRecipeWithSteps(recipe.asEntity(), recipe.asStepEntities())
     }
+
+    override suspend fun updateRecipe(recipe: CoffeeRecipe) {
+        coffeeRecipeDao.updateCoffeeRecipeWithSteps(recipe.asEntity(), recipe.asStepEntities())
+    }
+
+    override suspend fun deleteRecipe(id: String) {
+        // Brew steps are removed by the ON DELETE CASCADE foreign key.
+        coffeeRecipeDao.deleteCoffeeRecipe(id)
+    }
+}
+
+private fun CoffeeRecipe.asEntity() = CoffeeRecipeEntity(
+    id = id,
+    title = title,
+    brewMethod = brewMethod,
+    coffeeGrams = coffeeGrams,
+    totalWaterMl = totalWaterMl,
+    notes = notes
+)
+
+private fun CoffeeRecipe.asStepEntities() = steps.map { step ->
+    BrewStepEntity(
+        recipeId = id,
+        stepNumber = step.stepNumber,
+        description = step.description,
+        waterAmountMl = step.waterAmountMl,
+        timeRange = step.timeRange
+    )
 }
