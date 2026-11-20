@@ -3,6 +3,7 @@ package pl.betoniarze.kawapp.feature.recipes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -84,7 +85,7 @@ fun RecipesScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp)
+                .padding(start = 16.dp, top = 16.dp, end = 16.dp)
         ) {
             when (uiState) {
                 is RecipesUiState.Loading -> {
@@ -149,6 +150,9 @@ fun RecipesScreenContent(
                     } else {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
+                            // Room to scroll the last card above the add-recipe FAB
+                            // (16 dp margin + 56 dp FAB + 16 dp gap).
+                            contentPadding = PaddingValues(bottom = 88.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(
