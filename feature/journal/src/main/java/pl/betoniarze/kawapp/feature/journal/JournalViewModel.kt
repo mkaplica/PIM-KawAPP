@@ -16,7 +16,7 @@ import pl.betoniarze.kawapp.core.data.repository.BrewLogRepository
 import pl.betoniarze.kawapp.core.model.BrewLog
 
 data class JournalUiState(
-    val selectedDate: LocalDate = LocalDate.of(2026, 11, 3),
+    val selectedDate: LocalDate = LocalDate.now(),
     val brewsForSelectedDate: List<BrewLog> = emptyList(),
     val datesWithBrews: Set<LocalDate> = emptySet()
 )
@@ -26,7 +26,7 @@ class JournalViewModel @Inject constructor(
     private val brewLogRepository: BrewLogRepository
 ) : ViewModel() {
 
-    private val selectedDateFlow = MutableStateFlow(LocalDate.of(2026, 11, 3))
+    private val selectedDateFlow = MutableStateFlow(LocalDate.now())
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<JournalUiState> = combine(
