@@ -1,6 +1,7 @@
 package pl.betoniarze.kawapp.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -40,9 +41,13 @@ fun AppScaffold(
             }
         }
     ) { innerPadding ->
+        // Consume the insets applied here, so nested Scaffolds and TopAppBars
+        // don't add the status/navigation bar padding a second time.
         AppNavHost(
             navController = appState.navController,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
+                .padding(innerPadding)
+                .consumeWindowInsets(innerPadding)
         )
     }
 }
