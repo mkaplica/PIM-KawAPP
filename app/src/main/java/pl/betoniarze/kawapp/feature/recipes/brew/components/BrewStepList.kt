@@ -114,7 +114,7 @@ private fun BrewStepRow(
         when (status) {
             BrewStepStatus.ACTIVE -> colors.primary
             BrewStepStatus.DONE -> colors.onSurfaceVariant.copy(alpha = 0.6f)
-            BrewStepStatus.UPCOMING -> colors.onSurface
+            BrewStepStatus.UPCOMING -> colors.onSurfaceVariant
         },
         label = "stepText",
     )
