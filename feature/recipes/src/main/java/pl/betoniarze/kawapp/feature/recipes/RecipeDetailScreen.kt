@@ -129,7 +129,10 @@ fun RecipeDetailScreenContent(
     barState.targetState = wantBar && fabState.isIdle && !fabState.currentState
 
     // Editing or deleting mid-brew would pull the recipe out from under the timer.
-    val showRecipeActions = isRecipeLoaded && timerState.isIdle
+    // Built-in recipes are not in the database, so they cannot be edited or deleted.
+    val showRecipeActions = uiState is RecipeDetailUiState.Success &&
+            !uiState.recipe.isPredefined &&
+            timerState.isIdle
     var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
 
     if (showDeleteDialog && uiState is RecipeDetailUiState.Success) {
