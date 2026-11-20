@@ -7,4 +7,6 @@ interface RecipeRepository {
     fun getRecipes(): Flow<List<CoffeeRecipe>>
     fun getRecipeById(id: String): Flow<CoffeeRecipe?>
     suspend fun addRecipe(recipe: CoffeeRecipe)
+    suspend fun updateRecipe(recipe: CoffeeRecipe)
+    suspend fun deleteRecipe(id: String)
 }

@@ -22,14 +22,16 @@ class BrewTimerViewModel @Inject constructor() : ViewModel() {
     private val _state = MutableStateFlow(BrewTimerState())
     val state: StateFlow<BrewTimerState> = _state.asStateFlow()
 
-    private var boundRecipeId: String? = null
+    private var boundRecipe: CoffeeRecipe? = null
     private var ticker: Job? = null
     private var baseElapsedMs = 0L
     private var startedAtMs = 0L
 
+    // Compares the whole recipe, not just its id, so an edited recipe (same id,
+    // new steps) rebuilds the timer. Room re-emitting an identical recipe is a no-op.
     fun bind(recipe: CoffeeRecipe) {
-        if (recipe.id == boundRecipeId) return
-        boundRecipeId = recipe.id
+        if (recipe == boundRecipe) return
+        boundRecipe = recipe
         reset()
         _state.value = BrewTimerState(steps = recipe.toTimedSteps())
     }

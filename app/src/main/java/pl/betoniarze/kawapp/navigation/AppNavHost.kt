@@ -46,11 +46,24 @@ fun AppNavHost(
             RecipeDetailScreen(
                 onBackClick = {
                     navController.popBackStack()
+                },
+                onEditClick = { recipeId ->
+                    navController.navigate("edit_recipe/$recipeId")
+                },
+                onRecipeDeleted = {
+                    navController.popBackStack()
                 }
             )
         }
 
         composable(route = "add_recipe") {
+            RecipeAddScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        // Same form as add_recipe; the ViewModel pre-fills it from the recipeId argument.
+        composable(route = "edit_recipe/{recipeId}") {
             RecipeAddScreen(
                 onBackClick = { navController.popBackStack() }
             )

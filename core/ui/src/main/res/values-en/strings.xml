@@ -60,4 +60,10 @@
     <string name="description">Description (e.g Preinfusion)</string>
     <string name="time">Time (e.g 0:00 – 0:45)</string>
     <string name="add_step">Add next step</string>
+    <string name="edit_recipe">Edit recipe</string>
+    <string name="delete_recipe">Delete recipe</string>
+    <string name="delete_recipe_confirm_title">Delete recipe?</string>
+    <string name="delete_recipe_confirm_text">The recipe “%1$s” will be permanently deleted.</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
 </resources>

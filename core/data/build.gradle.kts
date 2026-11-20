@@ -20,6 +20,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    buildFeatures {
+        // BuildConfig.DEBUG gates the sample data in the repositories.
+        buildConfig = true
+    }
 }
 
 dependencies {

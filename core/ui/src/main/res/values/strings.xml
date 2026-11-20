@@ -60,4 +60,10 @@
     <string name="description">Opis (np. Preinfuzja)</string>
     <string name="time">Czas (np. 0:00 – 0:45)</string>
     <string name="add_step">Dodaj kolejny krok</string>
+    <string name="edit_recipe">Edytuj przepis</string>
+    <string name="delete_recipe">Usuń przepis</string>
+    <string name="delete_recipe_confirm_title">Usunąć przepis?</string>
+    <string name="delete_recipe_confirm_text">Przepis „%1$s” zostanie trwale usunięty.</string>
+    <string name="delete">Usuń</string>
+    <string name="cancel">Anuluj</string>
 </resources>
