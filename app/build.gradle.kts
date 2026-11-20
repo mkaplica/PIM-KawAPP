@@ -46,10 +46,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":feature:feed"))
-    implementation(project(":feature:recipes"))
-    implementation(project(":feature:profile"))
-    implementation(project(":feature:journal"))
     implementation(project(":core:ui"))
     implementation(project(":core:model"))
     implementation(project(":core:data"))
@@ -57,12 +53,14 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
 
