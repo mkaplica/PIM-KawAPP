@@ -33,9 +33,9 @@ internal fun WeeklyCalendarStrip(
     onDateSelected: (LocalDate) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val polishLocale = remember { Locale("pl", "PL") }
+    val polishLocale = remember { Locale.forLanguageTag("pl-PL") }
     val baseMonday = remember {
-        LocalDate.of(2026, 11, 3).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+        LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
     }
 
     val pagerState = rememberPagerState(
