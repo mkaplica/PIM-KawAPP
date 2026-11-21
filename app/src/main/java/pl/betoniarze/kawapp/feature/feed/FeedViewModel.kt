@@ -16,14 +16,27 @@ import pl.betoniarze.kawapp.core.data.repository.FeedRepository
 import pl.betoniarze.kawapp.core.model.FeedPost
 import pl.betoniarze.kawapp.feature.journal.calculateStreak
 
+/**
+ * A feed post together with the current user's Kawos state.
+ *
+ * @property kavosCount Count shown in the UI, including the current user's Kawos.
+ */
 data class FeedPostItem(
     val post: FeedPost,
     val kavosGiven: Boolean,
     val kavosCount: Int,
 )
 
+/** State of the Feed screen. */
 sealed interface FeedUiState {
+    /** Posts are not loaded yet; the screen shows the loading overlay. */
     data object Loading : FeedUiState
+    /**
+     * Posts are loaded.
+     *
+     * @property userName Name shown in the "Hello, <name>!" header.
+     * @property streakDays Consecutive days with a brew, shown under the greeting when above 0.
+     */
     data class Success(
         val posts: List<FeedPostItem>,
         val userName: String,
@@ -31,19 +44,25 @@ sealed interface FeedUiState {
     ) : FeedUiState
 }
 
+/** ViewModel of the Feed: posts, the greeting header and the user's Kawos. */
 @HiltViewModel
 class FeedViewModel @Inject constructor(
     private val feedRepository: FeedRepository,
     brewLogRepository: BrewLogRepository,
 ) : ViewModel() {
 
-    // TODO: pobierać z profilu / logowania, gdy pojawi się model użytkownika.
+    // TODO: take it from the profile / login once there is a user model.
+    /** Placeholder user name for the greeting header. */
     private val userName = "Barista"
 
-    // Stan Kawosów trzymany w ViewModelu (wcześniej mutacja post.kavosCount w UI,
-    // która ginęła przy przewinięciu). TODO: zapis do repozytorium / Firestore.
+    // TODO: save given Kawos to the repository / Firestore.
+    /**
+     * Ids of posts the user gave a Kawos. Kept here (not mutated in the UI), so it survives
+     * scrolling.
+     */
     private val givenKavos = MutableStateFlow<Set<String>>(emptySet())
 
+    /** Posts with Kawos state, the user name and the streak. Starts as [FeedUiState.Loading]. */
     val uiState: StateFlow<FeedUiState> = combine(
         feedRepository.getFeedPosts(),
         givenKavos,
@@ -67,6 +86,7 @@ class FeedViewModel @Inject constructor(
         initialValue = FeedUiState.Loading
     )
 
+    /** Gives or takes back the user's Kawos on the post with [postId]. */
     fun onKavosClick(postId: String) {
         givenKavos.update { if (postId in it) it - postId else it + postId }
     }

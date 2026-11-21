@@ -7,10 +7,14 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 /**
- * Kolory KawApp, których nie ma w Material [androidx.compose.material3.ColorScheme].
+ * KawApp colors that the Material [androidx.compose.material3.ColorScheme] has no slot for.
  *
- * Tag (chip metody, streak, Kawosy) jest JEDNYM komponentem typu outlined/tonal:
- * ciemniejsze tło + kolorowy tekst + obwódka w tym samym kolorze.
+ * The tag (method chip, streak, Kawos) is ONE outlined/tonal component:
+ * a darker background + colored text + a border in the same color.
+ *
+ * @property card Background of [pl.betoniarze.kawapp.core.ui.components.KawCard].
+ * @property brewDot Dot under calendar days that have a brew.
+ * @property timerAccent Caramel used for the brew timer's pause button and completed steps.
  */
 @Immutable
 data class KawColors(
@@ -24,6 +28,7 @@ data class KawColors(
     val brewDot: Color,
 )
 
+/** [KawColors] for the light theme. */
 val LightKawColors = KawColors(
     card = LightCardColor,
     cardBorder = LightCardBorder,
@@ -35,6 +40,7 @@ val LightKawColors = KawColors(
     brewDot = LightFirstDetailColor,
 )
 
+/** [KawColors] for the dark theme. */
 val DarkKawColors = KawColors(
     card = DarkCardColor,
     cardBorder = DarkCardBorder,
@@ -46,9 +52,10 @@ val DarkKawColors = KawColors(
     brewDot = DarkFirstDetailColor,
 )
 
+/** Provides [KawColors] down the tree; set by KawAPPTheme. Read it through [KawTheme.colors]. */
 val LocalKawColors = staticCompositionLocalOf { LightKawColors }
 
-/** Dostęp: `KawTheme.colors.card` */
+/** Access to the current [KawColors], e.g. `KawTheme.colors.card`. */
 object KawTheme {
     val colors: KawColors
         @Composable

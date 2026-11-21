@@ -15,9 +15,14 @@ import pl.betoniarze.kawapp.feature.recipes.RecipeAddScreen
 import pl.betoniarze.kawapp.feature.recipes.RecipeDetailScreen
 import pl.betoniarze.kawapp.feature.recipes.RecipesScreen
 
-/** Czas przenikania między ekranami (domyślnie w NavHost: 700 ms). */
+/** Crossfade duration between screens (the NavHost default is 700 ms). */
 private const val SCREEN_FADE_MS = 1_000
 
+/**
+ * Navigation graph of the app: the four top-level tabs plus recipe detail, add and edit screens.
+ *
+ * All screen changes use a [SCREEN_FADE_MS] crossfade.
+ */
 @Composable
 fun AppNavHost(
     navController: NavHostController,

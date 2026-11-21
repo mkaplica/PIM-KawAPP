@@ -40,11 +40,12 @@ import pl.betoniarze.kawapp.core.ui.R
 import pl.betoniarze.kawapp.core.ui.theme.KawTheme
 import pl.betoniarze.kawapp.feature.recipes.brew.BrewTimerState
 
+/** Where a step is relative to the timer. */
 private enum class BrewStepStatus { DONE, ACTIVE, UPCOMING }
 
 /**
- * Kroki jako oś czasu. Aktywny krok = pełny miód (jedyny akcent na tym ekranie),
- * ukończone = karmel (timerAccent), kolejne = obwódka outlineVariant.
+ * Recipe steps as a timeline. Active step = full honey (the only accent on this screen),
+ * completed = caramel (timerAccent), upcoming = outlineVariant border.
  */
 @Composable
 fun BrewStepsList(
@@ -80,6 +81,10 @@ fun BrewStepsList(
     }
 }
 
+/**
+ * One step in the timeline: marker, description, time range and water. The active step is a honey
+ * card with a progress bar.
+ */
 @Composable
 private fun BrewStepRow(
     step: BrewStep,
@@ -152,6 +157,10 @@ private fun BrewStepRow(
     }
 }
 
+/**
+ * Step number in a circle: honey when active, caramel with a check when done, outlined when
+ * upcoming.
+ */
 @Composable
 private fun StepMarker(number: Int, status: BrewStepStatus) {
     val colors = MaterialTheme.colorScheme
@@ -182,6 +191,7 @@ private fun StepMarker(number: Int, status: BrewStepStatus) {
     }
 }
 
+/** Message shown under the steps when the brew is finished. */
 @Composable
 private fun BrewFinishedMessage(modifier: Modifier = Modifier) {
     val kaw = KawTheme.colors

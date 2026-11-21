@@ -19,10 +19,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.util.Locale
 
+/** One statistic, e.g. value "15 g" with label "coffee". */
 @Immutable
 data class KawStat(val value: String, val label: String)
 
-/** Rząd statystyk w karcie (lista przepisów, feed). */
+/** A row of [stats] inside a card (recipe list, feed). Each stat takes an equal share of the width. */
 @Composable
 fun KawStatRow(
     stats: List<KawStat>,
@@ -48,7 +49,7 @@ fun KawStatRow(
     }
 }
 
-/** Kafelki statystyk (szczegóły przepisu). */
+/** [stats] as separate rounded tiles (recipe detail). Each tile takes an equal share of the width. */
 @Composable
 fun KawStatTiles(
     stats: List<KawStat>,
@@ -81,14 +82,15 @@ fun KawStatTiles(
     }
 }
 
+/** Formatting helpers for brew numbers shown in stats. */
 object KawFormat {
-    /** 250 ml / 15 g → "1:16,7" (separator zgodny z Locale). Null przy 0 g. */
+    /** 250 ml / 15 g → "1:16,7" (decimal separator follows the Locale). Null when [coffeeGrams] is 0. */
     fun ratio(coffeeGrams: Int, waterMl: Int): String? {
         if (coffeeGrams <= 0) return null
         return String.format(Locale.getDefault(), "1:%.1f", waterMl.toFloat() / coffeeGrams)
     }
 
-    /** 185 → "3:05" */
+    /** Formats seconds as m:ss, e.g. 185 → "3:05". */
     fun duration(totalSeconds: Int): String =
         String.format(Locale.getDefault(), "%d:%02d", totalSeconds / 60, totalSeconds % 60)
 }

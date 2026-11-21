@@ -29,6 +29,10 @@ import pl.betoniarze.kawapp.core.ui.components.KawLoadingOverlay
 import pl.betoniarze.kawapp.core.ui.components.KawStreakTag
 import pl.betoniarze.kawapp.feature.feed.components.FeedPostCard
 
+/**
+ * Feed tab: community posts under a greeting header. Connects [FeedScreenContent] to
+ * [FeedViewModel].
+ */
 @Composable
 fun FeedScreen(
     modifier: Modifier = Modifier,
@@ -43,6 +47,7 @@ fun FeedScreen(
     )
 }
 
+/** Stateless Feed UI for [uiState]: header and post list, or the loading overlay while loading. */
 @Composable
 fun FeedScreenContent(
     uiState: FeedUiState,
@@ -93,7 +98,7 @@ fun FeedScreenContent(
     }
 }
 
-/** Nagłówek Feedu w stylu Dziennika: powitanie + seria dni z kawą, za paskiem statusu. */
+/** Feed header in the Journal style: greeting + coffee streak, drawn behind the status bar. */
 @Composable
 private fun FeedHeader(
     userName: String,

@@ -14,6 +14,7 @@ import androidx.navigation.navOptions
 import kotlinx.coroutines.CoroutineScope
 import pl.betoniarze.kawapp.navigation.TopLevelDestination
 
+/** Creates and remembers the [AppState] for the current composition. */
 @Composable
 fun rememberAppState(
     navController: NavHostController = rememberNavController(),
@@ -24,11 +25,16 @@ fun rememberAppState(
     }
 }
 
+/** UI state of the app shell: navigation and bottom bar logic shared by [AppScaffold]. */
 @Stable
 class AppState(
     val navController: NavHostController,
     val coroutineScope: CoroutineScope
 ) {
+    /**
+     * Destination currently on top of the back stack. Each read subscribes separately and starts at
+     * null, so read it once per composition.
+     */
     val currentDestination: NavDestination?
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
@@ -40,8 +46,14 @@ class AppState(
     fun shouldShowBottomBar(destination: NavDestination?): Boolean =
         destination == null || topLevelDestinations.any { destination.isRouteInHierarchy(it.route) }
 
+    /** Tabs of the bottom navigation bar, in display order. */
     val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.entries
 
+    /**
+     * Switches to [topLevelDestination]'s tab. Pops back to the start screen, saves the state of
+     * the tab being left and restores the state of the target tab, so each tab keeps its own back
+     * stack and scroll position.
+     */
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
         val topLevelNavOptions = navOptions {
             popUpTo(navController.graph.findStartDestination().id) {
@@ -60,5 +72,6 @@ class AppState(
     }
 }
 
+/** True if this destination or one of its parent graphs has [route]. */
 fun NavDestination?.isRouteInHierarchy(route: String): Boolean =
     this?.hierarchy?.any { it.route == route } == true

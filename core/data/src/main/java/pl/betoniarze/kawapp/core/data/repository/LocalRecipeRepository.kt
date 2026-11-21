@@ -10,6 +10,7 @@ import pl.betoniarze.kawapp.core.database.model.CoffeeRecipeEntity
 import pl.betoniarze.kawapp.core.database.model.asExternalModel
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
 
+/** [RecipeRepository] backed by Room for user recipes, plus the built-in [PredefinedRecipes]. */
 class LocalRecipeRepository @Inject constructor(
     private val coffeeRecipeDao: CoffeeRecipeDao
 ) : RecipeRepository {
@@ -46,6 +47,7 @@ class LocalRecipeRepository @Inject constructor(
     }
 }
 
+/** Maps the recipe (without steps) to its Room row. */
 private fun CoffeeRecipe.asEntity() = CoffeeRecipeEntity(
     id = id,
     title = title,
@@ -55,6 +57,7 @@ private fun CoffeeRecipe.asEntity() = CoffeeRecipeEntity(
     notes = notes
 )
 
+/** Maps the steps to Room rows linked to this recipe's id. */
 private fun CoffeeRecipe.asStepEntities() = steps.map { step ->
     BrewStepEntity(
         recipeId = id,

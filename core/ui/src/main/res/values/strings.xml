@@ -42,6 +42,10 @@
     <string name="profile_language_setting">Język aplikacji</string>
     <string name="language_polish">Polski</string>
     <string name="language_english">English</string>
+    <string name="profile_theme_setting">Motyw aplikacji</string>
+    <string name="theme_system">Systemowy</string>
+    <string name="theme_light">Jasny</string>
+    <string name="theme_dark">Ciemny</string>
 
     <!-- Search bar -->
     <string name="search_placeholder">Szukaj przepisu</string>

@@ -31,6 +31,7 @@ import pl.betoniarze.kawapp.core.ui.R
 import pl.betoniarze.kawapp.core.ui.theme.KawTheme
 import pl.betoniarze.kawapp.feature.recipes.brew.BrewTimerState
 
+/** Rounded linear progress bar used by the brew timer; [progress] is from 0 to 1. */
 @Composable
 fun BrewProgressBar(
     progress: Float,
@@ -52,7 +53,7 @@ fun BrewProgressBar(
     )
 }
 
-/** Przyciski timera. Pauza/start w karmelu (timerAccent), reszta outlined. */
+/** Timer buttons. Pause/start in caramel (timerAccent), the others outlined. */
 @Composable
 fun TimerControls(
     state: BrewTimerState,

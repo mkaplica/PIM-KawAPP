@@ -45,6 +45,10 @@ import pl.betoniarze.kawapp.core.model.BrewMethod
 import pl.betoniarze.kawapp.core.ui.R
 import pl.betoniarze.kawapp.core.ui.components.KawLoadingOverlay
 
+/**
+ * Add / edit recipe form connected to [RecipeAddScreenViewModel]. Goes back after a successful
+ * save.
+ */
 @Composable
 fun RecipeAddScreen(
     modifier: Modifier = Modifier,
@@ -69,6 +73,10 @@ fun RecipeAddScreen(
     )
 }
 
+/**
+ * Stateless recipe form: title, brew method, dose, water, notes and an editable list of steps.
+ * Shows the loading overlay while a recipe to edit is loading.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeAddScreenContent(

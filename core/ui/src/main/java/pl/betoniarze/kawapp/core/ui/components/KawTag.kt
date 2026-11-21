@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pl.betoniarze.kawapp.core.ui.theme.KawTheme
 
+/** Colors of a [KawTag]. A [border] of [Color.Transparent] means no border. */
 @Immutable
 data class KawTagColors(
     val container: Color,
@@ -26,8 +27,9 @@ data class KawTagColors(
     val border: Color,
 )
 
+/** Predefined [KawTagColors]. */
 object KawTagDefaults {
-    /** Miodowy tag outlined – używany raz na ekran (chip metody, streak, Kawosy). */
+    /** Honey outlined tag – used once per screen (method chip, streak, Kawos). */
     @Composable
     fun accent() = KawTagColors(
         container = KawTheme.colors.tagContainer,
@@ -35,7 +37,7 @@ object KawTagDefaults {
         border = KawTheme.colors.tagBorder,
     )
 
-    /** Neutralny wariant tego samego komponentu (np. chip metody w Dzienniku). */
+    /** Neutral variant of the same component (e.g. the method chip in the Journal). */
     @Composable
     fun neutral() = KawTagColors(
         container = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -45,8 +47,10 @@ object KawTagDefaults {
 }
 
 /**
- * Jeden komponent tagu typu outlined/tonal.
- * Z [onClick] działa jako przycisk (np. Kawosy), bez – jako statyczna etykieta.
+ * The single outlined/tonal tag component used across the app.
+ * With [onClick] it works as a button (e.g. Kawos), without it as a static label.
+ *
+ * @param leading Optional content before the text, e.g. an icon.
  */
 @Composable
 fun KawTag(

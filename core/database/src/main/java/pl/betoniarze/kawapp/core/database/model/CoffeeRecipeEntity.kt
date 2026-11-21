@@ -10,6 +10,7 @@ import pl.betoniarze.kawapp.core.model.BrewMethod
 import pl.betoniarze.kawapp.core.model.BrewStep
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
 
+/** Room row for a user recipe, without its steps (see [BrewStepEntity]). */
 @Entity(tableName = "coffee_recipes")
 data class CoffeeRecipeEntity (
     @PrimaryKey val id: String,
@@ -20,6 +21,7 @@ data class CoffeeRecipeEntity (
     val notes: String
 )
 
+/** Room row for one recipe step. Deleted together with its recipe (ON DELETE CASCADE). */
 @Entity(
     tableName = "brew_steps",
     foreignKeys = [
@@ -41,6 +43,7 @@ data class BrewStepEntity(
     val timeRange: String
 )
 
+/** A recipe loaded together with its steps through a Room relation. */
 data class CoffeeRecipeWithSteps(
     @Embedded val recipe: CoffeeRecipeEntity,
     @Relation(
@@ -50,6 +53,7 @@ data class CoffeeRecipeWithSteps(
     val steps: List<BrewStepEntity>
 )
 
+/** Maps the row to the domain [BrewStep]. */
 fun BrewStepEntity.asExternalModel() = BrewStep(
     stepNumber = stepNumber,
     description = description,
@@ -57,6 +61,7 @@ fun BrewStepEntity.asExternalModel() = BrewStep(
     timeRange = timeRange
 )
 
+/** Maps to the domain [CoffeeRecipe], with steps sorted by their number. */
 fun CoffeeRecipeWithSteps.asExternalModel() = CoffeeRecipe(
     id = recipe.id,
     title = recipe.title,

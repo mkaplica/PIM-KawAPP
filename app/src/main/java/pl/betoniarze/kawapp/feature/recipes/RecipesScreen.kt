@@ -40,6 +40,12 @@ import pl.betoniarze.kawapp.core.ui.components.KawLoadingOverlay
 import pl.betoniarze.kawapp.core.ui.components.KawListDefaults
 import pl.betoniarze.kawapp.feature.recipes.components.RecipeCard
 
+/**
+ * Recipes tab connected to [RecipesViewModel].
+ *
+ * @param onRecipeClick Called with the id of a tapped recipe.
+ * @param onAddRecipeClick Called by the "New recipe" button.
+ */
 @Composable
 fun RecipesScreen(
     modifier: Modifier = Modifier,
@@ -59,6 +65,10 @@ fun RecipesScreen(
     )
 }
 
+/**
+ * Stateless recipe list: title, search field, brew method filters and recipe cards. Shows the
+ * loading overlay while recipes load.
+ */
 @Composable
 fun RecipesScreenContent(
     modifier: Modifier = Modifier,
@@ -154,6 +164,7 @@ fun RecipesScreenContent(
     }
 }
 
+/** Rounded search field with a clear button that appears once something is typed. */
 @Composable
 private fun SearchField(
     query: String,
@@ -184,7 +195,7 @@ private fun SearchField(
     )
 }
 
-/** Wybrany filtr jest neutralny (secondaryContainer), nie miodowy. */
+/** Brew method filter chip. The selected chip is neutral (secondaryContainer), not honey. */
 @Composable
 private fun MethodChip(label: String, selected: Boolean, onClick: () -> Unit) {
     FilterChip(

@@ -24,9 +24,13 @@ import pl.betoniarze.kawapp.core.database.utils.Converters
     exportSchema = true
 )
 
+/** Room database of the app: user recipes with their steps, brew logs and feed posts. */
 @TypeConverters(Converters::class)
 abstract class KawAppDatabase : RoomDatabase() {
+    /** DAO for community feed posts. */
     abstract fun feedPostDao(): FeedPostDao
+    /** DAO for the user's recipes and their brew steps. */
     abstract fun coffeeRecipeDao(): CoffeeRecipeDao
+    /** DAO for Journal brew logs. */
     abstract fun brewLogDao(): BrewLogDao
 }

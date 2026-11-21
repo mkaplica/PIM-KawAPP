@@ -1,4 +1,4 @@
 package pl.betoniarze.kawapp.core.network
 
-// Placeholder for Retrofit network implementation
+/** Placeholder for the future Retrofit network implementation. */
 class NetworkPlaceholder

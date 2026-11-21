@@ -39,16 +39,28 @@ import kotlin.math.sin
 import pl.betoniarze.kawapp.core.ui.R
 import pl.betoniarze.kawapp.core.ui.theme.KawTheme
 
+/** How long the overlay takes to fade in or out. */
 private const val OVERLAY_FADE_MS = 600
+/** Opacity of the background color covering the content behind the overlay. */
 private const val SCRIM_ALPHA = 0.9f
 
+/**
+ * Full-screen loading overlay: the screen background at [SCRIM_ALPHA] opacity covering data that is
+ * not loaded yet, with an animated [SteamingCoffeeCup] in the center. It fades in and out slowly
+ * and blocks touches while visible.
+ *
+ * @param animateFirstShow When false, an overlay that is already visible on its first composition
+ * (e.g. after the Activity was recreated by a theme change) appears immediately instead of fading
+ * in again.
+ */
 @Composable
 fun KawLoadingOverlay(
     visible: Boolean,
     modifier: Modifier = Modifier,
+    animateFirstShow: Boolean = true,
 ) {
-    // Start hidden, so the very first show also fades in.
-    val state = remember { MutableTransitionState(false) }
+    // Start hidden unless animateFirstShow is false, see the KDoc above.
+    val state = remember { MutableTransitionState(if (animateFirstShow) false else visible) }
     state.targetState = visible
 
     AnimatedVisibility(
@@ -77,6 +89,10 @@ fun KawLoadingOverlay(
     }
 }
 
+/**
+ * A coffee cup on a saucer drawn on a Canvas, with three waving steam stripes that rise and pulse,
+ * each with its own phase.
+ */
 @Composable
 fun SteamingCoffeeCup(
     modifier: Modifier = Modifier,

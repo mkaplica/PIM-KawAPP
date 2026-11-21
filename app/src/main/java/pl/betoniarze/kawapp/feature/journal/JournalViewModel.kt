@@ -16,6 +16,14 @@ import kotlinx.coroutines.flow.stateIn
 import pl.betoniarze.kawapp.core.data.repository.BrewLogRepository
 import pl.betoniarze.kawapp.core.model.BrewLog
 
+/**
+ * State of the Journal screen.
+ *
+ * @property brewsForSelectedDate Brews of [selectedDate]; empty while [isLoading].
+ * @property datesWithBrews Every day with at least one brew (calendar dots).
+ * @property streakDays Consecutive days with a brew, see [calculateStreak].
+ * @property isLoading True until the brews of [selectedDate] are loaded; shows the loading overlay.
+ */
 data class JournalUiState(
     val today: LocalDate = LocalDate.now(),
     val selectedDate: LocalDate = LocalDate.now(),
@@ -25,14 +33,16 @@ data class JournalUiState(
     val isLoading: Boolean = true,
 )
 
+/** ViewModel of the Journal: the selected day, its brews and the streak. */
 @HiltViewModel
 class JournalViewModel @Inject constructor(
     private val brewLogRepository: BrewLogRepository
 ) : ViewModel() {
 
-    // BUG FIX: wcześniej na sztywno LocalDate.of(2026, 11, 3).
+    /** Day picked in the calendar; starts at today. */
     private val selectedDateFlow = MutableStateFlow(LocalDate.now())
 
+    /** Combined Journal state. Recomputes when the selected day or the brew logs change. */
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<JournalUiState> = combine(
         selectedDateFlow,
@@ -59,18 +69,20 @@ class JournalViewModel @Inject constructor(
         initialValue = JournalUiState()
     )
 
+    /** Shows the brews of [date]. */
     fun onDateSelected(date: LocalDate) {
         selectedDateFlow.value = date
     }
 
+    /** Jumps back to today. */
     fun onTodayClick() {
         selectedDateFlow.value = LocalDate.now()
     }
 }
 
 /**
- * Liczba kolejnych dni z parzeniem. Jeśli dziś jeszcze nic nie zapisano,
- * seria liczy się od wczoraj (nie przepada rano).
+ * Number of consecutive days with a brew, ending today. If nothing was logged today yet,
+ * the streak counts from yesterday, so it is not lost in the morning.
  */
 internal fun calculateStreak(dates: Set<LocalDate>, today: LocalDate): Int {
     var day = if (today in dates) today else today.minusDays(1)

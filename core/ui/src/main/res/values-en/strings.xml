@@ -42,6 +42,10 @@
     <string name="profile_language_setting">App Language</string>
     <string name="language_polish">Polski</string>
     <string name="language_english">English</string>
+    <string name="profile_theme_setting">App theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
 
     <!-- Search bar -->
     <string name="search_placeholder">Search recipe</string>

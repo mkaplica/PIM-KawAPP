@@ -37,6 +37,12 @@ import pl.betoniarze.kawapp.core.ui.components.KawLoadingOverlay
 import pl.betoniarze.kawapp.feature.journal.components.BrewLogSummaryCard
 import pl.betoniarze.kawapp.feature.journal.components.WeeklyCalendarStrip
 
+/**
+ * Journal tab connected to [JournalViewModel].
+ *
+ * @param onBrewClick Called with the id of a tapped brew log.
+ * @param onAddBrewClick Called by the "Save brew" button.
+ */
 @Composable
 fun JournalScreen(
     modifier: Modifier = Modifier,
@@ -56,6 +62,10 @@ fun JournalScreen(
     )
 }
 
+/**
+ * Stateless Journal UI: calendar header with streak, the selected day's brews and a "Save brew"
+ * button. Shows the loading overlay while the day's brews load.
+ */
 @Composable
 fun JournalScreen(
     uiState: JournalUiState,
@@ -70,7 +80,7 @@ fun JournalScreen(
 
     Box(modifier = modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Nagłówek w kolorze navbara, oddzielony od listy kolorem tła.
+            // Header in the navbar color, separated from the list by the background color.
             WeeklyCalendarStrip(
                 today = uiState.today,
                 selectedDate = uiState.selectedDate,

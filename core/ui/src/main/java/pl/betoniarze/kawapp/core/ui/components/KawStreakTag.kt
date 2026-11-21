@@ -11,6 +11,10 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.unit.dp
 import pl.betoniarze.kawapp.core.ui.R
 
+/**
+ * Honey tag with a flame icon showing the coffee streak, e.g. "3 day coffee streak" (Journal,
+ * Feed).
+ */
 @Composable
 fun KawStreakTag(
     streakDays: Int,

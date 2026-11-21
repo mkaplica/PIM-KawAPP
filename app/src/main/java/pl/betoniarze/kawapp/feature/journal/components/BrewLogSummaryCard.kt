@@ -20,7 +20,9 @@ import pl.betoniarze.kawapp.core.ui.components.KawTag
 import pl.betoniarze.kawapp.core.ui.components.KawTagDefaults
 
 /**
- * Jeden cel kliknięcia (cała karta). Chip metody neutralny – miód na tym ekranie ma tylko streak.
+ * Summary of one brew in the Journal list: method, time, beans, recipe, grinder and roast date.
+ * The whole card is one click target. The method chip is neutral, because on this screen only the
+ * streak uses the honey accent.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

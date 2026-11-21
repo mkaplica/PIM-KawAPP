@@ -23,7 +23,7 @@ import pl.betoniarze.kawapp.core.ui.components.KawTag
 import pl.betoniarze.kawapp.feature.recipes.brew.toTimedSteps
 
 /**
- * Karta przepisu. Na ekranie listy przepisów miodowy akcent ma TYLKO chip metody.
+ * A recipe in the recipe list. On this screen ONLY the method chip uses the honey accent.
  */
 @Composable
 fun RecipeCard(

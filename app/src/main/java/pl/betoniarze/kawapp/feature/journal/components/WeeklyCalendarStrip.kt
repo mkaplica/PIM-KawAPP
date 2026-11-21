@@ -45,12 +45,19 @@ import pl.betoniarze.kawapp.core.ui.R
 import pl.betoniarze.kawapp.core.ui.components.KawStreakTag
 import pl.betoniarze.kawapp.core.ui.theme.KawTheme
 
+/** Pager page of the current week; lower pages are past weeks. */
 private const val INITIAL_PAGE = 500
+/** Total number of week pages (about 9.5 years back and forward). */
 private const val TOTAL_PAGES = 1000
 
 /**
- * Nagłówek Dziennika: miesiąc + „Dziś”, streak (jedyny miodowy akcent na ekranie), pasek tygodnia.
- * Cały blok ma kolor navbara (surfaceContainer) i zaokrąglony dół.
+ * Journal header: month + "Today" button, the streak (the only honey accent on the screen) and a
+ * swipeable week strip. The whole block has the navbar color (surfaceContainer), a rounded bottom
+ * and extends behind the status bar.
+ *
+ * @param today Date treated as today; later days are dimmed.
+ * @param datesWithBrews Days that get a brew dot.
+ * @param onTodayClick Called by the "Today" button, which also scrolls back to the current week.
  */
 @Composable
 internal fun WeeklyCalendarStrip(
@@ -147,6 +154,10 @@ internal fun WeeklyCalendarStrip(
     }
 }
 
+/**
+ * One day in the week strip: short day name, day number and a brew dot.
+ * The selected day is filled with honey; today has an outline; future days are dimmed.
+ */
 @Composable
 private fun DayItem(
     date: LocalDate,

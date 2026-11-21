@@ -18,6 +18,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
 import pl.betoniarze.kawapp.feature.recipes.brew.components.TimerControls
 
+/**
+ * Connects [recipe] to the brew timer [vm] and adds its side effects: keeps the screen on while
+ * running and gives feedback on step changes.
+ *
+ * @param showControls Whether to also show the timer buttons here.
+ */
 @Composable
 fun BrewTimerSection(
     recipe: CoffeeRecipe,
@@ -42,6 +48,7 @@ fun BrewTimerSection(
     }
 }
 
+/** Keeps the screen on while [enabled]. */
 @Composable
 private fun KeepScreenOn(enabled: Boolean) {
     val view = LocalView.current
@@ -51,6 +58,7 @@ private fun KeepScreenOn(enabled: Boolean) {
     }
 }
 
+/** Vibrates and beeps when the timer moves to a new step (not for the first step). */
 @Composable
 private fun StepChangeFeedback(state: BrewTimerState) {
     val haptic = LocalHapticFeedback.current

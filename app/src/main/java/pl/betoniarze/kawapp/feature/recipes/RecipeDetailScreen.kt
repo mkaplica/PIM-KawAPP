@@ -62,6 +62,12 @@ import pl.betoniarze.kawapp.feature.recipes.brew.components.BrewStepsList
 import pl.betoniarze.kawapp.feature.recipes.brew.components.BrewTimerBottomBar
 import pl.betoniarze.kawapp.feature.recipes.brew.toTimedSteps
 
+/**
+ * Recipe detail screen connected to [RecipeDetailViewModel] and [BrewTimerViewModel].
+ *
+ * @param onEditClick Called with the recipe id when the user wants to edit it.
+ * @param onRecipeDeleted Called after the recipe was deleted.
+ */
 @Composable
 fun RecipeDetailScreen(
     modifier: Modifier = Modifier,
@@ -95,6 +101,11 @@ fun RecipeDetailScreen(
     )
 }
 
+/**
+ * Stateless recipe detail UI: top bar with edit/delete, the recipe, the brew timer start button and
+ * the bottom timer bar while brewing. Edit and delete are hidden for built-in recipes and while a
+ * brew is running.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeDetailScreenContent(
@@ -222,6 +233,7 @@ fun RecipeDetailScreenContent(
     }
 }
 
+/** Scrollable recipe content: method chip and title, stat tiles, notes and the step timeline. */
 @Composable
 private fun RecipeDetailBody(
     recipe: CoffeeRecipe,
@@ -244,7 +256,7 @@ private fun RecipeDetailBody(
             .padding(horizontal = 12.dp, vertical = 4.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        // Hero – chip metody neutralny: miód na tym ekranie ma tylko aktywny krok.
+        // Hero – neutral method chip: on this screen only the active step is honey.
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             KawTag(text = recipe.brewMethod.displayName, colors = KawTagDefaults.neutral())
             Text(
@@ -274,6 +286,7 @@ private fun RecipeDetailBody(
     }
 }
 
+/** Asks the user to confirm deleting the recipe [recipeTitle]. */
 @Composable
 private fun DeleteRecipeDialog(
     recipeTitle: String,

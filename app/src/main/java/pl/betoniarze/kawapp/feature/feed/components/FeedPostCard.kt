@@ -46,8 +46,11 @@ import pl.betoniarze.kawapp.core.ui.components.KawTagDefaults
 import pl.betoniarze.kawapp.core.ui.theme.KawTheme
 
 /**
- * Post w feedzie. Miodowy akcent na tym ekranie mają TYLKO przyznane Kawosy.
- * Modyfikator trafia wyłącznie do karty (wcześniej był też przekazywany do LazyRow i rzędu akcji).
+ * A post in the feed: author, text, photos and the Kawos / comments / share actions.
+ * On this screen ONLY given Kawos use the honey accent. [modifier] is applied to the card only.
+ *
+ * @param kavosGiven Whether the current user gave this post a Kawos.
+ * @param kavosCount Kawos count including the current user's one.
  */
 @Composable
 fun FeedPostCard(
@@ -67,7 +70,7 @@ fun FeedPostCard(
         border = BorderStroke(1.dp, KawTheme.colors.cardBorder),
     ) {
         Column {
-            // Nagłówek
+            // Header
             Row(
                 modifier = Modifier.padding(start = 14.dp, end = 14.dp, top = 12.dp, bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -84,11 +87,11 @@ fun FeedPostCard(
                 )
                 Column {
                     Text(text = post.authorName, style = MaterialTheme.typography.titleMedium)
-                    // TODO: czas publikacji + metoda parzenia (brak pól w FeedPost).
+                    // TODO: publish time + brew method (FeedPost has no such fields yet).
                 }
             }
 
-            // TODO: tytuł i statystyki parzenia (KawStatRow), gdy FeedPost dostanie dane o naparze.
+            // TODO: brew title and stats (KawStatRow) once FeedPost carries brew data.
 
             Text(
                 text = post.content,
@@ -100,7 +103,7 @@ fun FeedPostCard(
                 PostImages(urls = post.imageUrls)
             }
 
-            // Akcje wyrównane do lewej, udostępnianie po prawej.
+            // Actions aligned to the left, share on the right.
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -140,9 +143,12 @@ fun FeedPostCard(
     }
 }
 
+/**
+ * Kawos button built from the same KawTag: honey outlined when [given], no background and border
+ * otherwise.
+ */
 @Composable
 private fun KavosButton(given: Boolean, count: Int, onClick: () -> Unit) {
-    // Ten sam komponent KawTag: przyznane = miodowy outlined, nieprzyznane = bez tła i obwódki.
     val colors = if (given) {
         KawTagDefaults.accent()
     } else {
@@ -167,6 +173,7 @@ private fun KavosButton(given: Boolean, count: Int, onClick: () -> Unit) {
     )
 }
 
+/** Swipeable post photos (16:10) with page dots when there is more than one. */
 @Composable
 private fun PostImages(urls: List<String>) {
     val pagerState = rememberPagerState(pageCount = { urls.size })

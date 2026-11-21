@@ -3,15 +3,15 @@ package pl.betoniarze.kawapp.core.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // ==========================================
-// Light Theme Palette – "light z dark mode"
-// Miód jako kolor akcji, tonalny miód na oznaczeniach.
+// Light Theme Palette – a light version of the dark mode palette.
+// Honey as the action color, tonal honey for markers.
 // ==========================================
 val LightBackgroundColor = Color(0xFFFAF6EE)    // Warm cream / beige background
 val LightNavbarColor = Color(0xFFEFE7DA)        // Warm light-beige container for navigation
-val LightPrimaryComponent = Color(0xFFF2C25A)   // Honey – główna akcja (FAB, zaznaczony dzień, aktywny krok)
+val LightPrimaryComponent = Color(0xFFF2C25A)   // Honey – main action (FAB, selected day, active step)
 val LightSecondaryComponent = Color(0xFF825232) // Warm caramel brown
 
-val LightFirstDetailColor = Color(0xFFC88A10)   // Honey amber – obwódka tagów, kropki parzeń
+val LightFirstDetailColor = Color(0xFFC88A10)   // Honey amber – tag border, brew dots
 val LightSecondDetailColor = Color(0xFFB83A2A)  // Coffee cherry / roasted terracotta
 
 // Light Theme Content & Utility Colors
@@ -21,11 +21,11 @@ val LightOnPrimary = Color(0xFF2E1F00)
 val LightPrimaryContainer = Color(0xFFFFF3D6)
 val LightOnPrimaryContainer = Color(0xFF6B4A00)
 val LightOnSecondary = Color(0xFFFFFFFF)
-val LightSecondaryContainer = Color(0xFFE9DFD0)    // neutralny – wybrane filtry
+val LightSecondaryContainer = Color(0xFFE9DFD0)    // neutral – selected filters
 val LightOnSecondaryContainer = Color(0xFF241C18)
 val LightOnTertiary = Color(0xFFFFFFFF)
-val LightTertiaryContainer = Color(0xFFFFF3D6)     // tonalny tag – tło
-val LightOnTertiaryContainer = Color(0xFF6B4A00)   // tonalny tag – tekst
+val LightTertiaryContainer = Color(0xFFFFF3D6)     // tonal tag – background
+val LightOnTertiaryContainer = Color(0xFF6B4A00)   // tonal tag – text
 val LightOnError = Color(0xFFFFFFFF)
 val LightErrorContainer = Color(0xFFFDE8E5)
 val LightOnErrorContainer = Color(0xFF410E0B)
@@ -41,11 +41,11 @@ val LightInverseSurface = Color(0xFF3A2F27)
 val LightInverseOnSurface = Color(0xFFF8EFE7)
 val LightInversePrimary = Color(0xFFD4A373)
 
-// Light – kolory spoza ColorScheme (KawColors)
+// Light – colors outside the Material ColorScheme (KawColors)
 val LightCardColor = Color(0xFFFFFFFF)
 val LightCardBorder = Color(0xFFD6C7B8)
 val LightTagBorder = Color(0xFFC88A10)
-val LightTimerAccent = Color(0xFFA85A28)      // karmel – pauza, ukończone kroki
+val LightTimerAccent = Color(0xFFA85A28)      // caramel – pause button, completed steps
 val LightOnTimerAccent = Color(0xFFFFFFFF)
 
 // ==========================================
@@ -53,10 +53,10 @@ val LightOnTimerAccent = Color(0xFFFFFFFF)
 // ==========================================
 val DarkBackgroundColor = Color(0xFF171003)
 val DarkNavbarColor = Color(0xFF261B13)
-val DarkPrimaryComponent = Color(0xFFF2C25A)    // Honey – główna akcja
+val DarkPrimaryComponent = Color(0xFFF2C25A)    // Honey – main action
 val DarkSecondaryComponent = Color(0xFFA67C52)
 
-val DarkFirstDetailColor = Color(0xFFF2C25A)    // Honey – obwódka tagów, kropki parzeń
+val DarkFirstDetailColor = Color(0xFFF2C25A)    // Honey – tag border, brew dots
 val DarkSecondDetailColor = Color(0xFFE07A5F)   // Soft warm terracotta red
 
 // Dark Theme Content & Utility Colors
@@ -66,11 +66,11 @@ val DarkOnPrimary = Color(0xFF2E1F00)
 val DarkPrimaryContainer = Color(0xFF3A2C0E)
 val DarkOnPrimaryContainer = Color(0xFFF2C25A)
 val DarkOnSecondary = Color(0xFF2B180C)
-val DarkSecondaryContainer = Color(0xFF4A3A2D)     // neutralny – wybrane filtry
+val DarkSecondaryContainer = Color(0xFF4A3A2D)     // neutral – selected filters
 val DarkOnSecondaryContainer = Color(0xFFEFE7E1)
 val DarkOnTertiary = Color(0xFF2E1F00)
-val DarkTertiaryContainer = Color(0xFF3A2C0E)      // tonalny tag – tło
-val DarkOnTertiaryContainer = Color(0xFFF2C25A)    // tonalny tag – tekst
+val DarkTertiaryContainer = Color(0xFF3A2C0E)      // tonal tag – background
+val DarkOnTertiaryContainer = Color(0xFFF2C25A)    // tonal tag – text
 val DarkOnError = Color(0xFF410E0B)
 val DarkErrorContainer = Color(0xFF63211B)
 val DarkOnErrorContainer = Color(0xFFFFDAD6)
@@ -86,7 +86,7 @@ val DarkInverseSurface = Color(0xFFE8DFD8)
 val DarkInverseOnSurface = Color(0xFF2A2018)
 val DarkInversePrimary = Color(0xFF7A4E2A)
 
-// Dark – kolory spoza ColorScheme (KawColors)
+// Dark – colors outside the Material ColorScheme (KawColors)
 val DarkCardColor = Color(0xFF3A2B20)
 val DarkCardBorder = Color(0xFF5C4A3B)
 val DarkTagBorder = Color(0xFFF2C25A)

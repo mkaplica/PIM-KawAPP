@@ -27,6 +27,7 @@ import pl.betoniarze.kawapp.core.ui.R
 import pl.betoniarze.kawapp.core.ui.components.KawFormat
 import pl.betoniarze.kawapp.feature.recipes.brew.BrewTimerState
 
+/** Button that starts the brew timer on the recipe detail screen. */
 @Composable
 fun BrewStartFab(
     onClick: () -> Unit,
@@ -42,7 +43,7 @@ fun BrewStartFab(
     )
 }
 
-/** Dolny pasek w trakcie parzenia: duży licznik, krok X z Y, przyciski. */
+/** Bottom bar while brewing: large elapsed / total time, "step X of Y" and the timer buttons. */
 @Composable
 fun BrewTimerBottomBar(
     state: BrewTimerState,
