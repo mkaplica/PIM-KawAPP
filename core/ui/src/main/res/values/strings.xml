@@ -66,4 +66,44 @@
     <string name="delete_recipe_confirm_text">Przepis „%1$s” zostanie trwale usunięty.</string>
     <string name="delete">Usuń</string>
     <string name="cancel">Anuluj</string>
+
+    <!-- Design system: stats, tags, journal, feed -->
+    <string name="stat_coffee">kawa</string>
+    <string name="stat_water">woda</string>
+    <string name="stat_ratio">proporcja</string>
+    <string name="stat_time">czas</string>
+    <plurals name="steps_count">
+        <item quantity="one">%d krok</item>
+        <item quantity="few">%d kroki</item>
+        <item quantity="many">%d kroków</item>
+        <item quantity="other">%d kroku</item>
+    </plurals>
+    <string name="timer_step_progress">Krok %1$d z %2$d · %3$d s</string>
+
+    <string name="today">Dziś</string>
+    <string name="journal_empty_day">Brak zapisanych parzeń tego dnia</string>
+    <string name="save_brew">Zapisz parzenie</string>
+    <string name="brew_log_subtitle">%1$s · %2$s</string>
+    <string name="roast_date">Wypał: %1$s</string>
+    <plurals name="streak_days">
+        <item quantity="one">%d dzień z rzędu z kawą</item>
+        <item quantity="few">%d dni z rzędu z kawą</item>
+        <item quantity="many">%d dni z rzędu z kawą</item>
+        <item quantity="other">%d dnia z rzędu z kawą</item>
+    </plurals>
+    <plurals name="brews_count">
+        <item quantity="one">%d parzenie</item>
+        <item quantity="few">%d parzenia</item>
+        <item quantity="many">%d parzeń</item>
+        <item quantity="other">%d parzenia</item>
+    </plurals>
+
+    <string name="comments">Komentarze</string>
+    <string name="share">Udostępnij</string>
+    <plurals name="kavos_count">
+        <item quantity="one">%d Kawos</item>
+        <item quantity="few">%d Kawosy</item>
+        <item quantity="many">%d Kawosów</item>
+        <item quantity="other">%d Kawosa</item>
+    </plurals>
 </resources>

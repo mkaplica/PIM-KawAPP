@@ -66,4 +66,36 @@
     <string name="delete_recipe_confirm_text">The recipe “%1$s” will be permanently deleted.</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+
+    <!-- Design system: stats, tags, journal, feed -->
+    <string name="stat_coffee">coffee</string>
+    <string name="stat_water">water</string>
+    <string name="stat_ratio">ratio</string>
+    <string name="stat_time">time</string>
+    <plurals name="steps_count">
+        <item quantity="one">%d step</item>
+        <item quantity="other">%d steps</item>
+    </plurals>
+    <string name="timer_step_progress">Step %1$d of %2$d · %3$d s</string>
+
+    <string name="today">Today</string>
+    <string name="journal_empty_day">No brews logged on this day</string>
+    <string name="save_brew">Log brew</string>
+    <string name="brew_log_subtitle">%1$s · %2$s</string>
+    <string name="roast_date">Roasted: %1$s</string>
+    <plurals name="streak_days">
+        <item quantity="one">%d day coffee streak</item>
+        <item quantity="other">%d day coffee streak</item>
+    </plurals>
+    <plurals name="brews_count">
+        <item quantity="one">%d brew</item>
+        <item quantity="other">%d brews</item>
+    </plurals>
+
+    <string name="comments">Comments</string>
+    <string name="share">Share</string>
+    <plurals name="kavos_count">
+        <item quantity="one">%d Kavos</item>
+        <item quantity="other">%d Kavos</item>
+    </plurals>
 </resources>

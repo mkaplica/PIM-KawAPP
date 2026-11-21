@@ -16,9 +16,11 @@ import pl.betoniarze.kawapp.core.data.repository.BrewLogRepository
 import pl.betoniarze.kawapp.core.model.BrewLog
 
 data class JournalUiState(
+    val today: LocalDate = LocalDate.now(),
     val selectedDate: LocalDate = LocalDate.now(),
     val brewsForSelectedDate: List<BrewLog> = emptyList(),
-    val datesWithBrews: Set<LocalDate> = emptySet()
+    val datesWithBrews: Set<LocalDate> = emptySet(),
+    val streakDays: Int = 0,
 )
 
 @HiltViewModel
@@ -26,6 +28,7 @@ class JournalViewModel @Inject constructor(
     private val brewLogRepository: BrewLogRepository
 ) : ViewModel() {
 
+    // BUG FIX: wcześniej na sztywno LocalDate.of(2026, 11, 3).
     private val selectedDateFlow = MutableStateFlow(LocalDate.now())
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -34,10 +37,13 @@ class JournalViewModel @Inject constructor(
         selectedDateFlow.flatMapLatest { date -> brewLogRepository.getBrewLogsForDate(date) },
         brewLogRepository.getDatesWithBrews()
     ) { selectedDate, brews, datesWithBrews ->
+        val today = LocalDate.now()
         JournalUiState(
+            today = today,
             selectedDate = selectedDate,
             brewsForSelectedDate = brews,
-            datesWithBrews = datesWithBrews
+            datesWithBrews = datesWithBrews,
+            streakDays = calculateStreak(datesWithBrews, today),
         )
     }.stateIn(
         scope = viewModelScope,
@@ -48,4 +54,22 @@ class JournalViewModel @Inject constructor(
     fun onDateSelected(date: LocalDate) {
         selectedDateFlow.value = date
     }
+
+    fun onTodayClick() {
+        selectedDateFlow.value = LocalDate.now()
+    }
+}
+
+/**
+ * Liczba kolejnych dni z parzeniem. Jeśli dziś jeszcze nic nie zapisano,
+ * seria liczy się od wczoraj (nie przepada rano).
+ */
+internal fun calculateStreak(dates: Set<LocalDate>, today: LocalDate): Int {
+    var day = if (today in dates) today else today.minusDays(1)
+    var count = 0
+    while (day in dates) {
+        count++
+        day = day.minusDays(1)
+    }
+    return count
 }

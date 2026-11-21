@@ -12,6 +12,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -114,6 +115,7 @@ fun KawAPPTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+    val kawColors = if (darkTheme) DarkKawColors else LightKawColors
 
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -128,11 +130,13 @@ fun KawAPPTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    CompositionLocalProvider(LocalKawColors provides kawColors) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }
 
 private tailrec fun Context.findActivity(): Activity? = when (this) {

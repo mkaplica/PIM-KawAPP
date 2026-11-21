@@ -8,15 +8,12 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -36,7 +33,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,26 +40,27 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import pl.betoniarze.kawapp.core.model.CoffeeRecipe
 import pl.betoniarze.kawapp.core.ui.R
+import pl.betoniarze.kawapp.core.ui.components.KawFormat
+import pl.betoniarze.kawapp.core.ui.components.KawStat
+import pl.betoniarze.kawapp.core.ui.components.KawStatTiles
+import pl.betoniarze.kawapp.core.ui.components.KawTag
+import pl.betoniarze.kawapp.core.ui.components.KawTagDefaults
 import pl.betoniarze.kawapp.feature.recipes.brew.BrewTimerSection
 import pl.betoniarze.kawapp.feature.recipes.brew.BrewTimerState
 import pl.betoniarze.kawapp.feature.recipes.brew.BrewTimerViewModel
 import pl.betoniarze.kawapp.feature.recipes.brew.components.BrewStartFab
 import pl.betoniarze.kawapp.feature.recipes.brew.components.BrewStepsList
 import pl.betoniarze.kawapp.feature.recipes.brew.components.BrewTimerBottomBar
+import pl.betoniarze.kawapp.feature.recipes.brew.toTimedSteps
 
 @Composable
 fun RecipeDetailScreen(
@@ -75,7 +72,7 @@ fun RecipeDetailScreen(
     onEditClick: (recipeId: String) -> Unit = {},
     onRecipeDeleted: () -> Unit = {}
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val timerState by timerVm.state.collectAsStateWithLifecycle()
 
     (uiState as? RecipeDetailUiState.Success)?.let { success ->
@@ -112,21 +109,12 @@ fun RecipeDetailScreenContent(
     onResetTimer: () -> Unit = {},
     onSkipStep: () -> Unit = {},
 ) {
-    val recipeNotFoundText = stringResource(R.string.recipe_not_found)
-    val backText = stringResource(R.string.back)
-    val descriptionLabel = stringResource(R.string.recipe_description)
-    val methodLabel = stringResource(R.string.brew_method)
-    val proportionsLabel = stringResource(R.string.proportions)
-    val stepsLabel = stringResource(R.string.recipe_steps)
-
     val isRecipeLoaded = uiState is RecipeDetailUiState.Success
-
     val wantFab = isRecipeLoaded && timerState.isIdle && timerState.hasSteps
     val wantBar = isRecipeLoaded && !timerState.isIdle
 
     val fabState = remember { MutableTransitionState(false) }
     val barState = remember { MutableTransitionState(false) }
-
     fabState.targetState = wantFab && barState.isIdle && !barState.currentState
     barState.targetState = wantBar && fabState.isIdle && !fabState.currentState
 
@@ -149,22 +137,16 @@ fun RecipeDetailScreenContent(
     }
 
     Scaffold(
-        containerColor = Color.Transparent,
-        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = modifier.background(
-            Brush.verticalGradient(
-                listOf(
-                    MaterialTheme.colorScheme.background,
-                    MaterialTheme.colorScheme.surfaceContainer,
-                )
-            )
-        ),
+        modifier = modifier,
         topBar = {
             TopAppBar(
                 title = {},
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = backText)
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.back)
+                        )
                     }
                 },
                 actions = {
@@ -216,90 +198,78 @@ fun RecipeDetailScreenContent(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp),
+                .padding(innerPadding),
             contentAlignment = Alignment.Center
         ) {
             when (uiState) {
                 is RecipeDetailUiState.Loading -> CircularProgressIndicator()
                 is RecipeDetailUiState.NotFound -> Text(
-                    text = recipeNotFoundText,
+                    text = stringResource(R.string.recipe_not_found),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.error
                 )
 
-                is RecipeDetailUiState.Success -> {
-                    val recipe = uiState.recipe
-                    val proportionsText = stringResource(
-                        R.string.recipe_proportions_format,
-                        recipe.coffeeGrams,
-                        recipe.totalWaterMl
-                    )
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                            .padding(8.dp)
-                    ) {
-
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            Text(
-                                text = recipe.title,
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                            Text(
-                                text = buildAnnotatedString {
-                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                        append(descriptionLabel)
-                                        append("\n")
-                                    }
-                                    withStyle(style = SpanStyle(fontStyle = FontStyle.Italic)) {
-                                        append(recipe.notes)
-                                    }
-                                },
-                                style = MaterialTheme.typography.bodyLarge,
-                            )
-                            Text(
-                                text = buildAnnotatedString {
-                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                        append(methodLabel)
-                                        append(" ")
-                                    }
-                                    append(recipe.brewMethod.displayName)
-                                },
-                                style = MaterialTheme.typography.bodyLarge,
-                            )
-                            Text(
-                                text = buildAnnotatedString {
-                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                        append(proportionsLabel)
-                                        append(" ")
-                                    }
-                                    append(proportionsText)
-                                },
-                                style = MaterialTheme.typography.bodyLarge,
-                            )
-                        }
-                        Spacer(modifier = Modifier.padding(16.dp))
-
-                        Text(
-                            text = stepsLabel,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        BrewStepsList(steps = recipe.steps, timerState = timerState)
-
-                        Spacer(modifier = Modifier.padding(40.dp))
-
-                    }
-                }
+                is RecipeDetailUiState.Success -> RecipeDetailBody(
+                    recipe = uiState.recipe,
+                    timerState = timerState,
+                )
             }
         }
     }
 }
+
+@Composable
+private fun RecipeDetailBody(
+    recipe: CoffeeRecipe,
+    timerState: BrewTimerState,
+) {
+    val totalSeconds = remember(recipe) { recipe.toTimedSteps().maxOfOrNull { it.endSec } }
+    val stats = buildList {
+        add(KawStat("${recipe.coffeeGrams} g", stringResource(R.string.stat_coffee)))
+        add(KawStat("${recipe.totalWaterMl} ml", stringResource(R.string.stat_water)))
+        KawFormat.ratio(recipe.coffeeGrams, recipe.totalWaterMl)?.let {
+            add(KawStat(it, stringResource(R.string.stat_ratio)))
+        }
+        totalSeconds?.let { add(KawStat(KawFormat.duration(it), stringResource(R.string.stat_time))) }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 12.dp, vertical = 4.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
+    ) {
+        // Hero – chip metody neutralny: miód na tym ekranie ma tylko aktywny krok.
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            KawTag(text = recipe.brewMethod.displayName, colors = KawTagDefaults.neutral())
+            Text(
+                text = recipe.title,
+                style = MaterialTheme.typography.headlineMedium.copy(fontSize = 26.sp),
+            )
+            if (recipe.notes.isNotBlank()) {
+                Text(
+                    text = recipe.notes,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        KawStatTiles(stats = stats)
+
+        Text(
+            text = stringResource(R.string.recipe_steps),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Medium,
+        )
+        BrewStepsList(steps = recipe.steps, timerState = timerState)
+
+        // Keep the last step clear of the start FAB.
+        Spacer(Modifier.height(72.dp))
+    }
+}
+
 @Composable
 private fun DeleteRecipeDialog(
     recipeTitle: String,
