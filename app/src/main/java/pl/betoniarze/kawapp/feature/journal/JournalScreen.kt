@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -32,6 +33,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import pl.betoniarze.kawapp.core.ui.R
 import pl.betoniarze.kawapp.core.ui.components.KawListDefaults
+import pl.betoniarze.kawapp.core.ui.components.KawLoadingOverlay
 import pl.betoniarze.kawapp.feature.journal.components.BrewLogSummaryCard
 import pl.betoniarze.kawapp.feature.journal.components.WeeklyCalendarStrip
 
@@ -97,7 +99,9 @@ fun JournalScreen(
                 modifier = Modifier.padding(start = 14.dp, end = 14.dp, top = 12.dp),
             )
 
-            if (uiState.brewsForSelectedDate.isEmpty()) {
+            if (uiState.isLoading) {
+                Spacer(modifier = Modifier.weight(1f))
+            } else if (uiState.brewsForSelectedDate.isEmpty()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -136,5 +140,7 @@ fun JournalScreen(
                 .align(Alignment.BottomEnd)
                 .padding(16.dp),
         )
+
+        KawLoadingOverlay(visible = uiState.isLoading)
     }
 }

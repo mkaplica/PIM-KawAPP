@@ -33,10 +33,12 @@ class AppState(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val shouldShowBottomBar: Boolean
-        @Composable get() = topLevelDestinations.any { destination ->
-            currentDestination.isRouteInHierarchy(destination.route)
-        }
+    /**
+     * Null means the NavHost hasn't reported its first destination yet; the start
+     * destination is a top-level one, so keep the bar instead of popping it in later.
+     */
+    fun shouldShowBottomBar(destination: NavDestination?): Boolean =
+        destination == null || topLevelDestinations.any { destination.isRouteInHierarchy(it.route) }
 
     val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.entries
 

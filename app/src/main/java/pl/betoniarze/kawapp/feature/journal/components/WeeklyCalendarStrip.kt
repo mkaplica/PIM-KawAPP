@@ -13,13 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocalFireDepartment
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -32,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -45,7 +42,7 @@ import java.time.temporal.TemporalAdjusters
 import java.util.Locale
 import kotlinx.coroutines.launch
 import pl.betoniarze.kawapp.core.ui.R
-import pl.betoniarze.kawapp.core.ui.components.KawTag
+import pl.betoniarze.kawapp.core.ui.components.KawStreakTag
 import pl.betoniarze.kawapp.core.ui.theme.KawTheme
 
 private const val INITIAL_PAGE = 500
@@ -84,7 +81,9 @@ internal fun WeeklyCalendarStrip(
         modifier = modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(top = 16.dp, bottom = 12.dp),
+            modifier = Modifier
+                .statusBarsPadding()
+                .padding(top = 16.dp, bottom = 12.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Row(
@@ -110,19 +109,11 @@ internal fun WeeklyCalendarStrip(
             }
 
             if (streakDays > 0) {
-                KawTag(
-                    text = pluralStringResource(R.plurals.streak_days, streakDays, streakDays),
+                KawStreakTag(
+                    streakDays = streakDays,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp, vertical = 10.dp),
-                    leading = {
-                        Icon(
-                            Icons.Filled.LocalFireDepartment,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                        )
-                    },
                 )
             }
 

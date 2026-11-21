@@ -22,7 +22,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,6 +48,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
 import pl.betoniarze.kawapp.core.ui.R
+import pl.betoniarze.kawapp.core.ui.components.KawLoadingOverlay
 import pl.betoniarze.kawapp.core.ui.components.KawFormat
 import pl.betoniarze.kawapp.core.ui.components.KawStat
 import pl.betoniarze.kawapp.core.ui.components.KawStatTiles
@@ -136,85 +136,89 @@ fun RecipeDetailScreenContent(
         )
     }
 
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            TopAppBar(
-                title = {},
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
-                        )
-                    }
-                },
-                actions = {
-                    if (showRecipeActions) {
-                        IconButton(onClick = onEditClick) {
+    Box(modifier = modifier.fillMaxSize()) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                TopAppBar(
+                    title = {},
+                    navigationIcon = {
+                        IconButton(onClick = onBackClick) {
                             Icon(
-                                Icons.Default.Edit,
-                                contentDescription = stringResource(R.string.edit_recipe)
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.back)
                             )
                         }
-                        IconButton(onClick = { showDeleteDialog = true }) {
-                            Icon(
-                                Icons.Default.Delete,
-                                contentDescription = stringResource(R.string.delete_recipe)
-                            )
+                    },
+                    actions = {
+                        if (showRecipeActions) {
+                            IconButton(onClick = onEditClick) {
+                                Icon(
+                                    Icons.Default.Edit,
+                                    contentDescription = stringResource(R.string.edit_recipe)
+                                )
+                            }
+                            IconButton(onClick = { showDeleteDialog = true }) {
+                                Icon(
+                                    Icons.Default.Delete,
+                                    contentDescription = stringResource(R.string.delete_recipe)
+                                )
+                            }
                         }
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent,
-                    scrolledContainerColor = Color.Transparent,
-                ),
-            )
-        },
-        floatingActionButton = {
-            AnimatedVisibility(
-                visibleState = fabState,
-                enter = scaleIn() + fadeIn(),
-                exit = scaleOut() + fadeOut(),
-            ) {
-                BrewStartFab(onClick = onStartTimer)
-            }
-        },
-        bottomBar = {
-            AnimatedVisibility(
-                visibleState = barState,
-                enter = slideInVertically { it } + fadeIn(),
-                exit = slideOutVertically { it } + fadeOut(),
-            ) {
-                BrewTimerBottomBar(
-                    state = timerState,
-                    onToggle = onToggleTimer,
-                    onReset = onResetTimer,
-                    onSkip = onSkipStep,
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent,
+                        scrolledContainerColor = Color.Transparent,
+                    ),
                 )
-            }
-        },
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            contentAlignment = Alignment.Center
-        ) {
-            when (uiState) {
-                is RecipeDetailUiState.Loading -> CircularProgressIndicator()
-                is RecipeDetailUiState.NotFound -> Text(
-                    text = stringResource(R.string.recipe_not_found),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.error
-                )
+            },
+            floatingActionButton = {
+                AnimatedVisibility(
+                    visibleState = fabState,
+                    enter = scaleIn() + fadeIn(),
+                    exit = scaleOut() + fadeOut(),
+                ) {
+                    BrewStartFab(onClick = onStartTimer)
+                }
+            },
+            bottomBar = {
+                AnimatedVisibility(
+                    visibleState = barState,
+                    enter = slideInVertically { it } + fadeIn(),
+                    exit = slideOutVertically { it } + fadeOut(),
+                ) {
+                    BrewTimerBottomBar(
+                        state = timerState,
+                        onToggle = onToggleTimer,
+                        onReset = onResetTimer,
+                        onSkip = onSkipStep,
+                    )
+                }
+            },
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                contentAlignment = Alignment.Center
+            ) {
+                when (uiState) {
+                    is RecipeDetailUiState.Loading -> Unit
+                    is RecipeDetailUiState.NotFound -> Text(
+                        text = stringResource(R.string.recipe_not_found),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.error
+                    )
 
-                is RecipeDetailUiState.Success -> RecipeDetailBody(
-                    recipe = uiState.recipe,
-                    timerState = timerState,
-                )
+                    is RecipeDetailUiState.Success -> RecipeDetailBody(
+                        recipe = uiState.recipe,
+                        timerState = timerState,
+                    )
+                }
             }
         }
+
+        KawLoadingOverlay(visible = uiState is RecipeDetailUiState.Loading)
     }
 }
 

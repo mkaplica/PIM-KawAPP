@@ -1,5 +1,8 @@
 package pl.betoniarze.kawapp.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -12,6 +15,9 @@ import pl.betoniarze.kawapp.feature.recipes.RecipeAddScreen
 import pl.betoniarze.kawapp.feature.recipes.RecipeDetailScreen
 import pl.betoniarze.kawapp.feature.recipes.RecipesScreen
 
+/** Czas przenikania między ekranami (domyślnie w NavHost: 700 ms). */
+private const val SCREEN_FADE_MS = 1_000
+
 @Composable
 fun AppNavHost(
     navController: NavHostController,
@@ -21,7 +27,13 @@ fun AppNavHost(
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        modifier = modifier
+        modifier = modifier,
+        // Same crossfade as the NavHost default (700 ms), just slower.
+        // Loading flicker is covered by KawLoadingOverlay.
+        enterTransition = { fadeIn(tween(SCREEN_FADE_MS)) },
+        exitTransition = { fadeOut(tween(SCREEN_FADE_MS)) },
+        popEnterTransition = { fadeIn(tween(SCREEN_FADE_MS)) },
+        popExitTransition = { fadeOut(tween(SCREEN_FADE_MS)) },
     ) {
         composable(route = TopLevelDestination.FEED.route) {
             FeedScreen()

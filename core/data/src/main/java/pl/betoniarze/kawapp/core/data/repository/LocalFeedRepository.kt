@@ -21,4 +21,5 @@ class LocalFeedRepository @Inject constructor(
     override fun getFeedPosts(): Flow<List<FeedPost>> =
         feedPostDao.getAllFeedPosts()
             .map { list -> list.map { it.asExternalModel() } + samplePosts }
+            .withDebugDelay()
 }

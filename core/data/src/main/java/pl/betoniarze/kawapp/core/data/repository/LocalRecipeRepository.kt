@@ -25,10 +25,12 @@ class LocalRecipeRepository @Inject constructor(
     override fun getRecipes(): Flow<List<CoffeeRecipe>> =
         coffeeRecipeDao.getCoffeeRecipes()
             .map { list -> list.map { it.asExternalModel() } + PredefinedRecipes.recipes }
+            .withDebugDelay()
 
     override fun getRecipeById(id: String): Flow<CoffeeRecipe?> =
         coffeeRecipeDao.getCoffeeRecipeById(id)
             .map { it?.asExternalModel() ?: PredefinedRecipes.findById(id) }
+            .withDebugDelay()
 
     override suspend fun addRecipe(recipe: CoffeeRecipe) {
         coffeeRecipeDao.insertCoffeeRecipeWithSteps(recipe.asEntity(), recipe.asStepEntities())

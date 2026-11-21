@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">KawAPP</string>
+    <string name="loading">Ładowanie…</string>
 
     <!-- Navigation -->
     <string name="feature_feed_title">Społeczność</string>
@@ -34,6 +35,7 @@
 
     <!-- Feed -->
     <string name="feed_posts_count">Liczba postów w feedzie: %1$d</string>
+    <string name="feed_greeting">Cześć, %1$s!</string>
     <string name="feed_empty_text">Trochę tu pusto...</string>
 
     <!-- Profile & Language Switcher -->

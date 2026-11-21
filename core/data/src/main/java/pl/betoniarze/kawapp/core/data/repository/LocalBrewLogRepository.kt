@@ -22,6 +22,7 @@ class LocalBrewLogRepository @Inject constructor(
     override fun getAllBrewLogs(): Flow<List<BrewLog>> =
         brewLogDao.getAllBrewLogs()
             .map { list -> (list.map { it.asExternalModel() } + sampleLogs).sortedNewestFirst() }
+            .withDebugDelay()
 
     override fun getBrewLogsForDate(date: LocalDate): Flow<List<BrewLog>> =
         brewLogDao.getBrewLogsForDate(date)
@@ -29,10 +30,12 @@ class LocalBrewLogRepository @Inject constructor(
                 (list.map { it.asExternalModel() } + sampleLogs.filter { it.date == date })
                     .sortedNewestFirst()
             }
+            .withDebugDelay()
 
     override fun getDatesWithBrews(): Flow<Set<LocalDate>> =
         brewLogDao.getDatesWithBrews()
             .map { it.toSet() + sampleLogs.map { log -> log.date } }
+            .withDebugDelay()
 }
 
 // Same order as the DAO queries: newest date first, then latest time.

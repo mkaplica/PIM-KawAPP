@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import pl.betoniarze.kawapp.core.data.repository.BrewLogRepository
 import pl.betoniarze.kawapp.core.model.BrewLog
@@ -21,6 +22,7 @@ data class JournalUiState(
     val brewsForSelectedDate: List<BrewLog> = emptyList(),
     val datesWithBrews: Set<LocalDate> = emptySet(),
     val streakDays: Int = 0,
+    val isLoading: Boolean = true,
 )
 
 @HiltViewModel
@@ -34,14 +36,20 @@ class JournalViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<JournalUiState> = combine(
         selectedDateFlow,
-        selectedDateFlow.flatMapLatest { date -> brewLogRepository.getBrewLogsForDate(date) },
+        // Pair the brews with the date they were loaded for, so a newly selected day
+        // shows the loading overlay instead of the previous day's brews.
+        selectedDateFlow.flatMapLatest { date ->
+            brewLogRepository.getBrewLogsForDate(date).map { brews -> date to brews }
+        },
         brewLogRepository.getDatesWithBrews()
-    ) { selectedDate, brews, datesWithBrews ->
+    ) { selectedDate, (loadedDate, brews), datesWithBrews ->
         val today = LocalDate.now()
+        val isLoading = loadedDate != selectedDate
         JournalUiState(
             today = today,
             selectedDate = selectedDate,
-            brewsForSelectedDate = brews,
+            brewsForSelectedDate = if (isLoading) emptyList() else brews,
+            isLoading = isLoading,
             datesWithBrews = datesWithBrews,
             streakDays = calculateStreak(datesWithBrews, today),
         )

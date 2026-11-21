@@ -10,8 +10,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import java.time.LocalDate
+import pl.betoniarze.kawapp.core.data.repository.BrewLogRepository
 import pl.betoniarze.kawapp.core.data.repository.FeedRepository
 import pl.betoniarze.kawapp.core.model.FeedPost
+import pl.betoniarze.kawapp.feature.journal.calculateStreak
 
 data class FeedPostItem(
     val post: FeedPost,
@@ -21,13 +24,21 @@ data class FeedPostItem(
 
 sealed interface FeedUiState {
     data object Loading : FeedUiState
-    data class Success(val posts: List<FeedPostItem>) : FeedUiState
+    data class Success(
+        val posts: List<FeedPostItem>,
+        val userName: String,
+        val streakDays: Int,
+    ) : FeedUiState
 }
 
 @HiltViewModel
 class FeedViewModel @Inject constructor(
-    private val feedRepository: FeedRepository
+    private val feedRepository: FeedRepository,
+    brewLogRepository: BrewLogRepository,
 ) : ViewModel() {
+
+    // TODO: pobierać z profilu / logowania, gdy pojawi się model użytkownika.
+    private val userName = "Barista"
 
     // Stan Kawosów trzymany w ViewModelu (wcześniej mutacja post.kavosCount w UI,
     // która ginęła przy przewinięciu). TODO: zapis do repozytorium / Firestore.
@@ -36,9 +47,12 @@ class FeedViewModel @Inject constructor(
     val uiState: StateFlow<FeedUiState> = combine(
         feedRepository.getFeedPosts(),
         givenKavos,
-    ) { posts, given ->
+        brewLogRepository.getDatesWithBrews(),
+    ) { posts, given, datesWithBrews ->
         FeedUiState.Success(
-            posts.map { post ->
+            userName = userName,
+            streakDays = calculateStreak(datesWithBrews, LocalDate.now()),
+            posts = posts.map { post ->
                 val isGiven = post.id in given
                 FeedPostItem(
                     post = post,
