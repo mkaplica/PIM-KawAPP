@@ -46,6 +46,10 @@
     <string name="theme_system">Systemowy</string>
     <string name="theme_light">Jasny</string>
     <string name="theme_dark">Ciemny</string>
+    <string name="profile_chime_setting">Dźwięk kroku parzenia</string>
+    <string name="chime_high">Wysoki</string>
+    <string name="chime_low">Niski</string>
+    <string name="chime_both">Oba</string>
 
     <!-- Search bar -->
     <string name="search_placeholder">Szukaj przepisu</string>

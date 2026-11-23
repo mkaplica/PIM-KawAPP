@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
+import pl.betoniarze.kawapp.feature.chime_generator.ChimeTone
+import pl.betoniarze.kawapp.feature.chime_generator.ChimeToneStore
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
@@ -21,7 +23,9 @@ import kotlin.time.Duration.Companion.milliseconds
  * stays correct if ticks are delayed.
  */
 @HiltViewModel
-class BrewTimerViewModel @Inject constructor() : ViewModel() {
+class BrewTimerViewModel @Inject constructor(
+    private val chimeToneStore: ChimeToneStore,
+) : ViewModel() {
 
     private val _state = MutableStateFlow(BrewTimerState())
     /** Current timer state, updated about every [TICK_MS] ms while running. */
@@ -88,9 +92,23 @@ class BrewTimerViewModel @Inject constructor() : ViewModel() {
         _state.update { it.copy(elapsedMs = 0L, isRunning = false) }
     }
 
-    /** Jumps to the start of the next step, if there is one. */
+    /** Chime chosen in the Profile; read on every step change, so a new choice applies at once. */
+    val chimeTone: ChimeTone get() = chimeToneStore.chimeTone
+
+    /**
+     * Jumps to the start of the next step. During the last step it finishes the brew instead,
+     * stopping the timer at the end.
+     */
     fun skipToNextStep() {
-        val next = _state.value.nextStep ?: return
+        val s = _state.value
+        if (!s.canSkip) return
+        val next = s.nextStep
+        if (next == null) {
+            ticker?.cancel()
+            baseElapsedMs = s.totalMs
+            _state.update { it.copy(elapsedMs = baseElapsedMs, isRunning = false) }
+            return
+        }
         baseElapsedMs = next.startSec * 1000L
         startedAtMs = SystemClock.elapsedRealtime()
         _state.update { it.copy(elapsedMs = baseElapsedMs) }

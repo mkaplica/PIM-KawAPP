@@ -89,6 +89,9 @@ data class BrewTimerState(
     val currentStep: TimedStep? get() = steps.getOrNull(currentStepIndex)
     val nextStep: TimedStep? get() = steps.getOrNull(currentStepIndex + 1)
 
+    /** True once the brew has started and is not finished; skipping the last step finishes it. */
+    val canSkip: Boolean get() = !isIdle && !isFinished
+
     /** Progress of the current step from 0 to 1; 1 when finished. */
     val stepProgress: Float
         get() = currentStep?.let { s ->

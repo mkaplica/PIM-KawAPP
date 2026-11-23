@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pl.betoniarze.kawapp.core.model.AppLanguage
 import pl.betoniarze.kawapp.core.model.ThemeMode
+import pl.betoniarze.kawapp.feature.chime_generator.ChimeTone
+import pl.betoniarze.kawapp.feature.chime_generator.ChimeToneStore
+import pl.betoniarze.kawapp.feature.chime_generator.playRepeaterChime
 import pl.betoniarze.kawapp.ui.ThemeModeStore
 
 /** How long the overlay stays after a language or theme change (debug and release builds). */
@@ -23,12 +26,13 @@ internal const val SETTINGS_CHANGE_DELAY_MS = 2_000L
 private const val OVERLAY_COVER_MS = 600L
 
 /**
- * ViewModel of the Profile: app language and theme mode. Applies changes behind the loading
- * overlay.
+ * ViewModel of the Profile: app language, theme mode and brew step chime. Applies language and
+ * theme changes behind the loading overlay.
  */
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val themeModeStore: ThemeModeStore,
+    private val chimeToneStore: ChimeToneStore,
 ) : ViewModel() {
 
     private val _selectedLanguage = MutableStateFlow(getCurrentAppLanguage())
@@ -38,6 +42,10 @@ class ProfileViewModel @Inject constructor(
     private val _selectedThemeMode = MutableStateFlow(themeModeStore.themeMode)
     /** Theme mode currently selected in the UI. */
     val selectedThemeMode: StateFlow<ThemeMode> = _selectedThemeMode.asStateFlow()
+
+    private val _selectedChimeTone = MutableStateFlow(chimeToneStore.chimeTone)
+    /** Chime played on brew step changes, currently selected in the UI. */
+    val selectedChimeTone: StateFlow<ChimeTone> = _selectedChimeTone.asStateFlow()
 
     private val _isApplyingSettings = MutableStateFlow(false)
     /** True while a change is being applied; the screen shows the loading overlay. */
@@ -63,6 +71,16 @@ class ProfileViewModel @Inject constructor(
         if (_selectedThemeMode.value == mode || _isApplyingSettings.value) return
         _selectedThemeMode.value = mode
         applyBehindOverlay { themeModeStore.setThemeMode(mode) }
+    }
+
+    /**
+     * Saves [tone] as the brew step chime and plays it as a preview. Needs no overlay, since
+     * nothing is recreated.
+     */
+    fun selectChimeTone(tone: ChimeTone) {
+        _selectedChimeTone.value = tone
+        chimeToneStore.chimeTone = tone
+        viewModelScope.launch { playRepeaterChime(tone) }
     }
 
     /**

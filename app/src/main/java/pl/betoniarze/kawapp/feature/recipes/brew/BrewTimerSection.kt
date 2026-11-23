@@ -34,7 +34,7 @@ fun BrewTimerSection(
     val state by vm.state.collectAsStateWithLifecycle()
 
     KeepScreenOn(enabled = state.isRunning)
-    StepChangeFeedback(state)
+    StepChangeFeedback(state, chimeTone = { vm.chimeTone })
 
     if (showControls) {
         TimerControls(
@@ -57,9 +57,12 @@ private fun KeepScreenOn(enabled: Boolean) {
     }
 }
 
-/** Vibrates and plays a chime when the timer moves to a new step (not for the first step). */
+/**
+ * Vibrates and plays a chime when the timer moves to a new step or finishes (not for the first
+ * step). [chimeTone] is read at play time, so it always uses the latest saved choice.
+ */
 @Composable
-private fun StepChangeFeedback(state: BrewTimerState) {
+private fun StepChangeFeedback(state: BrewTimerState, chimeTone: () -> ChimeTone) {
     val haptic = LocalHapticFeedback.current
 
     var lastAnnounced by rememberSaveable { mutableIntStateOf(state.currentStepIndex) }
@@ -68,7 +71,7 @@ private fun StepChangeFeedback(state: BrewTimerState) {
     LaunchedEffect(index) {
         if (index > lastAnnounced && index > 0) {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            playRepeaterChime(tone = ChimeTone.FIRST)
+            playRepeaterChime(tone = chimeTone())
         }
         lastAnnounced = index
     }

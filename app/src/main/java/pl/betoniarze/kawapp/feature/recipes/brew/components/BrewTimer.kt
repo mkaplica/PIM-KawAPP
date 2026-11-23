@@ -106,7 +106,7 @@ fun TimerControls(
 
         OutlinedButton(
             onClick = onSkip,
-            enabled = !state.isIdle && state.nextStep != null,
+            enabled = state.canSkip,
             border = outline,
             colors = outlinedColors,
             modifier = Modifier

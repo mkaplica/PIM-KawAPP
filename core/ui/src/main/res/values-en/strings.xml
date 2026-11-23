@@ -46,6 +46,10 @@
     <string name="theme_system">System</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
+    <string name="profile_chime_setting">Brew step chime</string>
+    <string name="chime_high">High</string>
+    <string name="chime_low">Low</string>
+    <string name="chime_both">Both</string>
 
     <!-- Search bar -->
     <string name="search_placeholder">Search recipe</string>

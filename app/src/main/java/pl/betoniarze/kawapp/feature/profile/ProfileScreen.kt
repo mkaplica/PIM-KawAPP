@@ -26,8 +26,9 @@ import pl.betoniarze.kawapp.core.model.AppLanguage
 import pl.betoniarze.kawapp.core.model.ThemeMode
 import pl.betoniarze.kawapp.core.ui.R
 import pl.betoniarze.kawapp.core.ui.components.KawLoadingOverlay
+import pl.betoniarze.kawapp.feature.chime_generator.ChimeTone
 
-/** Profile tab connected to [ProfileViewModel]: app language and theme settings. */
+/** Profile tab connected to [ProfileViewModel]: app language, theme and brew chime settings. */
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
@@ -35,6 +36,7 @@ fun ProfileScreen(
 ) {
     val selectedLanguage by viewModel.selectedLanguage.collectAsState()
     val selectedThemeMode by viewModel.selectedThemeMode.collectAsState()
+    val selectedChimeTone by viewModel.selectedChimeTone.collectAsState()
     val isApplyingSettings by viewModel.isApplyingSettings.collectAsState()
 
     ProfileScreenContent(
@@ -43,12 +45,14 @@ fun ProfileScreen(
         isApplyingSettings = isApplyingSettings,
         onLanguageSelected = viewModel::selectLanguage,
         onThemeModeSelected = viewModel::selectThemeMode,
+        selectedChimeTone = selectedChimeTone,
+        onChimeToneSelected = viewModel::selectChimeTone,
         modifier = modifier
     )
 }
 
 /**
- * Stateless Profile UI: language and theme setting cards, plus the overlay shown while a change is
+ * Stateless Profile UI: language, theme and brew chime setting cards, plus the overlay shown while a change is
  * applied.
  *
  * @param isApplyingSettings True while a language/theme change is being applied; shows the loading
@@ -62,6 +66,8 @@ fun ProfileScreenContent(
     selectedThemeMode: ThemeMode = ThemeMode.SYSTEM,
     isApplyingSettings: Boolean = false,
     onThemeModeSelected: (ThemeMode) -> Unit = {},
+    selectedChimeTone: ChimeTone = ChimeTone.FIRST,
+    onChimeToneSelected: (ChimeTone) -> Unit = {},
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         Column(
@@ -95,6 +101,20 @@ fun ProfileScreenContent(
                         ThemeMode.SYSTEM -> stringResource(R.string.theme_system)
                         ThemeMode.LIGHT -> stringResource(R.string.theme_light)
                         ThemeMode.DARK -> stringResource(R.string.theme_dark)
+                    }
+                },
+            )
+
+            SettingCard(
+                title = stringResource(R.string.profile_chime_setting),
+                options = ChimeTone.entries,
+                selected = selectedChimeTone,
+                onSelected = onChimeToneSelected,
+                label = { tone ->
+                    when (tone) {
+                        ChimeTone.FIRST -> stringResource(R.string.chime_high)
+                        ChimeTone.SECOND -> stringResource(R.string.chime_low)
+                        ChimeTone.BOTH -> stringResource(R.string.chime_both)
                     }
                 },
             )
