@@ -23,6 +23,10 @@ class LocalRecipeRepository @Inject constructor(
     //  - or seed predefined recipes into the database on first launch, so they become
     //    regular recipes that can be edited and deleted.
     //  Brew logs reference predefined recipe ids, so decide what a log shows for a deleted one.
+
+    // TODO: Solution proposed by Michal, to add predefined recipes as file, and add filter
+    //  of favourites recipes and filter out predefined. Also switch in profile to firstly show
+    //  favourites or all recipes
     override fun getRecipes(): Flow<List<CoffeeRecipe>> =
         coffeeRecipeDao.getCoffeeRecipes()
             .map { list -> list.map { it.asExternalModel() } + PredefinedRecipes.recipes }
