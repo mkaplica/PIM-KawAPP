@@ -13,6 +13,14 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 import pl.betoniarze.kawapp.core.ui.R
 
+/**
+ * Tabs shown in the bottom navigation bar.
+ *
+ * @property selectedIcon Filled icon shown when the tab is selected.
+ * @property unselectedIcon Outlined icon shown otherwise.
+ * @property titleTextId Label under the icon.
+ * @property route Navigation route of the tab's start screen.
+ */
 enum class TopLevelDestination(
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,

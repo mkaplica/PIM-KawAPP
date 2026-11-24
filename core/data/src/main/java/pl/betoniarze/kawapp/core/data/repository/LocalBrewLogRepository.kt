@@ -10,18 +10,22 @@ import pl.betoniarze.kawapp.core.database.model.asExternalModel
 import pl.betoniarze.kawapp.core.model.BrewLog
 import java.time.LocalDate
 
+/** [BrewLogRepository] backed by Room. Debug builds also include [FakeCoffeeData.brewLogs]. */
 class LocalBrewLogRepository @Inject constructor(
     private val brewLogDao: BrewLogDao
 ) : BrewLogRepository {
 
-    // Debug builds show the sample logs alongside the user's own logs from the database.
-    // Release builds never include them.
+    /**
+     * Sample logs shown next to the user's own logs in debug builds. Release builds never include
+     * them.
+     */
     private val sampleLogs: List<BrewLog> =
         if (BuildConfig.DEBUG) FakeCoffeeData.brewLogs else emptyList()
 
     override fun getAllBrewLogs(): Flow<List<BrewLog>> =
         brewLogDao.getAllBrewLogs()
             .map { list -> (list.map { it.asExternalModel() } + sampleLogs).sortedNewestFirst() }
+            .withDebugDelay()
 
     override fun getBrewLogsForDate(date: LocalDate): Flow<List<BrewLog>> =
         brewLogDao.getBrewLogsForDate(date)
@@ -29,12 +33,14 @@ class LocalBrewLogRepository @Inject constructor(
                 (list.map { it.asExternalModel() } + sampleLogs.filter { it.date == date })
                     .sortedNewestFirst()
             }
+            .withDebugDelay()
 
     override fun getDatesWithBrews(): Flow<Set<LocalDate>> =
         brewLogDao.getDatesWithBrews()
             .map { it.toSet() + sampleLogs.map { log -> log.date } }
+            .withDebugDelay()
 }
 
-// Same order as the DAO queries: newest date first, then latest time.
+/** Same order as the DAO queries: newest date first, then latest time. */
 private fun List<BrewLog>.sortedNewestFirst(): List<BrewLog> =
     sortedWith(compareByDescending<BrewLog> { it.date }.thenByDescending { it.time })

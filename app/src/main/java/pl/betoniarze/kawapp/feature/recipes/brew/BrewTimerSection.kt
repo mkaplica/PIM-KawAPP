@@ -1,13 +1,10 @@
 package pl.betoniarze.kawapp.feature.recipes.brew
 
-import android.media.AudioManager
-import android.media.ToneGenerator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -16,8 +13,16 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
+import pl.betoniarze.kawapp.feature.chime_generator.ChimeTone
+import pl.betoniarze.kawapp.feature.chime_generator.playRepeaterChime
 import pl.betoniarze.kawapp.feature.recipes.brew.components.TimerControls
 
+/**
+ * Connects [recipe] to the brew timer [vm] and adds its side effects: keeps the screen on while
+ * running and gives feedback on step changes.
+ *
+ * @param showControls Whether to also show the timer buttons here.
+ */
 @Composable
 fun BrewTimerSection(
     recipe: CoffeeRecipe,
@@ -29,7 +34,7 @@ fun BrewTimerSection(
     val state by vm.state.collectAsStateWithLifecycle()
 
     KeepScreenOn(enabled = state.isRunning)
-    StepChangeFeedback(state)
+    StepChangeFeedback(state, chimeTone = { vm.chimeTone })
 
     if (showControls) {
         TimerControls(
@@ -42,6 +47,7 @@ fun BrewTimerSection(
     }
 }
 
+/** Keeps the screen on while [enabled]. */
 @Composable
 private fun KeepScreenOn(enabled: Boolean) {
     val view = LocalView.current
@@ -51,11 +57,13 @@ private fun KeepScreenOn(enabled: Boolean) {
     }
 }
 
+/**
+ * Vibrates and plays a chime when the timer moves to a new step or finishes (not for the first
+ * step). [chimeTone] is read at play time, so it always uses the latest saved choice.
+ */
 @Composable
-private fun StepChangeFeedback(state: BrewTimerState) {
+private fun StepChangeFeedback(state: BrewTimerState, chimeTone: () -> ChimeTone) {
     val haptic = LocalHapticFeedback.current
-    val tone = remember { runCatching { ToneGenerator(AudioManager.STREAM_NOTIFICATION, 80) }.getOrNull() }
-    DisposableEffect(Unit) { onDispose { tone?.release() } }
 
     var lastAnnounced by rememberSaveable { mutableIntStateOf(state.currentStepIndex) }
     val index = state.currentStepIndex
@@ -63,7 +71,7 @@ private fun StepChangeFeedback(state: BrewTimerState) {
     LaunchedEffect(index) {
         if (index > lastAnnounced && index > 0) {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            tone?.startTone(ToneGenerator.TONE_PROP_BEEP, 200)
+            playRepeaterChime(tone = chimeTone())
         }
         lastAnnounced = index
     }

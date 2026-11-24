@@ -1,6 +1,7 @@
 package pl.betoniarze.kawapp.feature.recipes
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,7 +43,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pl.betoniarze.kawapp.core.model.BrewMethod
 import pl.betoniarze.kawapp.core.ui.R
+import pl.betoniarze.kawapp.core.ui.components.KawLoadingOverlay
 
+/**
+ * Add / edit recipe form connected to [RecipeAddScreenViewModel]. Goes back after a successful
+ * save.
+ */
 @Composable
 fun RecipeAddScreen(
     modifier: Modifier = Modifier,
@@ -67,6 +73,10 @@ fun RecipeAddScreen(
     )
 }
 
+/**
+ * Stateless recipe form: title, brew method, dose, water, notes and an editable list of steps.
+ * Shows the loading overlay while a recipe to edit is loading.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeAddScreenContent(
@@ -89,177 +99,181 @@ fun RecipeAddScreenContent(
         }
     }
 
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(
-                            if (uiState.isEditMode) R.string.edit_recipe else R.string.new_recipe
+    Box(modifier = modifier.fillMaxSize()) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = stringResource(
+                                if (uiState.isEditMode) R.string.edit_recipe else R.string.new_recipe
+                            )
                         )
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
-                    }
-                },
-                actions = {
-                    TextButton(
-                        onClick = onSaveClick,
-                        enabled = uiState.isValid && !uiState.isSaving && !uiState.isLoading
-                    ) {
-                        Text(text = stringResource(R.string.save))
-                    }
-                }
-            )
-        }
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                // Shrink above the keyboard so the focused field can scroll into view.
-                .imePadding(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            item {
-                OutlinedTextField(
-                    value = uiState.title,
-                    onValueChange = onTitleChange,
-                    label = { Text(text = stringResource(R.string.name)) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true
-                )
-            }
-
-            item {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    BrewMethod.entries.forEach { method ->
-                        FilterChip(
-                            selected = uiState.brewMethod == method,
-                            onClick = { onBrewMethodChange(method) },
-                            label = { Text(method.displayName) }
-                        )
-                    }
-                }
-            }
-
-            item {
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedTextField(
-                        value = uiState.coffeeGrams,
-                        onValueChange = onCoffeeGramsChange,
-                        label = { Text(text = stringResource(R.string.coffee_grams)) },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
-                        singleLine = true
-                    )
-                    OutlinedTextField(
-                        value = uiState.totalWaterMl,
-                        onValueChange = onTotalWaterMlChange,
-                        label = { Text(text = stringResource(R.string.water_ml))},
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
-                        singleLine = true
-                    )
-                }
-            }
-
-            item {
-                OutlinedTextField(
-                    value = uiState.notes,
-                    onValueChange = onNotesChange,
-                    label = { Text(text = stringResource(R.string.notes)) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    minLines = 2
-                )
-            }
-
-            item {
-                Text(
-                    text = stringResource(R.string.brew_steps),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-            }
-
-            itemsIndexed(uiState.steps) { index, step ->
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(
-                        modifier = Modifier.padding(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onBackClick) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
+                        }
+                    },
+                    actions = {
+                        TextButton(
+                            onClick = onSaveClick,
+                            enabled = uiState.isValid && !uiState.isSaving && !uiState.isLoading
                         ) {
-                            Text(stringResource(R.string.step) + " ${step.stepNumber}", style = MaterialTheme.typography.labelLarge)
-                            if (uiState.steps.size > 1) {
-                                IconButton(onClick = { onRemoveStep(index) }) {
-                                    Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete_step))
+                            Text(text = stringResource(R.string.save))
+                        }
+                    }
+                )
+            }
+        ) { innerPadding ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    // Shrink above the keyboard so the focused field can scroll into view.
+                    .imePadding(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                item {
+                    OutlinedTextField(
+                        value = uiState.title,
+                        onValueChange = onTitleChange,
+                        label = { Text(text = stringResource(R.string.name)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        singleLine = true
+                    )
+                }
+
+                item {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        BrewMethod.entries.forEach { method ->
+                            FilterChip(
+                                selected = uiState.brewMethod == method,
+                                onClick = { onBrewMethodChange(method) },
+                                label = { Text(method.displayName) }
+                            )
+                        }
+                    }
+                }
+
+                item {
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        OutlinedTextField(
+                            value = uiState.coffeeGrams,
+                            onValueChange = onCoffeeGramsChange,
+                            label = { Text(text = stringResource(R.string.coffee_grams)) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp),
+                            singleLine = true
+                        )
+                        OutlinedTextField(
+                            value = uiState.totalWaterMl,
+                            onValueChange = onTotalWaterMlChange,
+                            label = { Text(text = stringResource(R.string.water_ml))},
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp),
+                            singleLine = true
+                        )
+                    }
+                }
+
+                item {
+                    OutlinedTextField(
+                        value = uiState.notes,
+                        onValueChange = onNotesChange,
+                        label = { Text(text = stringResource(R.string.notes)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        minLines = 2
+                    )
+                }
+
+                item {
+                    Text(
+                        text = stringResource(R.string.brew_steps),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+
+                itemsIndexed(uiState.steps) { index, step ->
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Column(
+                            modifier = Modifier.padding(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(stringResource(R.string.step) + " ${step.stepNumber}", style = MaterialTheme.typography.labelLarge)
+                                if (uiState.steps.size > 1) {
+                                    IconButton(onClick = { onRemoveStep(index) }) {
+                                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete_step))
+                                    }
                                 }
                             }
-                        }
 
-                        OutlinedTextField(
-                            value = step.description,
-                            onValueChange = { onStepChange(index, step.copy(description = it)) },
-                            label = { Text(text = stringResource(R.string.description)) },
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                            OutlinedTextField(
+                                value = step.description,
+                                onValueChange = { onStepChange(index, step.copy(description = it)) },
+                                label = { Text(text = stringResource(R.string.description)) },
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            )
 
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            OutlinedTextField(
-                                value = step.waterAmountMl,
-                                onValueChange = {
-                                    if (it.all { c -> c.isDigit() }) {
-                                        onStepChange(index, step.copy(waterAmountMl = it))
-                                    }
-                                },
-                                label = { Text(text = stringResource(R.string.water_ml)) },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                modifier = Modifier.weight(1f),
-                                shape = RoundedCornerShape(12.dp),
-                                singleLine = true
-                            )
-                            OutlinedTextField(
-                                value = step.timeRange,
-                                onValueChange = { onStepChange(index, step.copy(timeRange = it)) },
-                                label = {
-                                    Text (
-                                        text = stringResource(R.string.time),
-                                        maxLines = 1,
-                                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                                    )
-                                },
-                                modifier = Modifier.weight(1f),
-                                shape = RoundedCornerShape(12.dp),
-                                singleLine = true
-                            )
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                OutlinedTextField(
+                                    value = step.waterAmountMl,
+                                    onValueChange = {
+                                        if (it.all { c -> c.isDigit() }) {
+                                            onStepChange(index, step.copy(waterAmountMl = it))
+                                        }
+                                    },
+                                    label = { Text(text = stringResource(R.string.water_ml)) },
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(12.dp),
+                                    singleLine = true
+                                )
+                                OutlinedTextField(
+                                    value = step.timeRange,
+                                    onValueChange = { onStepChange(index, step.copy(timeRange = it)) },
+                                    label = {
+                                        Text (
+                                            text = stringResource(R.string.time),
+                                            maxLines = 1,
+                                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                                        )
+                                    },
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(12.dp),
+                                    singleLine = true
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            item {
-                OutlinedButton(
-                    onClick = onAddStep,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = null)
-                    Spacer(Modifier.width(8.dp))
-                    Text(text = stringResource(R.string.add_step))
+                item {
+                    OutlinedButton(
+                        onClick = onAddStep,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text(text = stringResource(R.string.add_step))
+                    }
                 }
             }
         }
+
+        KawLoadingOverlay(visible = uiState.isLoading)
     }
 }

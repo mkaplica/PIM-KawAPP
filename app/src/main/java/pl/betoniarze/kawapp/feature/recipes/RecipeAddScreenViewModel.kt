@@ -16,6 +16,13 @@ import pl.betoniarze.kawapp.core.model.CoffeeRecipe
 import java.util.UUID
 import javax.inject.Inject
 
+/**
+ * State of the recipe form. Numbers are kept as text so the fields can be empty while typing.
+ *
+ * @property isSaveSuccess Set after saving; the screen then navigates back.
+ * @property isEditMode True when editing an existing recipe instead of adding a new one.
+ * @property isLoading True while the recipe to edit is being loaded.
+ */
 data class RecipeAddUiState(
     val title: String = "",
     val brewMethod: BrewMethod = BrewMethod.V60,
@@ -28,6 +35,9 @@ data class RecipeAddUiState(
     val isEditMode: Boolean = false,
     val isLoading: Boolean = false
 ) {
+    /**
+     * Whether the recipe can be saved: a title, a dose and water above 0, and every step described.
+     */
     val isValid: Boolean
         get() = title.isNotBlank() &&
                 (coffeeGrams.toIntOrNull() ?: 0) > 0 &&
@@ -36,6 +46,7 @@ data class RecipeAddUiState(
                 steps.all { it.description.isNotBlank() }
 }
 
+/** One step as entered in the form; numbers are kept as text. */
 data class BrewStepInput(
     val stepNumber: Int,
     val description: String = "",
@@ -43,6 +54,7 @@ data class BrewStepInput(
     val timeRange: String = ""
 )
 
+/** ViewModel of the add / edit recipe form. */
 @HiltViewModel
 class RecipeAddScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -60,6 +72,7 @@ class RecipeAddScreenViewModel @Inject constructor(
         editedRecipeId?.let(::loadRecipe)
     }
 
+    /** Fills the form with the recipe [id] being edited. */
     private fun loadRecipe(id: String) {
         viewModelScope.launch {
             val recipe = recipeRepository.getRecipeById(id).first()
@@ -88,30 +101,36 @@ class RecipeAddScreenViewModel @Inject constructor(
         }
     }
 
+    /** Updates the recipe title. */
     fun onTitleChange(title: String) {
         _uiState.update { it.copy(title = title) }
     }
 
+    /** Updates the brew method. */
     fun onBrewMethodChange(brewMethod: BrewMethod) {
         _uiState.update { it.copy(brewMethod = brewMethod) }
     }
 
+    /** Updates the coffee dose; input that is not only digits is ignored. */
     fun onCoffeeGramsChange(coffeeGrams: String) {
         if (coffeeGrams.all { it.isDigit() }) {
             _uiState.update { it.copy(coffeeGrams = coffeeGrams) }
         }
     }
 
+    /** Updates the total water; input that is not only digits is ignored. */
     fun onTotalWaterMlChange(totalWaterMl: String) {
         if (totalWaterMl.all { it.isDigit() }) {
             _uiState.update { it.copy(totalWaterMl = totalWaterMl) }
         }
     }
 
+    /** Updates the recipe notes. */
     fun onNotesChange(notes: String) {
         _uiState.update { it.copy(notes = notes) }
     }
 
+    /** Adds an empty step at the end. */
     fun onAddStep() {
         _uiState.update { state ->
             val nextNumber = state.steps.size + 1
@@ -119,16 +138,21 @@ class RecipeAddScreenViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Removes the step at [index] and renumbers the rest. The last remaining step cannot be
+     * removed.
+     */
     fun onRemoveStep(index: Int) {
         _uiState.update { state ->
-            if (state.steps.size <= 1) return@update state // Zostawiamy minimum 1 krok
+            if (state.steps.size <= 1) return@update state // Keep at least 1 step
             val updatedSteps = state.steps
                 .filterIndexed { i, _ -> i != index }
-                .mapIndexed { i, step -> step.copy(stepNumber = i + 1) } // Przenumerowanie kroków
+                .mapIndexed { i, step -> step.copy(stepNumber = i + 1) } // Renumber the steps
             state.copy(steps = updatedSteps)
         }
     }
 
+    /** Replaces the step at [index] with [updatedStep]. */
     fun onStepChange(index: Int, updatedStep: BrewStepInput) {
         _uiState.update { state ->
             val updatedSteps = state.steps.mapIndexed { i, step ->
@@ -138,6 +162,10 @@ class RecipeAddScreenViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Saves the recipe (new, or overwriting the edited one) if the form is valid. Text is trimmed
+     * and empty step water becomes 0.
+     */
     fun saveRecipe() {
         val currentState = _uiState.value
         if (!currentState.isValid || currentState.isSaving || currentState.isLoading) return

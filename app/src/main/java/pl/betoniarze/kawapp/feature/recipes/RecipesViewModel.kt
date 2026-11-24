@@ -19,8 +19,17 @@ import pl.betoniarze.kawapp.core.model.BrewMethod
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
 import kotlin.time.Duration.Companion.milliseconds
 
+/** State of the recipe list. */
 sealed interface RecipesUiState {
+    /** Recipes are not loaded yet; the screen shows the loading overlay. */
     data object Loading : RecipesUiState
+    /**
+     * Recipes are loaded.
+     *
+     * @property recipes Recipes matching the search query and the brew method filter.
+     * @property searchQuery Text in the search field (updates immediately, filtering is debounced).
+     * @property selectedBrewMethod Active filter, or null for all methods.
+     */
     data class Success(
         val recipes: List<CoffeeRecipe>,
         val searchQuery: String = "",
@@ -28,6 +37,7 @@ sealed interface RecipesUiState {
     ) : RecipesUiState
 }
 
+/** ViewModel of the recipe list: search and brew method filtering. */
 @HiltViewModel
 class RecipesViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository
@@ -40,6 +50,7 @@ class RecipesViewModel @Inject constructor(
         .debounce(300.milliseconds)
         .distinctUntilChanged()
 
+    /** Filtered recipes. Search filtering waits 300 ms after the last keystroke. */
     val uiState: StateFlow<RecipesUiState> = combine(
         recipeRepository.getRecipes(),
         _searchQuery,
@@ -64,10 +75,12 @@ class RecipesViewModel @Inject constructor(
         initialValue = RecipesUiState.Loading
     )
 
+    /** Updates the search text; the list is filtered by title and notes. */
     fun onSearchQueryChange(newQuery: String) {
         _searchQuery.value = newQuery
     }
 
+    /** Filters by [newMethod]; null shows all methods. */
     fun onBrewMethodChange(newMethod: BrewMethod?) {
         _selectedBrewMethod.value = newMethod
     }

@@ -124,7 +124,7 @@ object PredefinedRecipes {
             )
         ),
 
-        // 4. Tetsu Katsuya - Stary przepis V60 (Metoda 4:6)
+        // 4. Tetsu Katsuya - Old V60 recipe (4:6 method)
         CoffeeRecipe(
             id = "recipe_katsuya_old_46",
             title = "Tetsu Katsuya – Stary V60 (Metoda 4:6)",
@@ -166,7 +166,7 @@ object PredefinedRecipes {
             )
         ),
 
-        // 5. Tetsu Katsuya - Nowy przepis V60
+        // 5. Tetsu Katsuya - New V60 recipe
         CoffeeRecipe(
             id = "recipe_katsuya_new_v60",
             title = "Tetsu Katsuya – Nowy V60 (Uproszczony)",
@@ -196,7 +196,7 @@ object PredefinedRecipes {
             )
         ),
 
-        // 6. Tim Wendelboe – Skandynawski Klasyk
+        // 6. Tim Wendelboe – Scandinavian classic
         CoffeeRecipe(
             id = "recipe_wendelboe_aeropress",
             title = "Tim Wendelboe – Klasyczny AeroPress",
@@ -226,7 +226,7 @@ object PredefinedRecipes {
             )
         ),
 
-        // 7. Alan Adler – Oryginalny przepis twórcy AeroPressu (z dolewką / Bypass)
+        // 7. Alan Adler – The AeroPress inventor's original recipe (with bypass)
         CoffeeRecipe(
             id = "recipe_adler_original_aeropress",
             title = "Alan Adler – Oryginalny Przepis (80°C)",
@@ -262,7 +262,7 @@ object PredefinedRecipes {
             )
         ),
 
-        // 8. Jonathan Gagné – 10-minutowy AeroPress
+        // 8. Jonathan Gagné – 10-minute AeroPress
         CoffeeRecipe(
             id = "recipe_gagne_10min_aeropress",
             title = "Jonathan Gagné – 10-Minute AeroPress",
@@ -298,7 +298,7 @@ object PredefinedRecipes {
             )
         ),
 
-        // 9. Lance Hedrick – Codzienny przepis (Metoda klasyczna)
+        // 9. Lance Hedrick – Everyday recipe (classic method)
         CoffeeRecipe(
             id = "recipe_hedrick_aeropress",
             title = "Lance Hedrick – Daily AeroPress",
@@ -328,7 +328,7 @@ object PredefinedRecipes {
             )
         ),
 
-        // 10. Wendelien van Bunnik – Mistrzyni Świata WAC 2019 (Metoda odwrócona + Bypass)
+        // 10. Wendelien van Bunnik – World AeroPress Champion 2019 (inverted method + bypass)
         CoffeeRecipe(
             id = "recipe_van_bunnik_wac_aeropress",
             title = "Wendelien van Bunnik – WAC Champion (Inverted)",
@@ -364,7 +364,7 @@ object PredefinedRecipes {
             )
         ),
 
-        // 11. Scott Rao – Klasyczna metoda V60 (Rao Spin)
+        // 11. Scott Rao – Classic V60 method (Rao spin)
         CoffeeRecipe(
             id = "recipe_scott_rao_v60",
             title = "Scott Rao – Classic V60 (Rao Spin)",
@@ -394,7 +394,7 @@ object PredefinedRecipes {
             )
         ),
 
-        // 12. Lance Hedrick – Metoda 1-2-1 V60
+        // 12. Lance Hedrick – 1-2-1 V60 method
         CoffeeRecipe(
             id = "recipe_hedrick_121_v60",
             title = "Lance Hedrick – 1-2-1 V60",
@@ -424,7 +424,7 @@ object PredefinedRecipes {
             )
         ),
 
-        // 13. Matt Winton – Mistrz Świata Brewers Cup 2021 (Metoda 5 zalań)
+        // 13. Matt Winton – World Brewers Cup Champion 2021 (5-pour method)
         CoffeeRecipe(
             id = "recipe_matt_winton_5pour_v60",
             title = "Matt Winton – Five Pour V60 (WBrC 2021)",
@@ -468,5 +468,6 @@ object PredefinedRecipes {
 
     ).map { it.copy(isPredefined = true) }
 
+    /** The built-in recipe with [id], or null if [id] belongs to a user recipe. */
     fun findById(id: String): CoffeeRecipe? = recipes.find { it.id == id }
 }

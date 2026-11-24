@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,31 +11,41 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pl.betoniarze.kawapp.core.model.BrewMethod
 import pl.betoniarze.kawapp.core.ui.R
+import pl.betoniarze.kawapp.core.ui.components.KawLoadingOverlay
+import pl.betoniarze.kawapp.core.ui.components.KawListDefaults
 import pl.betoniarze.kawapp.feature.recipes.components.RecipeCard
 
+/**
+ * Recipes tab connected to [RecipesViewModel].
+ *
+ * @param onRecipeClick Called with the id of a tapped recipe.
+ * @param onAddRecipeClick Called by the "New recipe" button.
+ */
 @Composable
 fun RecipesScreen(
     modifier: Modifier = Modifier,
@@ -44,7 +53,7 @@ fun RecipesScreen(
     onAddRecipeClick: () -> Unit = {},
     viewModel: RecipesViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     RecipesScreenContent(
         uiState = uiState,
@@ -56,6 +65,10 @@ fun RecipesScreen(
     )
 }
 
+/**
+ * Stateless recipe list: title, search field, brew method filters and recipe cards. Shows the
+ * loading overlay while recipes load.
+ */
 @Composable
 fun RecipesScreenContent(
     modifier: Modifier = Modifier,
@@ -65,109 +78,133 @@ fun RecipesScreenContent(
     onRecipeClick: (String) -> Unit = {},
     onAddRecipeClick: () -> Unit = {}
 ) {
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        floatingActionButton = {
-            if (uiState is RecipesUiState.Success) {
-                FloatingActionButton(
-                    onClick = onAddRecipeClick,
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(R.string.add_recipe)
+    Box(modifier = modifier.fillMaxSize()) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            floatingActionButton = {
+                if (uiState is RecipesUiState.Success) {
+                    ExtendedFloatingActionButton(
+                        onClick = onAddRecipeClick,
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        icon = { Icon(Icons.Default.Add, contentDescription = null) },
+                        text = { Text(stringResource(R.string.new_recipe)) },
                     )
                 }
             }
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(start = 16.dp, top = 16.dp, end = 16.dp)
-        ) {
-            when (uiState) {
-                is RecipesUiState.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-                is RecipesUiState.Success -> {
-                    OutlinedTextField(
-                        value = uiState.searchQuery,
-                        onValueChange = onSearchQueryChange,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = CircleShape,
-                        placeholder = { Text(text = stringResource(R.string.search_placeholder)) },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = null
-                            )
-                        },
-                        trailingIcon = {
-                            if (uiState.searchQuery.isNotEmpty()) {
-                                IconButton(onClick = { onSearchQueryChange("") }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Clear,
-                                        contentDescription = stringResource(R.string.clear_search_query)
-                                    )
-                                }
-                            }
-                        },
-                        singleLine = true
-                    )
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                Text(
+                    text = stringResource(R.string.feature_recipe_title),
+                    style = MaterialTheme.typography.displayLarge.copy(fontWeight = null),
+                    modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 20.dp, bottom = 8.dp),
+                )
 
-                    Spacer(modifier = Modifier.padding(8.dp))
+                when (uiState) {
+                    is RecipesUiState.Loading -> Unit
 
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        item {
-                            FilterChip(
-                                selected = uiState.selectedBrewMethod == null,
-                                onClick = { onBrewMethodChange(null) },
-                                label = { Text(text = stringResource(R.string.all_brewing_methods)) }
-                            )
-                        }
-                        items(BrewMethod.entries.toTypedArray()) { method ->
-                            FilterChip(
-                                selected = uiState.selectedBrewMethod == method,
-                                onClick = { onBrewMethodChange(method) },
-                                label = { Text(text = method.displayName) }
-                            )
-                        }
-                    }
+                    is RecipesUiState.Success -> {
+                        SearchField(
+                            query = uiState.searchQuery,
+                            onQueryChange = onSearchQueryChange,
+                            modifier = Modifier.padding(horizontal = 12.dp),
+                        )
 
-                    Spacer(modifier = Modifier.padding(8.dp))
-
-                    if (uiState.recipes.isEmpty()) {
-                        Text(text = stringResource(R.string.no_recipes_found))
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                            // Room to scroll the last card above the add-recipe FAB
-                            // (16 dp margin + 56 dp FAB + 16 dp gap).
-                            contentPadding = PaddingValues(bottom = 88.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        LazyRow(
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            items(
-                                items = uiState.recipes,
-                                key = { recipe -> recipe.id }
-                            ) { recipe ->
-                                RecipeCard(
-                                    recipe = recipe,
-                                    onClick = { onRecipeClick(recipe.id) }
+                            item {
+                                MethodChip(
+                                    label = stringResource(R.string.all_brewing_methods),
+                                    selected = uiState.selectedBrewMethod == null,
+                                    onClick = { onBrewMethodChange(null) },
+                                )
+                            }
+                            items(BrewMethod.entries) { method ->
+                                MethodChip(
+                                    label = method.displayName,
+                                    selected = uiState.selectedBrewMethod == method,
+                                    onClick = { onBrewMethodChange(method) },
                                 )
                             }
                         }
+
+                        if (uiState.recipes.isEmpty()) {
+                            Text(
+                                text = stringResource(R.string.no_recipes_found),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(horizontal = 12.dp),
+                            )
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize(),
+                                contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 88.dp),
+                                verticalArrangement = Arrangement.spacedBy(KawListDefaults.ItemSpacing),
+                            ) {
+                                items(items = uiState.recipes, key = { it.id }) { recipe ->
+                                    RecipeCard(
+                                        recipe = recipe,
+                                        onClick = { onRecipeClick(recipe.id) }
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
+
+        KawLoadingOverlay(visible = uiState is RecipesUiState.Loading)
     }
+}
+
+/** Rounded search field with a clear button that appears once something is typed. */
+@Composable
+private fun SearchField(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    TextField(
+        value = query,
+        onValueChange = onQueryChange,
+        modifier = modifier.fillMaxWidth(),
+        shape = CircleShape,
+        singleLine = true,
+        placeholder = { Text(stringResource(R.string.search_placeholder)) },
+        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+        trailingIcon = {
+            if (query.isNotEmpty()) {
+                IconButton(onClick = { onQueryChange("") }) {
+                    Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.clear_search_query))
+                }
+            }
+        },
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+        ),
+    )
+}
+
+/** Brew method filter chip. The selected chip is neutral (secondaryContainer), not honey. */
+@Composable
+private fun MethodChip(label: String, selected: Boolean, onClick: () -> Unit) {
+    FilterChip(
+        selected = selected,
+        onClick = onClick,
+        label = { Text(label) },
+        colors = FilterChipDefaults.filterChipColors(
+            selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        ),
+    )
 }

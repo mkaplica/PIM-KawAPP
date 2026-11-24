@@ -9,6 +9,7 @@ import pl.betoniarze.kawapp.core.model.CoffeeBag
 import pl.betoniarze.kawapp.core.model.Grinder
 import java.time.LocalDate
 
+/** Room row for a [BrewLog]. The coffee bag is embedded as columns of the same table. */
 @Entity(tableName = "brew_logs")
 data class BrewLogEntity(
     @PrimaryKey val id: String,
@@ -23,6 +24,7 @@ data class BrewLogEntity(
     val tastingNotes: String
 )
 
+/** Coffee bag columns embedded in [BrewLogEntity]. */
 data class CoffeeBagEntity(
     val roasterName: String,
     val beanName: String,
@@ -30,6 +32,7 @@ data class CoffeeBagEntity(
     val roastDate: LocalDate
 )
 
+/** Maps the embedded entity to the domain [CoffeeBag]. */
 fun CoffeeBagEntity.asExternalModel() = CoffeeBag(
     roasterName = roasterName,
     beanName = beanName,
@@ -37,6 +40,7 @@ fun CoffeeBagEntity.asExternalModel() = CoffeeBag(
     roastDate = roastDate
 )
 
+/** Maps the row to the domain [BrewLog]. */
 fun BrewLogEntity.asExternalModel() = BrewLog(
     id = id,
     brewMethod = brewMethod,

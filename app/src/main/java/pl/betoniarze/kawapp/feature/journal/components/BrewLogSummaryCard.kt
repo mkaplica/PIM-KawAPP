@@ -1,76 +1,73 @@
 package pl.betoniarze.kawapp.feature.journal.components
 
-
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import pl.betoniarze.kawapp.core.model.BrewLog
+import pl.betoniarze.kawapp.core.ui.R
+import pl.betoniarze.kawapp.core.ui.components.KawCard
+import pl.betoniarze.kawapp.core.ui.components.KawTag
+import pl.betoniarze.kawapp.core.ui.components.KawTagDefaults
 
+/**
+ * Summary of one brew in the Journal list: method, time, beans, recipe, grinder and roast date.
+ * The whole card is one click target. The method chip is neutral, because on this screen only the
+ * streak uses the honey accent.
+ */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun BrewLogSummaryCard(
     brewLog: BrewLog,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ElevatedCard(
-        onClick = onClick,
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+    val neutral = KawTagDefaults.neutral()
+
+    KawCard(onClick = onClick, modifier = modifier) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                SuggestionChip(
-                    onClick = onClick,
-                    label = { Text(brewLog.brewMethod.displayName) }
-                )
-                Text(
-                    text = brewLog.time,
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
+            KawTag(text = brewLog.brewMethod.displayName, colors = neutral)
             Text(
-                text = "${brewLog.coffeeBag.origin} ${brewLog.coffeeBag.beanName} • ${brewLog.coffeeBag.roasterName}",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
+                text = brewLog.time,
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Normal),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f),
+                textAlign = androidx.compose.ui.text.style.TextAlign.End,
             )
+        }
 
-            Text(
-                text = "Przepis: ${brewLog.recipeTitle}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+        Text(
+            text = "${brewLog.coffeeBag.origin} ${brewLog.coffeeBag.beanName}",
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Text(
+            text = stringResource(
+                R.string.brew_log_subtitle,
+                brewLog.coffeeBag.roasterName,
+                brewLog.recipeTitle,
+            ),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
 
-            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "${brewLog.grinder.displayName}: ${brewLog.grindSetting}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = "Wypał: ${brewLog.coffeeBag.roastDate}",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.outline
-                )
-            }
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            KawTag(text = "${brewLog.grinder.displayName} · ${brewLog.grindSetting}", colors = neutral)
+            KawTag(text = stringResource(R.string.roast_date, brewLog.coffeeBag.roastDate.toString()), colors = neutral)
         }
     }
 }

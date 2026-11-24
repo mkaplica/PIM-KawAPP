@@ -1,8 +1,5 @@
 package pl.betoniarze.kawapp.core.ui.theme
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
@@ -12,11 +9,9 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
 
 private val LightColorScheme = lightColorScheme(
     primary = LightPrimaryComponent,
@@ -92,7 +87,7 @@ private val DarkColorScheme = darkColorScheme(
     inversePrimary = DarkInversePrimary,
 )
 
-// Convenient color scheme extension accessors
+/** App-specific names for [ColorScheme] roles, used by older screens. */
 val ColorScheme.backgroundColor: Color get() = background
 val ColorScheme.navbarColor: Color get() = surfaceContainer
 val ColorScheme.primaryComponent: Color get() = primary
@@ -100,6 +95,14 @@ val ColorScheme.secondaryComponent: Color get() = secondary
 val ColorScheme.firstDetailColor: Color get() = tertiary
 val ColorScheme.secondDetailColor: Color get() = error
 
+/**
+ * The app theme: KawApp light/dark color schemes, typography and [KawColors].
+ *
+ * @param darkTheme Whether to use the dark palette. Follows the app's theme mode (see
+ * MainActivity).
+ * @param dynamicColor Use Material You wallpaper colors on Android 12+. Off by default to keep the
+ * brand colors.
+ */
 @Composable
 fun KawAPPTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -114,29 +117,13 @@ fun KawAPPTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+    val kawColors = if (darkTheme) DarkKawColors else LightKawColors
 
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context.findActivity())?.window ?: return@SideEffect
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                window.isNavigationBarContrastEnforced = false
-            }
-            val insetsController = WindowCompat.getInsetsController(window, view)
-            insetsController.isAppearanceLightStatusBars = !darkTheme
-            insetsController.isAppearanceLightNavigationBars = !darkTheme
-        }
+    CompositionLocalProvider(LocalKawColors provides kawColors) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
     }
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
-}
-
-private tailrec fun Context.findActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
 }

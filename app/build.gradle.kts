@@ -29,6 +29,9 @@ android {
 
     buildTypes {
         release {
+            // Signed with the local debug key so the APK installs for testing and demos.
+            // Not accepted by Google Play: switch to a real release keystore before publishing.
+            signingConfig = signingConfigs.getByName("debug")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

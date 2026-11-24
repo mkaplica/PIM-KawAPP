@@ -10,6 +10,7 @@ import pl.betoniarze.kawapp.core.database.model.CoffeeRecipeEntity
 import pl.betoniarze.kawapp.core.database.model.asExternalModel
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
 
+/** [RecipeRepository] backed by Room for user recipes, plus the built-in [PredefinedRecipes]. */
 class LocalRecipeRepository @Inject constructor(
     private val coffeeRecipeDao: CoffeeRecipeDao
 ) : RecipeRepository {
@@ -22,13 +23,19 @@ class LocalRecipeRepository @Inject constructor(
     //  - or seed predefined recipes into the database on first launch, so they become
     //    regular recipes that can be edited and deleted.
     //  Brew logs reference predefined recipe ids, so decide what a log shows for a deleted one.
+
+    // TODO: Solution proposed by Michal, to add predefined recipes as file, and add filter
+    //  of favourites recipes and filter out predefined. Also switch in profile to firstly show
+    //  favourites or all recipes
     override fun getRecipes(): Flow<List<CoffeeRecipe>> =
         coffeeRecipeDao.getCoffeeRecipes()
             .map { list -> list.map { it.asExternalModel() } + PredefinedRecipes.recipes }
+            .withDebugDelay()
 
     override fun getRecipeById(id: String): Flow<CoffeeRecipe?> =
         coffeeRecipeDao.getCoffeeRecipeById(id)
             .map { it?.asExternalModel() ?: PredefinedRecipes.findById(id) }
+            .withDebugDelay()
 
     override suspend fun addRecipe(recipe: CoffeeRecipe) {
         coffeeRecipeDao.insertCoffeeRecipeWithSteps(recipe.asEntity(), recipe.asStepEntities())
@@ -44,6 +51,7 @@ class LocalRecipeRepository @Inject constructor(
     }
 }
 
+/** Maps the recipe (without steps) to its Room row. */
 private fun CoffeeRecipe.asEntity() = CoffeeRecipeEntity(
     id = id,
     title = title,
@@ -53,6 +61,7 @@ private fun CoffeeRecipe.asEntity() = CoffeeRecipeEntity(
     notes = notes
 )
 
+/** Maps the steps to Room rows linked to this recipe's id. */
 private fun CoffeeRecipe.asStepEntities() = steps.map { step ->
     BrewStepEntity(
         recipeId = id,

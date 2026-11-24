@@ -2,15 +2,28 @@ package pl.betoniarze.kawapp.feature.recipes.brew.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,23 +33,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import pl.betoniarze.kawapp.core.ui.R
 import pl.betoniarze.kawapp.core.model.BrewStep
+import pl.betoniarze.kawapp.core.ui.R
+import pl.betoniarze.kawapp.core.ui.theme.KawTheme
 import pl.betoniarze.kawapp.feature.recipes.brew.BrewTimerState
 
+/** Where a step is relative to the timer. */
 private enum class BrewStepStatus { DONE, ACTIVE, UPCOMING }
 
-private const val NORMAL_FONT_SIZE = 14f
-private const val ACTIVE_STEP_FONT_SIZE = 18f
-
-
+/**
+ * Recipe steps as a timeline. Active step = full honey (the only accent on this screen),
+ * completed = caramel (timerAccent), upcoming = outlineVariant border.
+ */
 @Composable
 fun BrewStepsList(
     steps: List<BrewStep>,
@@ -48,21 +58,21 @@ fun BrewStepsList(
     val doneNumbers = remember(timerState.currentStepIndex, timerState.steps) {
         timerState.steps.take(timerState.currentStepIndex).map { it.step.stepNumber }.toSet()
     }
+    val sorted = remember(steps) { steps.sortedBy { it.stepNumber } }
 
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        steps.sortedBy { it.stepNumber }.forEach { step ->
+    Column(modifier) {
+        sorted.forEachIndexed { index, step ->
             val status = when {
                 !active -> BrewStepStatus.UPCOMING
-                step.stepNumber == currentNumber -> BrewStepStatus.ACTIVE
+                step.stepNumber == currentNumber && !timerState.isFinished -> BrewStepStatus.ACTIVE
                 step.stepNumber in doneNumbers -> BrewStepStatus.DONE
                 else -> BrewStepStatus.UPCOMING
             }
-            val isActive = status == BrewStepStatus.ACTIVE
             BrewStepRow(
                 step = step,
                 status = status,
+                isLast = index == sorted.lastIndex,
                 progress = if (status == BrewStepStatus.ACTIVE) timerState.stepProgress else 0f,
-                secondsLeft = if (isActive) timerState.secondsLeftInStep else null,
             )
         }
         AnimatedVisibility(visible = timerState.isFinished) {
@@ -71,106 +81,138 @@ fun BrewStepsList(
     }
 }
 
+/**
+ * One step in the timeline: marker, description, time range and water. The active step is a honey
+ * card with a progress bar.
+ */
+@Composable
+private fun BrewStepRow(
+    step: BrewStep,
+    status: BrewStepStatus,
+    isLast: Boolean,
+    progress: Float,
+) {
+    val colors = MaterialTheme.colorScheme
+    val kaw = KawTheme.colors
+    val lineColor by animateColorAsState(
+        if (status == BrewStepStatus.DONE) kaw.timerAccent else colors.outlineVariant,
+        label = "stepLine",
+    )
+
+    Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxHeight()) {
+            StepMarker(number = step.stepNumber, status = status)
+            if (!isLast) {
+                Box(
+                    modifier = Modifier
+                        .width(2.dp)
+                        .weight(1f)
+                        .background(lineColor)
+                )
+            }
+        }
+
+        val meta = buildString {
+            if (step.timeRange.isNotBlank()) append(step.timeRange)
+            if (step.waterAmountMl > 0) {
+                if (isNotEmpty()) append(" · ")
+                append("${step.waterAmountMl} ml")
+            }
+        }
+
+        if (status == BrewStepStatus.ACTIVE) {
+            Surface(
+                color = colors.primary,
+                contentColor = colors.onPrimary,
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(bottom = 10.dp),
+            ) {
+                Column(Modifier.padding(horizontal = 10.dp, vertical = 8.dp)) {
+                    Text(step.description, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+                    if (meta.isNotEmpty()) Text(meta, style = MaterialTheme.typography.labelSmall)
+                    Spacer(Modifier.height(6.dp))
+                    BrewProgressBar(
+                        progress = progress,
+                        height = 4.dp,
+                        color = colors.onPrimary,
+                        trackColor = colors.onPrimary.copy(alpha = 0.2f),
+                    )
+                }
+            }
+        } else {
+            val textColor = if (status == BrewStepStatus.DONE) colors.onSurfaceVariant else colors.onSurface
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(bottom = 12.dp)
+            ) {
+                Text(step.description, style = MaterialTheme.typography.bodyMedium, color = textColor)
+                if (meta.isNotEmpty()) {
+                    Text(meta, style = MaterialTheme.typography.labelSmall, color = colors.onSurfaceVariant)
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Step number in a circle: honey when active, caramel with a check when done, outlined when
+ * upcoming.
+ */
+@Composable
+private fun StepMarker(number: Int, status: BrewStepStatus) {
+    val colors = MaterialTheme.colorScheme
+    val kaw = KawTheme.colors
+    val (container, content, border) = when (status) {
+        BrewStepStatus.DONE -> Triple(kaw.timerAccent, kaw.onTimerAccent, kaw.timerAccent)
+        BrewStepStatus.ACTIVE -> Triple(colors.primary, colors.onPrimary, colors.primary)
+        BrewStepStatus.UPCOMING -> Triple(Color.Transparent, colors.onSurfaceVariant, colors.outlineVariant)
+    }
+    Box(
+        modifier = Modifier
+            .size(24.dp)
+            .clip(CircleShape)
+            .background(container)
+            .border(BorderStroke(2.dp, border), CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (status == BrewStepStatus.DONE) {
+            Icon(Icons.Filled.Check, contentDescription = null, tint = content, modifier = Modifier.size(14.dp))
+        } else {
+            Text(
+                text = number.toString(),
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = if (status == BrewStepStatus.ACTIVE) FontWeight.Bold else null,
+                color = content,
+            )
+        }
+    }
+}
+
+/** Message shown under the steps when the brew is finished. */
 @Composable
 private fun BrewFinishedMessage(modifier: Modifier = Modifier) {
-    val colors = MaterialTheme.colorScheme
+    val kaw = KawTheme.colors
     Column(
         modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(colors.primary.copy(alpha = 0.18f))
-            .padding(horizontal = 12.dp, vertical = 12.dp),
+            .clip(RoundedCornerShape(12.dp))
+            .background(kaw.tagContainer)
+            .border(BorderStroke(1.5.dp, kaw.tagBorder), RoundedCornerShape(12.dp))
+            .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         Text(
             text = stringResource(R.string.brew_finished),
             style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = colors.primary,
+            color = kaw.onTag,
         )
         Text(
             text = stringResource(R.string.brew_enjoy_coffee_message),
             style = MaterialTheme.typography.bodyLarge,
-            color = colors.primary,
+            color = kaw.onTag,
         )
-    }
-}
-
-@Composable
-private fun BrewStepRow(
-    step: BrewStep,
-    status: BrewStepStatus,
-    progress: Float,
-    secondsLeft: Int?,
-) {
-    val colors = MaterialTheme.colorScheme
-    val isActive = status == BrewStepStatus.ACTIVE
-
-    val background by animateColorAsState(
-        if (isActive) colors.primary.copy(alpha = 0.18f) else Color.Transparent,
-        label = "stepBackground",
-    )
-    val textColor by animateColorAsState(
-        when (status) {
-            BrewStepStatus.ACTIVE -> colors.primary
-            BrewStepStatus.DONE -> colors.onSurfaceVariant.copy(alpha = 0.6f)
-            BrewStepStatus.UPCOMING -> colors.onSurfaceVariant
-        },
-        label = "stepText",
-    )
-
-    val fontSize by animateFloatAsState(
-        targetValue = if (isActive) ACTIVE_STEP_FONT_SIZE else NORMAL_FONT_SIZE,
-        label = "stepFontSize",
-    )
-
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(background)
-            .padding(horizontal = 8.dp, vertical = 6.dp),
-    ) {
-        Text(
-            text = buildAnnotatedString {
-                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append("${step.stepNumber}. ")
-                }
-                withStyle(
-                    SpanStyle(
-                        fontStyle = if (isActive) FontStyle.Normal else FontStyle.Italic,
-                        fontWeight = if (isActive) FontWeight.Bold else null,
-                    )
-                ) {
-                    append(step.description)
-                }
-            },
-            style = MaterialTheme.typography.bodyMedium.copy(
-                fontSize = fontSize.sp,
-            ),
-            color = textColor,
-        )
-
-        AnimatedVisibility(visible = isActive) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                BrewProgressBar(
-                    progress = progress,
-                    height = 4.dp,
-                    modifier = Modifier.weight(1f),
-                )
-                Text(
-                    text = "${secondsLeft ?: 0} s",
-                    modifier = Modifier.padding(start = 12.dp),
-                    style = MaterialTheme.typography.titleMedium.copy(fontFeatureSettings = "tnum"),
-                    fontWeight = FontWeight.Bold,
-                    color = colors.primary,
-                )
-            }
-        }
     }
 }

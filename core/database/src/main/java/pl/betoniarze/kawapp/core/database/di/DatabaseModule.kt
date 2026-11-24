@@ -13,10 +13,12 @@ import pl.betoniarze.kawapp.core.database.dao.CoffeeRecipeDao
 import pl.betoniarze.kawapp.core.database.dao.FeedPostDao
 import javax.inject.Singleton
 
+/** Hilt module providing the Room database and its DAOs. */
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
+    /** Single app-wide instance of the database, stored in "kawapp.db". */
     @Provides
     @Singleton
     fun provideKawAppDatabase(
@@ -29,16 +31,19 @@ object DatabaseModule {
         ).build()
     }
 
+    /** Recipe DAO from the shared database. */
     @Provides
     fun provideCoffeeRecipeDao(database: KawAppDatabase): CoffeeRecipeDao {
         return database.coffeeRecipeDao()
     }
 
+    /** Feed post DAO from the shared database. */
     @Provides
     fun provideFeedPostDao(database: KawAppDatabase): FeedPostDao {
         return database.feedPostDao()
     }
 
+    /** Brew log DAO from the shared database. */
     @Provides
     fun provideBrewLogDao(database: KawAppDatabase): BrewLogDao {
         return database.brewLogDao()

@@ -9,16 +9,20 @@ import pl.betoniarze.kawapp.core.database.dao.FeedPostDao
 import pl.betoniarze.kawapp.core.database.model.asExternalModel
 import pl.betoniarze.kawapp.core.model.FeedPost
 
+/** [FeedRepository] backed by Room. Debug builds also include [FakeCoffeeData.feedPosts]. */
 class LocalFeedRepository @Inject constructor(
     private val feedPostDao: FeedPostDao
 ) : FeedRepository {
 
-    // Debug builds show the sample posts after the posts from the database.
-    // Release builds never include them.
+    /**
+     * Sample posts shown after the posts from the database in debug builds. Release builds never
+     * include them.
+     */
     private val samplePosts: List<FeedPost> =
         if (BuildConfig.DEBUG) FakeCoffeeData.feedPosts else emptyList()
 
     override fun getFeedPosts(): Flow<List<FeedPost>> =
         feedPostDao.getAllFeedPosts()
             .map { list -> list.map { it.asExternalModel() } + samplePosts }
+            .withDebugDelay()
 }

@@ -12,22 +12,29 @@ import pl.betoniarze.kawapp.core.data.repository.LocalRecipeRepository
 import pl.betoniarze.kawapp.core.data.repository.RecipeRepository
 import javax.inject.Singleton
 
+/** Hilt module binding repository interfaces to their local (Room-based) implementations. */
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
 
+    /**
+     * Recipes come from Room plus the built-in
+     * [pl.betoniarze.kawapp.core.data.fake.PredefinedRecipes].
+     */
     @Binds
     @Singleton
     abstract fun bindRecipeRepository(
         localRecipeRepository: LocalRecipeRepository
     ): RecipeRepository
 
+    /** Feed posts come from Room (plus sample posts in debug builds). */
     @Binds
     @Singleton
     abstract fun bindFeedRepository(
         localFeedRepository: LocalFeedRepository
     ): FeedRepository
 
+    /** Brew logs come from Room (plus sample logs in debug builds). */
     @Binds
     @Singleton
     abstract fun bindBrewLogRepository(

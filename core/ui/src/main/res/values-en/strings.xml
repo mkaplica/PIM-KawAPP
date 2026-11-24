@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">KawAPP</string>
+    <string name="loading">Loading…</string>
 
     <!-- Navigation -->
     <string name="feature_feed_title">Community</string>
@@ -34,12 +35,21 @@
 
     <!-- Feed -->
     <string name="feed_posts_count">Posts count in feed: %1$d</string>
+    <string name="feed_greeting">Hello, %1$s!</string>
     <string name="feed_empty_text">It\'s a bit empty here...</string>
 
     <!-- Profile & Language Switcher -->
     <string name="profile_language_setting">App Language</string>
     <string name="language_polish">Polski</string>
     <string name="language_english">English</string>
+    <string name="profile_theme_setting">App theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="profile_chime_setting">Brew step chime</string>
+    <string name="chime_high">High</string>
+    <string name="chime_low">Low</string>
+    <string name="chime_both">Both</string>
 
     <!-- Search bar -->
     <string name="search_placeholder">Search recipe</string>
@@ -66,4 +76,36 @@
     <string name="delete_recipe_confirm_text">The recipe “%1$s” will be permanently deleted.</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+
+    <!-- Design system: stats, tags, journal, feed -->
+    <string name="stat_coffee">coffee</string>
+    <string name="stat_water">water</string>
+    <string name="stat_ratio">ratio</string>
+    <string name="stat_time">time</string>
+    <plurals name="steps_count">
+        <item quantity="one">%d step</item>
+        <item quantity="other">%d steps</item>
+    </plurals>
+    <string name="timer_step_progress">Step %1$d of %2$d · %3$d s</string>
+
+    <string name="today">Today</string>
+    <string name="journal_empty_day">No brews logged on this day</string>
+    <string name="save_brew">Log brew</string>
+    <string name="brew_log_subtitle">%1$s · %2$s</string>
+    <string name="roast_date">Roasted: %1$s</string>
+    <plurals name="streak_days">
+        <item quantity="one">%d day coffee streak</item>
+        <item quantity="other">%d day coffee streak</item>
+    </plurals>
+    <plurals name="brews_count">
+        <item quantity="one">%d brew</item>
+        <item quantity="other">%d brews</item>
+    </plurals>
+
+    <string name="comments">Comments</string>
+    <string name="share">Share</string>
+    <plurals name="kavos_count">
+        <item quantity="one">%d Kavos</item>
+        <item quantity="other">%d Kavos</item>
+    </plurals>
 </resources>

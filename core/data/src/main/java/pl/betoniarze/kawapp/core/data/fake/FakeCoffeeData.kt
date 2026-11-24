@@ -7,6 +7,7 @@ import pl.betoniarze.kawapp.core.model.FeedPost
 import pl.betoniarze.kawapp.core.model.Grinder
 import java.time.LocalDate
 
+/** Sample feed posts and brew logs (November-December 2026) shown in debug builds only. */
 object FakeCoffeeData {
     val feedPosts = listOf(
         FeedPost(
@@ -45,7 +46,7 @@ object FakeCoffeeData {
             authorName = "Bartek Wiśniewski (CoffeeGeek)",
             authorAvatarUrl = "https://picsum.photos/seed/avatar3/200/200",
             content = "Testuję dzisiaj metodę 4:6 od Tetsu Katsuyi na nowej Kenii. Zmniejszyłem pierwsze zalanie do 45 ml i kwasowość wystrzeliła w kosmos. Próbował ktoś?",
-            imageUrls = emptyList(),// Post tekstowy bez zdjęć - warto testować taki przypadek w UI!
+            imageUrls = emptyList(),// Text-only post without photos - worth testing this case in the UI!
             kavosCount = 95,
             comments = listOf(
                 "Metoda 4:6 uratowała mi już niejedną Kenię!",
@@ -122,7 +123,7 @@ object FakeCoffeeData {
     )
 
     val brewLogs = listOf(
-        // --- 1 LISTOPADA 2026 (Niedziela - 2 wpisy) ---
+        // --- 1 NOVEMBER 2026 (Sunday - 2 entries) ---
         BrewLog(
             id = "log_1",
             brewMethod = BrewMethod.V60,
@@ -148,7 +149,7 @@ object FakeCoffeeData {
             tastingNotes = "Dużo słodyczy, przypomina czerwone jabłko. Przeciskanie trwało 35 sekund."
         ),
 
-        // --- 2 LISTOPADA 2026 (Poniedziałek - 1 wpis) ---
+        // --- 2 NOVEMBER 2026 (Monday - 1 entry) ---
         BrewLog(
             id = "log_3",
             brewMethod = BrewMethod.V60,
@@ -162,7 +163,7 @@ object FakeCoffeeData {
             tastingNotes = "Po zmianie na 23 kliki zeszło idealnie w 2:55. Zniknęła lekka cierpkość w finiszu."
         ),
 
-        // --- 3 LISTOPADA 2026 (Wtorek - 1 wpis) ---
+        // --- 3 NOVEMBER 2026 (Tuesday - 1 entry) ---
         BrewLog(
             id = "log_4",
             brewMethod = BrewMethod.AEROPRESS,
@@ -176,7 +177,7 @@ object FakeCoffeeData {
             tastingNotes = "Test Rwandy na Niche Zero. Gęste body, truskawkowy dżem, trochę mniejsza klarowność niż z Comandante."
         ),
 
-        // --- 4 LISTOPADA 2026 (Środa - 1 wpis) ---
+        // --- 4 NOVEMBER 2026 (Wednesday - 1 entry) ---
         BrewLog(
             id = "log_5",
             brewMethod = BrewMethod.V60,
@@ -190,7 +191,7 @@ object FakeCoffeeData {
             tastingNotes = "Wysoka kwasowość czarnej porzeczki. Woda 96 stopni."
         ),
 
-        // --- 5 LISTOPADA 2026 (Czwartek - 2 wpisy) ---
+        // --- 5 NOVEMBER 2026 (Thursday - 2 entries) ---
         BrewLog(
             id = "log_6",
             brewMethod = BrewMethod.V60,
@@ -217,7 +218,7 @@ object FakeCoffeeData {
             tastingNotes = "Szybka kawa przed pracą. Bardzo zbalansowana, mleczna czekolada i cytrusy."
         ),
 
-        // --- 6 LISTOPADA 2026 (Piątek - 3 wpisy) ---
+        // --- 6 NOVEMBER 2026 (Friday - 3 entries) ---
         BrewLog(
             id = "log_8",
             brewMethod = BrewMethod.V60,
@@ -255,7 +256,7 @@ object FakeCoffeeData {
             tastingNotes = "Wersja z dolewką wody (bypass). Bardzo delikatna i herbaciana."
         ),
 
-        // --- 7 LISTOPADA 2026 (Sobota - 1 wpis) ---
+        // --- 7 NOVEMBER 2026 (Saturday - 1 entry) ---
         BrewLog(
             id = "log_11",
             brewMethod = BrewMethod.V60,
@@ -269,7 +270,7 @@ object FakeCoffeeData {
             tastingNotes = "Pierwsze zalanie 50ml podbiło słodycz. Bardzo soczysty napar."
         ),
 
-        // --- 8 LISTOPADA 2026 (Niedziela - 1 wpis) ---
+        // --- 8 NOVEMBER 2026 (Sunday - 1 entry) ---
         BrewLog(
             id = "log_12",
             brewMethod = BrewMethod.V60,
@@ -283,7 +284,7 @@ object FakeCoffeeData {
             tastingNotes = "2-minutowy bloom wyciągnął mnóstwo owocowości."
         ),
 
-        // --- 9 LISTOPADA 2026 (Poniedziałek - 2 wpisy) ---
+        // --- 9 NOVEMBER 2026 (Monday - 2 entries) ---
         BrewLog(
             id = "log_13",
             brewMethod = BrewMethod.V60,
@@ -309,9 +310,9 @@ object FakeCoffeeData {
             tastingNotes = "Szalona doza 30g kawy. Użyłem dwóch papierowych filtrów, wyszedł prawdziwy nektar porzeczkowy."
         ),
 
-        // (4 listopada celowo pusty - brak wpisów)
+        // (4 November intentionally left empty - no entries)
 
-        // --- 11 LISTOPADA 2026 (Środa - 1 wpis) ---
+        // --- 11 NOVEMBER 2026 (Wednesday - 1 entry) ---
         BrewLog(
             id = "log_15",
             brewMethod = BrewMethod.V60,
@@ -325,9 +326,9 @@ object FakeCoffeeData {
             tastingNotes = "Świetny balans, lekka kwasowość limonki na finiszu."
         ),
 
-        // 7 LISTOPADA 2026 (Sobota - 2 wpisy)
+        // 7 NOVEMBER 2026 (Saturday - 2 entries)
 
-        // --- 13 LISTOPADA 2026 (Piątek - 2 wpisy) ---
+        // --- 13 NOVEMBER 2026 (Friday - 2 entries) ---
         BrewLog(
             id = "log_16",
             brewMethod = BrewMethod.V60,
@@ -353,9 +354,9 @@ object FakeCoffeeData {
             tastingNotes = "Popołudniowa Brazylia do ciasta. Bardzo słodka, nugatowa."
         ),
 
-        // 9 LISTOPADA 2026 (Poniedziałek - 1 wpis)
+        // 9 NOVEMBER 2026 (Monday - 1 entry)
 
-        // --- 14 LISTOPADA 2026 (Sobota - 1 wpis) ---
+        // --- 14 NOVEMBER 2026 (Saturday - 1 entry) ---
         BrewLog(
             id = "log_18",
             brewMethod = BrewMethod.V60,
@@ -369,9 +370,9 @@ object FakeCoffeeData {
             tastingNotes = "Szybkie poranne parzenie przed wyjściem. Wyraźna kwasowość rabarbaru."
         ),
 
-        // 11 LISTOPADA 2026 (Środa - Święto - 2 wpisy)
+        // 11 NOVEMBER 2026 (Wednesday - Holiday - 2 entries)
 
-        // --- 16 LISTOPADA 2026 (Poniedziałek - 2 wpisy) ---
+        // --- 16 NOVEMBER 2026 (Monday - 2 entries) ---
         BrewLog(
             id = "log_19",
             brewMethod = BrewMethod.V60,
@@ -397,9 +398,9 @@ object FakeCoffeeData {
             tastingNotes = "Ostatnia porcja Etiopii z tej paczki (wyszło 13.5g zamiast 14g, więc odjąłem 10ml wody)."
         ),
 
-        // 14 LISTOPADA 2026 (Sobota - 1 wpis)
+        // 14 NOVEMBER 2026 (Saturday - 1 entry)
 
-        // --- 19 LISTOPADA 2026 (Czwartek - 1 wpis) ---
+        // --- 19 NOVEMBER 2026 (Thursday - 1 entry) ---
         BrewLog(
             id = "log_21",
             brewMethod = BrewMethod.V60,
@@ -413,9 +414,9 @@ object FakeCoffeeData {
             tastingNotes = "Idealnie płaskie złoże po Rao Spinie. Czas całkowity 2:50."
         ),
 
-        // 16 LISTOPADA 2026 (Poniedziałek - 1 wpis)
+        // 16 NOVEMBER 2026 (Monday - 1 entry)
 
-        // --- 21 LISTOPADA 2026 (Sobota - 1 wpis) ---
+        // --- 21 NOVEMBER 2026 (Saturday - 1 entry) ---
         BrewLog(
             id = "log_22",
             brewMethod = BrewMethod.AEROPRESS,
@@ -429,9 +430,9 @@ object FakeCoffeeData {
             tastingNotes = "Powtarzalny, gęsty napar. Temperatura wody obniżona do 90 stopni."
         ),
 
-        // 19 LISTOPADA 2026 (Czwartek - 1 wpis)
+        // 19 NOVEMBER 2026 (Thursday - 1 entry)
 
-        // --- 23 LISTOPADA 2026 (Poniedziałek - 1 wpis) ---
+        // --- 23 NOVEMBER 2026 (Monday - 1 entry) ---
         BrewLog(
             id = "log_23",
             brewMethod = BrewMethod.V60,
@@ -445,9 +446,9 @@ object FakeCoffeeData {
             tastingNotes = "5 zalań wydobyło z Kolumbii niesamowitą soczystość czerwonego jabłka."
         ),
 
-        // 21 LISTOPADA 2026 (Sobota - 2 wpisy)
+        // 21 NOVEMBER 2026 (Saturday - 2 entries)
 
-        // --- 25 LISTOPADA 2026 (Środa - 2 wpisy) ---
+        // --- 25 NOVEMBER 2026 (Wednesday - 2 entries) ---
         BrewLog(
             id = "log_24",
             brewMethod = BrewMethod.V60,
@@ -473,9 +474,9 @@ object FakeCoffeeData {
             tastingNotes = "Geisha w AeroPressie – mniej klarowna niż w V60, ale za to bardziej kremowa (brzoskwiniowy jogurt)."
         ),
 
-        // 24 LISTOPADA 2026 (Wtorek - 1 wpis)
+        // 24 NOVEMBER 2026 (Tuesday - 1 entry)
 
-        // --- 28 LISTOPADA 2026 (Sobota - 1 wpis) ---
+        // --- 28 NOVEMBER 2026 (Saturday - 1 entry) ---
         BrewLog(
             id = "log_26",
             brewMethod = BrewMethod.V60,
@@ -489,9 +490,9 @@ object FakeCoffeeData {
             tastingNotes = "Brazylia Arara w V60 na niskiej temperaturze (89°C). Przyjemny smak orzechów laskowych."
         ),
 
-        // 26 LISTOPADA 2026 (Czwartek - 1 wpis)
+        // 26 NOVEMBER 2026 (Thursday - 1 entry)
 
-        // --- 30 LISTOPADA 2026 (Poniedziałek - 1 wpis) ---
+        // --- 30 NOVEMBER 2026 (Monday - 1 entry) ---
         BrewLog(
             id = "log_27",
             brewMethod = BrewMethod.V60,
@@ -505,9 +506,9 @@ object FakeCoffeeData {
             tastingNotes = "Otwarta druga paczka Kelloo Lalesa. Bardzo mocna agitacja przy preinfuzji, czas 2:45."
         ),
 
-        // 28 LISTOPADA 2026 (Sobota - 1 wpis)
+        // 28 NOVEMBER 2026 (Saturday - 1 entry)
 
-        // --- 1 GRUDNIA 2026 (Wtorek - 1 wpis) ---
+        // --- 1 DECEMBER 2026 (Tuesday - 1 entry) ---
         BrewLog(
             id = "log_28",
             brewMethod = BrewMethod.AEROPRESS,
@@ -521,9 +522,9 @@ object FakeCoffeeData {
             tastingNotes = "Długie parzenie w sobotni poranek. Kolumbia wyszła niesamowicie słodka, jak kompot truskawkowy."
         ),
 
-        // 30 LISTOPADA 2026 (Poniedziałek - 1 wpis)
+        // 30 NOVEMBER 2026 (Monday - 1 entry)
 
-        // --- 3 GRUDNIA 2026 (Czwartek - 1 wpis) ---
+        // --- 3 DECEMBER 2026 (Thursday - 1 entry) ---
         BrewLog(
             id = "log_29",
             brewMethod = BrewMethod.V60,
@@ -537,11 +538,11 @@ object FakeCoffeeData {
             tastingNotes = "Klasyczny przepis Hoffmanna nigdy nie zawodzi przy tej Kenii."
         ),
 
-        // ==================== GRUDZIEŃ 2026 ====================
+        // ==================== DECEMBER 2026 ====================
 
-        // 3 GRUDNIA 2026 (Czwartek - 1 wpis)
+        // 3 DECEMBER 2026 (Thursday - 1 entry)
 
-        // --- 6 GRUDNIA 2026 (Niedziela - 1 wpis) ---
+        // --- 6 DECEMBER 2026 (Sunday - 1 entry) ---
         BrewLog(
             id = "log_30",
             brewMethod = BrewMethod.AEROPRESS,
@@ -555,9 +556,9 @@ object FakeCoffeeData {
             tastingNotes = "Szybki koncentrat rozcieńczony gorącą wodą. Bardzo niskie pH, delikatna dla żołądka."
         ),
 
-        // 5 GRUDNIA 2026 (Sobota - 2 wpisy)
+        // 5 DECEMBER 2026 (Saturday - 2 entries)
 
-        // --- 8 GRUDNIA 2026 (Wtorek - 2 wpisy) ---
+        // --- 8 DECEMBER 2026 (Tuesday - 2 entries) ---
         BrewLog(
             id = "log_31",
             brewMethod = BrewMethod.V60,
@@ -583,9 +584,9 @@ object FakeCoffeeData {
             tastingNotes = "Intensywny, gęsty napar na popołudnie."
         ),
 
-        // 8 GRUDNIA 2026 (Wtorek - 1 wpis)
+        // 8 DECEMBER 2026 (Tuesday - 1 entry)
 
-        // --- 10 GRUDNIA 2026 (Czwartek - 1 wpis) ---
+        // --- 10 DECEMBER 2026 (Thursday - 1 entry) ---
         BrewLog(
             id = "log_33",
             brewMethod = BrewMethod.V60,
@@ -599,9 +600,9 @@ object FakeCoffeeData {
             tastingNotes = "Przy używaniu szybszych filtrów Cafec Abaca musiałem zmielić o klik drobniej (23 zamiast 24)."
         ),
 
-        // 10 GRUDNIA 2026 (Czwartek - 1 wpis)
+        // 10 DECEMBER 2026 (Thursday - 1 entry)
 
-        // --- 12 GRUDNIA 2026 (Sobota - 1 wpis) ---
+        // --- 12 DECEMBER 2026 (Saturday - 1 entry) ---
         BrewLog(
             id = "log_34",
             brewMethod = BrewMethod.AEROPRESS,
@@ -615,9 +616,9 @@ object FakeCoffeeData {
             tastingNotes = "Świetna równowaga między wysoką kwasowością Kenii a pełnym body z AeroPressu."
         ),
 
-        // 13 GRUDNIA 2026 (Niedziela - 1 wpis)
+        // 13 DECEMBER 2026 (Sunday - 1 entry)
 
-        // --- 15 GRUDNIA 2026 (Wtorek - 1 wpis) ---
+        // --- 15 DECEMBER 2026 (Tuesday - 1 entry) ---
         BrewLog(
             id = "log_35",
             brewMethod = BrewMethod.V60,
@@ -631,9 +632,9 @@ object FakeCoffeeData {
             tastingNotes = "Niedzielny klasyk 4:6. Bardzo czysta i słodka filiżanka."
         ),
 
-        // 16 GRUDNIA 2026 (Środa - 1 wpis)
+        // 16 DECEMBER 2026 (Wednesday - 1 entry)
 
-        // --- 18 GRUDNIA 2026 (Piątek - 1 wpis) ---
+        // --- 18 DECEMBER 2026 (Friday - 1 entry) ---
         BrewLog(
             id = "log_36",
             brewMethod = BrewMethod.V60,
@@ -647,9 +648,9 @@ object FakeCoffeeData {
             tastingNotes = "Porównanie Etiopii na żarnach stożkowych Niche Zero – mniej kwiatów, więcej słodkiej brzoskwini w syropie."
         ),
 
-        // 19 GRUDNIA 2026 (Sobota - 2 wpisy)
+        // 19 DECEMBER 2026 (Saturday - 2 entries)
 
-        // --- 20 GRUDNIA 2026 (Niedziela - 2 wpisy) ---
+        // --- 20 DECEMBER 2026 (Sunday - 2 entries) ---
         BrewLog(
             id = "log_37",
             brewMethod = BrewMethod.V60,
@@ -675,9 +676,9 @@ object FakeCoffeeData {
             tastingNotes = "Klasyczna czekoladowa Brazylia po południu."
         ),
 
-        // 21 GRUDNIA 2026 (Poniedziałek - 1 wpis)
+        // 21 DECEMBER 2026 (Monday - 1 entry)
 
-        // --- 22 GRUDNIA 2026 (Wtorek - 1 wpis) ---
+        // --- 22 DECEMBER 2026 (Tuesday - 1 entry) ---
         BrewLog(
             id = "log_39",
             brewMethod = BrewMethod.V60,
@@ -691,9 +692,9 @@ object FakeCoffeeData {
             tastingNotes = "Trzy zalania w 92 stopniach. Bardzo soczysty finisz czerwonej porzeczki."
         ),
 
-        // 24 GRUDNIA 2026 (Czwartek - Wigilia - 1 wpis)
+        // 24 DECEMBER 2026 (Thursday - Christmas Eve - 1 entry)
 
-        // --- 25 GRUDNIA 2026 (Piątek - 1 wpis) ---
+        // --- 25 DECEMBER 2026 (Friday - 1 entry) ---
         BrewLog(
             id = "log_40",
             brewMethod = BrewMethod.V60,
@@ -707,9 +708,9 @@ object FakeCoffeeData {
             tastingNotes = "Świąteczny przelew z Peru Geisha na 500 ml. Idealny start Wigilii."
         ),
 
-        // 26 GRUDNIA 2026 (Sobota - Drugi dzień świąt - 2 wpisy)
+        // 26 DECEMBER 2026 (Saturday - Boxing Day - 2 entries)
 
-        // --- 27 GRUDNIA 2026 (Niedziela - 2 wpisy) ---
+        // --- 27 DECEMBER 2026 (Sunday - 2 entries) ---
         BrewLog(
             id = "log_41",
             brewMethod = BrewMethod.V60,
@@ -735,9 +736,9 @@ object FakeCoffeeData {
             tastingNotes = "Brazylia do świątecznego sernika – pasuje bezbłędnie."
         ),
 
-        // 29 GRUDNIA 2026 (Wtorek - 1 wpis)
+        // 29 DECEMBER 2026 (Tuesday - 1 entry)
 
-        // --- 29 GRUDNIA 2026 (Wtorek - 1 wpis) ---
+        // --- 29 DECEMBER 2026 (Tuesday - 1 entry) ---
         BrewLog(
             id = "log_43",
             brewMethod = BrewMethod.V60,
@@ -751,9 +752,9 @@ object FakeCoffeeData {
             tastingNotes = "Spokojny poranek między świętami a Nowym Rokiem. Bergamotka i jaśmin."
         ),
 
-        // 31 GRUDNIA 2026 (Czwartek - Sylwester - 2 wpisy)
+        // 31 DECEMBER 2026 (Thursday - New Year's Eve - 2 entries)
 
-        // --- 31 GRUDNIA 2026 (Czwartek - 2 wpisy) ---
+        // --- 31 DECEMBER 2026 (Thursday - 2 entries) ---
         BrewLog(
             id = "log_44",
             brewMethod = BrewMethod.V60,
