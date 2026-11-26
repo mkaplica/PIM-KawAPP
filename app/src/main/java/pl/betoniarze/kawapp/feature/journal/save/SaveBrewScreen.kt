@@ -1,10 +1,11 @@
 package pl.betoniarze.kawapp.feature.journal.save
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,16 +20,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -36,23 +33,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -61,14 +50,9 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.os.ConfigurationCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import pl.betoniarze.kawapp.core.model.BrewMethod
 import pl.betoniarze.kawapp.core.model.CoffeeBag
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
@@ -82,8 +66,10 @@ import pl.betoniarze.kawapp.core.ui.components.KawStatTiles
 import pl.betoniarze.kawapp.core.ui.components.KawTag
 import pl.betoniarze.kawapp.core.ui.components.KawTagDefaults
 import pl.betoniarze.kawapp.feature.recipes.brew.toTimedSteps
+import pl.betoniarze.kawapp.ui.components.KawFieldShape
 import pl.betoniarze.kawapp.ui.components.MAX_RATING
 import pl.betoniarze.kawapp.ui.components.RatingPicker
+import pl.betoniarze.kawapp.ui.components.RoastDateField
 
 /**
  * "Save brew" form connected to [SaveBrewViewModel]: rating, coffee, grind and a description.
@@ -142,19 +128,6 @@ fun SaveBrewScreenContent(
     onGrindSettingChange: (String) -> Unit = {},
     onDescriptionChange: (String) -> Unit = {},
 ) {
-    var showDatePicker by rememberSaveable { mutableStateOf(false) }
-
-    if (showDatePicker) {
-        RoastDatePickerDialog(
-            initial = uiState.roastDate,
-            onConfirm = { date ->
-                onRoastDateChange(date)
-                showDatePicker = false
-            },
-            onDismiss = { showDatePicker = false },
-        )
-    }
-
     Box(modifier = modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -202,12 +175,13 @@ fun SaveBrewScreenContent(
                         onRoasterNameChange = onRoasterNameChange,
                         onBeanNameChange = onBeanNameChange,
                         onOriginChange = onOriginChange,
-                        onRoastDateClick = { showDatePicker = true },
+                        onRoastDateChange = onRoastDateChange,
                     )
                 }
 
                 item {
                     GrindSection(
+                        grinders = uiState.grinders,
                         grinder = uiState.grinder,
                         grindSetting = uiState.grindSetting,
                         onGrinderChange = onGrinderChange,
@@ -222,7 +196,7 @@ fun SaveBrewScreenContent(
                         label = { Text(text = stringResource(R.string.brew_description)) },
                         placeholder = { Text(text = stringResource(R.string.brew_description_hint)) },
                         keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-                        shape = FieldShape,
+                        shape = KawFieldShape,
                         minLines = 4,
                         modifier = Modifier.fillMaxWidth(),
                     )
@@ -233,8 +207,6 @@ fun SaveBrewScreenContent(
         KawLoadingOverlay(visible = uiState.isLoading)
     }
 }
-
-private val FieldShape = RoundedCornerShape(12.dp)
 
 /** Same hero as the recipe detail: neutral method chip, title and the recipe's stat tiles. */
 @Composable
@@ -337,7 +309,7 @@ private fun CoffeeSection(
     onRoasterNameChange: (String) -> Unit,
     onBeanNameChange: (String) -> Unit,
     onOriginChange: (String) -> Unit,
-    onRoastDateClick: () -> Unit,
+    onRoastDateChange: (LocalDate) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         SectionTitle(text = stringResource(R.string.section_coffee))
@@ -379,26 +351,44 @@ private fun CoffeeSection(
             label = stringResource(R.string.coffee_origin),
             modifier = Modifier.fillMaxWidth(),
         )
-        RoastDateField(date = uiState.roastDate, onClick = onRoastDateClick)
+        RoastDateField(
+            date = uiState.roastDate,
+            onDateChange = onRoastDateChange,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
+/** Grinder chips from the Profile, or a hint to add one there when the user has none. */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun GrindSection(
-    grinder: Grinder,
+    grinders: List<Grinder>,
+    grinder: Grinder?,
     grindSetting: String,
     onGrinderChange: (Grinder) -> Unit,
     onGrindSettingChange: (String) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         SectionTitle(text = stringResource(R.string.section_grind))
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Grinder.entries.forEach { entry ->
-                FilterChip(
-                    selected = grinder == entry,
-                    onClick = { onGrinderChange(entry) },
-                    label = { Text(entry.displayName) },
-                )
+        if (grinders.isEmpty()) {
+            Text(
+                text = stringResource(R.string.save_brew_no_grinders),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                grinders.forEach { entry ->
+                    FilterChip(
+                        selected = grinder?.id == entry.id,
+                        onClick = { onGrinderChange(entry) },
+                        label = { Text(entry.displayName) },
+                    )
+                }
             }
         }
         FormField(
@@ -407,73 +397,6 @@ private fun GrindSection(
             label = stringResource(R.string.grind_setting),
             modifier = Modifier.fillMaxWidth(),
         )
-    }
-}
-
-/** Read-only field that opens the date picker; future dates are not selectable. */
-@Composable
-private fun RoastDateField(date: LocalDate?, onClick: () -> Unit) {
-    val locale = ConfigurationCompat.getLocales(LocalConfiguration.current)[0] ?: Locale.getDefault()
-    val formatter = remember(locale) { DateTimeFormatter.ofPattern("d MMMM yyyy", locale) }
-
-    Box {
-        OutlinedTextField(
-            value = date?.format(formatter).orEmpty(),
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(text = stringResource(R.string.roast_date_label)) },
-            trailingIcon = { Icon(Icons.Outlined.CalendarMonth, contentDescription = null) },
-            shape = FieldShape,
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
-        )
-        // The text field would swallow taps for its own cursor, so a transparent layer opens the picker.
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .padding(top = 8.dp)
-                .clip(FieldShape)
-                .clickable(onClickLabel = stringResource(R.string.choose_date), onClick = onClick),
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun RoastDatePickerDialog(
-    initial: LocalDate?,
-    onConfirm: (LocalDate) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val today = remember { LocalDate.now() }
-    val todayMillis = remember(today) { today.toUtcMillis() }
-    val state = rememberDatePickerState(
-        initialSelectedDateMillis = initial?.toUtcMillis(),
-        selectableDates = remember(todayMillis) {
-            object : SelectableDates {
-                override fun isSelectableDate(utcTimeMillis: Long) = utcTimeMillis <= todayMillis
-                override fun isSelectableYear(year: Int) = year <= today.year
-            }
-        },
-    )
-
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(
-                onClick = { state.selectedDateMillis?.let { onConfirm(it.toUtcLocalDate()) } },
-                enabled = state.selectedDateMillis != null,
-            ) {
-                Text(text = stringResource(R.string.ok))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = stringResource(R.string.cancel))
-            }
-        },
-    ) {
-        DatePicker(state = state)
     }
 }
 
@@ -553,12 +476,8 @@ private fun FormField(
         onValueChange = onValueChange,
         label = { Text(text = label) },
         keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
-        shape = FieldShape,
+        shape = KawFieldShape,
         singleLine = true,
         modifier = modifier,
     )
 }
-
-private fun LocalDate.toUtcMillis(): Long = atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-
-private fun Long.toUtcLocalDate(): LocalDate = Instant.ofEpochMilli(this).atZone(ZoneOffset.UTC).toLocalDate()

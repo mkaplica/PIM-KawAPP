@@ -5,14 +5,22 @@ import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDate
 import java.util.Locale
+import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import pl.betoniarze.kawapp.core.data.repository.CoffeeBagRepository
+import pl.betoniarze.kawapp.core.data.repository.GrinderRepository
 import pl.betoniarze.kawapp.core.model.AppLanguage
+import pl.betoniarze.kawapp.core.model.CoffeeBag
+import pl.betoniarze.kawapp.core.model.Grinder
 import pl.betoniarze.kawapp.core.model.ThemeMode
 import pl.betoniarze.kawapp.feature.chime_generator.ChimeTone
 import pl.betoniarze.kawapp.feature.chime_generator.ChimeToneStore
@@ -26,14 +34,28 @@ internal const val SETTINGS_CHANGE_DELAY_MS = 2_000L
 private const val OVERLAY_COVER_MS = 600L
 
 /**
- * ViewModel of the Profile: app language, theme mode and brew step chime. Applies language and
- * theme changes behind the loading overlay.
+ * ViewModel of the Profile: user name, the user's grinders and coffees, and the app settings
+ * (language, theme, brew step chime). Applies language and theme changes behind the loading overlay.
  */
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val themeModeStore: ThemeModeStore,
     private val chimeToneStore: ChimeToneStore,
+    private val userNameStore: UserNameStore,
+    private val grinderRepository: GrinderRepository,
+    private val coffeeBagRepository: CoffeeBagRepository,
 ) : ViewModel() {
+
+    /** Name shown in the header and used as the author of the user's posts; empty until set. */
+    val userName: StateFlow<String> = userNameStore.userName
+
+    /** The user's grinders, oldest first; null until the first load, so no empty state flashes. */
+    val grinders: StateFlow<List<Grinder>?> = grinderRepository.getGrinders()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), initialValue = null)
+
+    /** The user's coffees, newest first; null until the first load. */
+    val coffeeBags: StateFlow<List<CoffeeBag>?> = coffeeBagRepository.getCoffeeBags()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), initialValue = null)
 
     private val _selectedLanguage = MutableStateFlow(getCurrentAppLanguage())
     /** Language currently selected in the UI. */
@@ -50,6 +72,56 @@ class ProfileViewModel @Inject constructor(
     private val _isApplyingSettings = MutableStateFlow(false)
     /** True while a change is being applied; the screen shows the loading overlay. */
     val isApplyingSettings: StateFlow<Boolean> = _isApplyingSettings.asStateFlow()
+
+    /** Saves the user name; a blank name clears it. */
+    fun saveUserName(name: String) {
+        userNameStore.setUserName(name)
+    }
+
+    /** Adds a grinder called [name]. Blank names are ignored. */
+    fun addGrinder(name: String) {
+        val trimmed = name.trim()
+        if (trimmed.isEmpty()) return
+        viewModelScope.launch {
+            grinderRepository.addGrinder(Grinder(id = UUID.randomUUID().toString(), displayName = trimmed))
+        }
+    }
+
+    /** Deletes [grinder]. Brew logs keep their copy; [restoreGrinder] undoes it. */
+    fun deleteGrinder(grinder: Grinder) {
+        viewModelScope.launch { grinderRepository.deleteGrinder(grinder.id) }
+    }
+
+    /** Puts back a grinder removed with [deleteGrinder] (the "Undo" action). */
+    fun restoreGrinder(grinder: Grinder) {
+        viewModelScope.launch { grinderRepository.addGrinder(grinder) }
+    }
+
+    /** Adds a coffee. Roaster and beans must not be blank; origin is optional. */
+    fun addCoffeeBag(roasterName: String, beanName: String, origin: String, roastDate: LocalDate) {
+        if (roasterName.isBlank() || beanName.isBlank()) return
+        viewModelScope.launch {
+            coffeeBagRepository.addCoffeeBag(
+                CoffeeBag(
+                    id = UUID.randomUUID().toString(),
+                    roasterName = roasterName.trim(),
+                    beanName = beanName.trim(),
+                    origin = origin.trim(),
+                    roastDate = roastDate,
+                )
+            )
+        }
+    }
+
+    /** Deletes [coffeeBag]. Brew logs keep their copy; [restoreCoffeeBag] undoes it. */
+    fun deleteCoffeeBag(coffeeBag: CoffeeBag) {
+        viewModelScope.launch { coffeeBagRepository.deleteCoffeeBag(coffeeBag.id) }
+    }
+
+    /** Puts back a coffee removed with [deleteCoffeeBag] (the "Undo" action). */
+    fun restoreCoffeeBag(coffeeBag: CoffeeBag) {
+        viewModelScope.launch { coffeeBagRepository.addCoffeeBag(coffeeBag) }
+    }
 
     /**
      * Switches the app to [language]. Ignored if it is already selected or another change is in

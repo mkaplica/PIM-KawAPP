@@ -3,7 +3,6 @@ package pl.betoniarze.kawapp.core.database.utils
 import androidx.room.TypeConverter
 import org.json.JSONArray
 import pl.betoniarze.kawapp.core.model.BrewMethod
-import pl.betoniarze.kawapp.core.model.Grinder
 import java.time.LocalDate
 
 /** Room type converters for types SQLite cannot store directly. */
@@ -23,14 +22,6 @@ class Converters {
     /** Reads an enum stored by [fromBrewMethod]. */
     @TypeConverter
     fun toBrewMethod(methodString: String): BrewMethod = BrewMethod.valueOf(methodString)
-
-    /** Stores the enum by its name. */
-    @TypeConverter
-    fun fromGrinder(grinder: Grinder): String = grinder.name
-
-    /** Reads an enum stored by [fromGrinder]. */
-    @TypeConverter
-    fun toGrinder(grinderString: String): Grinder = Grinder.valueOf(grinderString)
 
     /** Stores a list of strings as a JSON array. */
     @TypeConverter

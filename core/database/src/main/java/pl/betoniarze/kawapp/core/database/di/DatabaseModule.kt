@@ -9,8 +9,10 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import pl.betoniarze.kawapp.core.database.KawAppDatabase
 import pl.betoniarze.kawapp.core.database.dao.BrewLogDao
+import pl.betoniarze.kawapp.core.database.dao.CoffeeBagDao
 import pl.betoniarze.kawapp.core.database.dao.CoffeeRecipeDao
 import pl.betoniarze.kawapp.core.database.dao.FeedPostDao
+import pl.betoniarze.kawapp.core.database.dao.GrinderDao
 import javax.inject.Singleton
 
 /** Hilt module providing the Room database and its DAOs. */
@@ -50,4 +52,10 @@ object DatabaseModule {
     fun provideBrewLogDao(database: KawAppDatabase): BrewLogDao {
         return database.brewLogDao()
     }
+
+    @Provides
+    fun provideGrinderDao(database: KawAppDatabase): GrinderDao = database.grinderDao()
+
+    @Provides
+    fun provideCoffeeBagDao(database: KawAppDatabase): CoffeeBagDao = database.coffeeBagDao()
 }

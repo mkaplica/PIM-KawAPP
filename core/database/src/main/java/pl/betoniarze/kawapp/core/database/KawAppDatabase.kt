@@ -7,9 +7,13 @@ import pl.betoniarze.kawapp.core.database.model.FeedPostEntity
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import pl.betoniarze.kawapp.core.database.dao.BrewLogDao
+import pl.betoniarze.kawapp.core.database.dao.CoffeeBagDao
 import pl.betoniarze.kawapp.core.database.dao.CoffeeRecipeDao
 import pl.betoniarze.kawapp.core.database.dao.FeedPostDao
+import pl.betoniarze.kawapp.core.database.dao.GrinderDao
 import pl.betoniarze.kawapp.core.database.model.BrewLogEntity
+import pl.betoniarze.kawapp.core.database.model.GrinderEntity
+import pl.betoniarze.kawapp.core.database.model.SavedCoffeeBagEntity
 import pl.betoniarze.kawapp.core.database.utils.Converters
 
 
@@ -18,9 +22,11 @@ import pl.betoniarze.kawapp.core.database.utils.Converters
         FeedPostEntity::class,
         CoffeeRecipeEntity::class,
         BrewStepEntity::class,
-        BrewLogEntity::class
+        BrewLogEntity::class,
+        GrinderEntity::class,
+        SavedCoffeeBagEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 
@@ -33,4 +39,8 @@ abstract class KawAppDatabase : RoomDatabase() {
     abstract fun coffeeRecipeDao(): CoffeeRecipeDao
     /** DAO for Journal brew logs. */
     abstract fun brewLogDao(): BrewLogDao
+        /** DAO for the user's grinders. */
+    abstract fun grinderDao(): GrinderDao
+    /** DAO for the coffees saved in the Profile. */
+    abstract fun coffeeBagDao(): CoffeeBagDao
 }

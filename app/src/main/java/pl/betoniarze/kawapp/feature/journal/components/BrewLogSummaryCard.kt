@@ -71,7 +71,9 @@ internal fun BrewLogSummaryCard(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            KawTag(text = "${brewLog.grinder.displayName} · ${brewLog.grindSetting}", colors = neutral)
+            brewLog.grinder?.let { grinder ->
+                KawTag(text = "${grinder.displayName} · ${brewLog.grindSetting}", colors = neutral)
+            }
             KawTag(text = stringResource(R.string.roast_date, brewLog.coffeeBag.roastDate.toString()), colors = neutral)
         }
     }

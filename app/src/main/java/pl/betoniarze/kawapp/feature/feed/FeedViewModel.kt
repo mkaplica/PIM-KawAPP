@@ -16,6 +16,7 @@ import pl.betoniarze.kawapp.core.data.repository.FeedRepository
 import pl.betoniarze.kawapp.core.model.BrewLog
 import pl.betoniarze.kawapp.core.model.FeedPost
 import pl.betoniarze.kawapp.feature.journal.calculateStreak
+import pl.betoniarze.kawapp.feature.profile.UserNameStore
 import kotlin.collections.mutableSetOf
 
 /**
@@ -52,11 +53,11 @@ sealed interface FeedUiState {
 class FeedViewModel @Inject constructor(
     private val feedRepository: FeedRepository,
     brewLogRepository: BrewLogRepository,
+    userNameStore: UserNameStore
 ) : ViewModel() {
 
     // TODO: take it from the profile / login once there is a user model.
     /** Placeholder user name for the greeting header. */
-    private val userName = "Barista"
 
     // TODO: save given Kawos to the repository / Firestore.
     /**
@@ -70,7 +71,8 @@ class FeedViewModel @Inject constructor(
         feedRepository.getFeedPosts(),
         givenKavos,
         brewLogRepository.getAllBrewLogs(),
-    ) { posts, given, brewLogs ->
+        userNameStore.userName
+    ) { posts, given, brewLogs, userName ->
         val brewsById = brewLogs.associateBy { it.id }
         FeedUiState.Success(
             userName = userName,

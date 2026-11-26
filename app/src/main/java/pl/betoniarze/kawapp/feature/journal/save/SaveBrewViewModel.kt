@@ -16,7 +16,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pl.betoniarze.kawapp.core.data.repository.BrewLogRepository
+import pl.betoniarze.kawapp.core.data.repository.CoffeeBagRepository
 import pl.betoniarze.kawapp.core.data.repository.FeedRepository
+import pl.betoniarze.kawapp.core.data.repository.GrinderRepository
 import pl.betoniarze.kawapp.core.data.repository.RecipeRepository
 import pl.betoniarze.kawapp.core.model.BrewLog
 import pl.betoniarze.kawapp.core.model.BrewMethod
@@ -24,10 +26,11 @@ import pl.betoniarze.kawapp.core.model.CoffeeBag
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
 import pl.betoniarze.kawapp.core.model.FeedPost
 import pl.betoniarze.kawapp.core.model.Grinder
+import pl.betoniarze.kawapp.feature.profile.UserNameStore
 import pl.betoniarze.kawapp.ui.components.MAX_RATING
 
-/** How many recently brewed coffees are offered as quick picks. */
-private const val RECENT_BAGS_LIMIT = 6
+/** How many coffees are offered as quick picks. */
+private const val RECENT_BAGS_LIMIT = 8
 
 /**
  * State of the "save brew" form.
@@ -35,7 +38,8 @@ private const val RECENT_BAGS_LIMIT = 6
  * @property recipe Recipe that was just brewed; null when the form was opened from the Journal.
  * @property brewMethod Used only when [recipe] is null (otherwise the recipe's method wins).
  * @property rating 1–10, 0 until the user picks one.
- * @property recentBags Coffees from earlier brews, newest first, for one-tap filling.
+ * @property grinders The user's grinders from the Profile; [grinder] is one of them or null.
+ * @property recentBags Coffees from the Profile, then from earlier brews, for one-tap filling.
  * @property isSaved Set after saving; the screen then navigates away.
  */
 data class SaveBrewUiState(
@@ -46,7 +50,8 @@ data class SaveBrewUiState(
     val beanName: String = "",
     val origin: String = "",
     val roastDate: LocalDate? = null,
-    val grinder: Grinder = Grinder.COMANDANTE_C40,
+    val grinders: List<Grinder> = emptyList(),
+    val grinder: Grinder? = null,
     val grindSetting: String = "",
     val description: String = "",
     val recentBags: List<CoffeeBag> = emptyList(),
@@ -79,6 +84,9 @@ class SaveBrewViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
     private val brewLogRepository: BrewLogRepository,
     private val feedRepository: FeedRepository,
+    private val grinderRepository: GrinderRepository,
+    private val coffeeBagRepository: CoffeeBagRepository,
+    private val userNameStore: UserNameStore,
 ) : ViewModel() {
 
     private val recipeId: String? = savedStateHandle.get<String>("recipeId")?.takeIf { it.isNotBlank() }
@@ -98,6 +106,8 @@ class SaveBrewViewModel @Inject constructor(
         viewModelScope.launch {
             val recipe = recipeId?.let { recipeRepository.getRecipeById(it).first() }
             val logs = brewLogRepository.getAllBrewLogs().first()
+            val grinders = grinderRepository.getGrinders().first()
+            val savedBags = coffeeBagRepository.getCoffeeBags().first()
             val previous = logs.firstOrNull { recipeId != null && it.recipeId == recipeId }
                 ?: logs.firstOrNull()
 
@@ -109,9 +119,14 @@ class SaveBrewViewModel @Inject constructor(
                     beanName = previous?.coffeeBag?.beanName.orEmpty(),
                     origin = previous?.coffeeBag?.origin.orEmpty(),
                     roastDate = previous?.coffeeBag?.roastDate,
-                    grinder = previous?.grinder ?: state.grinder,
+                    grinders = grinders,
+                    // The last used grinder if it is still in the Profile, otherwise the first one.
+                    grinder = grinders.firstOrNull { it.id == previous?.grinder?.id }
+                        ?: grinders.firstOrNull(),
                     grindSetting = previous?.grindSetting.orEmpty(),
-                    recentBags = logs.map { it.coffeeBag }.distinct().take(RECENT_BAGS_LIMIT),
+                    recentBags = (savedBags + logs.map { it.coffeeBag })
+                        .distinctBy { Triple(it.roasterName, it.beanName, it.roastDate) }
+                        .take(RECENT_BAGS_LIMIT),
                     isLoading = false,
                 )
             }
@@ -180,9 +195,7 @@ class SaveBrewViewModel @Inject constructor(
             feedRepository.addFeedPost(
                 FeedPost(
                     id = UUID.randomUUID().toString(),
-                    // TODO: take the author from the profile once there is a user model
-                    //  (same placeholder as in FeedViewModel).
-                    authorName = "Barista",
+                    authorName = userNameStore.authorName,
                     authorAvatarUrl = "",
                     content = description,
                     imageUrls = emptyList(),

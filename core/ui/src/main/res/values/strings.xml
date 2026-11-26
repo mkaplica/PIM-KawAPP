@@ -126,7 +126,7 @@
     <string name="section_method">Metoda</string>
     <string name="section_coffee">Kawa</string>
     <string name="section_grind">Mielenie</string>
-    <string name="recent_coffees">Ostatnio parzone</string>
+    <string name="recent_coffees">Twoje kawy</string>
     <string name="roaster_name">Palarnia</string>
     <string name="bean_name">Ziarno</string>
     <string name="coffee_origin">Pochodzenie (opcjonalnie)</string>
@@ -138,4 +138,27 @@
     <string name="save_brew_hint_rating">Wybierz ocenę, żeby zapisać parzenie</string>
     <string name="save_brew_hint_coffee">Uzupełnij palarnię, ziarno i datę wypału</string>
     <string name="ok">OK</string>
+
+    <!-- Profile -->
+    <string name="profile_add_name">Dodaj nazwę</string>
+    <string name="profile_edit_name">Zmień nazwę</string>
+    <string name="user_name_dialog_title">Nazwa użytkownika</string>
+    <string name="user_name_label">Nazwa</string>
+    <string name="profile_grinders">Młynki</string>
+    <string name="profile_coffees">Kawy</string>
+    <string name="profile_settings">Ustawienia</string>
+    <string name="add">Dodaj</string>
+    <string name="add_grinder_title">Nowy młynek</string>
+    <string name="grinder_name">Nazwa młynka</string>
+    <string name="grinder_name_hint">np. Comandante C40</string>
+    <string name="add_coffee_title">Nowa kawa</string>
+    <string name="add_coffee">Dodaj kawę</string>
+    <string name="grinders_empty">Dodaj młynek, żeby wybierać go przy zapisie parzenia</string>
+    <string name="coffees_empty">Dodaj kawę, żeby wybierać ją jednym dotknięciem przy zapisie parzenia</string>
+    <string name="delete_item">Usuń %1$s</string>
+    <string name="grinder_deleted">Usunięto młynek %1$s</string>
+    <string name="coffee_deleted">Usunięto kawę %1$s</string>
+    <string name="undo">Cofnij</string>
+    <string name="feed_greeting_no_name">Cześć!</string>
+    <string name="save_brew_no_grinders">Dodaj młynek w profilu, żeby go tu wybrać</string>
 </resources>

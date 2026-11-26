@@ -19,7 +19,8 @@ data class BrewLogEntity(
     @Embedded val coffeeBag: CoffeeBagEntity,
     val recipeId: String,
     val recipeTitle: String,
-    val grinder: Grinder,
+    val grinderId: String?,
+    val grinderName: String?,
     val grindSetting: String,
     val tastingNotes: String,
     val rating: Int
@@ -50,7 +51,7 @@ fun BrewLogEntity.asExternalModel() = BrewLog(
     coffeeBag = coffeeBag.asExternalModel(),
     recipeId = recipeId,
     recipeTitle = recipeTitle,
-    grinder = grinder,
+    grinder = if (grinderId != null && grinderName != null) Grinder(grinderId, grinderName) else null,
     grindSetting = grindSetting,
     tastingNotes = tastingNotes,
     rating = rating
@@ -71,7 +72,8 @@ fun BrewLog.asEntity() = BrewLogEntity(
     coffeeBag = coffeeBag.asEntity(),
     recipeId = recipeId,
     recipeTitle = recipeTitle,
-    grinder = grinder,
+    grinderId = grinder?.id,
+    grinderName = grinder?.displayName,
     grindSetting = grindSetting,
     tastingNotes = tastingNotes,
     rating = rating

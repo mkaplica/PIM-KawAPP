@@ -118,7 +118,11 @@ private fun FeedHeader(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Text(
-                text = stringResource(R.string.feed_greeting, userName),
+                text = if (userName.isBlank()) {
+                    stringResource(R.string.feed_greeting_no_name)
+                } else {
+                    stringResource(R.string.feed_greeting, userName)
+                },
                 style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Normal),
             )
             if (streakDays > 0) {

@@ -7,5 +7,6 @@ data class CoffeeBag(
     val roasterName: String,
     val beanName: String,
     val origin: String,
-    val roastDate: LocalDate
+    val roastDate: LocalDate,
+    val id: String =""
 )
