@@ -28,7 +28,9 @@ object DatabaseModule {
             context,
             KawAppDatabase::class.java,
             "kawapp.db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration(dropAllTables = true)
+            .build()
     }
 
     /** Recipe DAO from the shared database. */

@@ -21,7 +21,8 @@ data class BrewLogEntity(
     val recipeTitle: String,
     val grinder: Grinder,
     val grindSetting: String,
-    val tastingNotes: String
+    val tastingNotes: String,
+    val rating: Int
 )
 
 /** Coffee bag columns embedded in [BrewLogEntity]. */
@@ -51,5 +52,27 @@ fun BrewLogEntity.asExternalModel() = BrewLog(
     recipeTitle = recipeTitle,
     grinder = grinder,
     grindSetting = grindSetting,
-    tastingNotes = tastingNotes
+    tastingNotes = tastingNotes,
+    rating = rating
+)
+
+fun CoffeeBag.asEntity() = CoffeeBagEntity(
+    roasterName = roasterName,
+    beanName = beanName,
+    origin = origin,
+    roastDate = roastDate
+)
+
+fun BrewLog.asEntity() = BrewLogEntity(
+    id = id,
+    brewMethod = brewMethod,
+    date = date,
+    time = time,
+    coffeeBag = coffeeBag.asEntity(),
+    recipeId = recipeId,
+    recipeTitle = recipeTitle,
+    grinder = grinder,
+    grindSetting = grindSetting,
+    tastingNotes = tastingNotes,
+    rating = rating
 )

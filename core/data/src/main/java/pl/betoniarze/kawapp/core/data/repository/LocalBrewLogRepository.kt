@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.map
 import pl.betoniarze.kawapp.core.data.BuildConfig
 import pl.betoniarze.kawapp.core.data.fake.FakeCoffeeData
 import pl.betoniarze.kawapp.core.database.dao.BrewLogDao
+import pl.betoniarze.kawapp.core.database.model.asEntity
 import pl.betoniarze.kawapp.core.database.model.asExternalModel
 import pl.betoniarze.kawapp.core.model.BrewLog
 import java.time.LocalDate
@@ -39,6 +40,10 @@ class LocalBrewLogRepository @Inject constructor(
         brewLogDao.getDatesWithBrews()
             .map { it.toSet() + sampleLogs.map { log -> log.date } }
             .withDebugDelay()
+
+    override suspend fun saveBrewLog(brewLog: BrewLog) {
+        brewLogDao.insertBrewLog(brewLog.asEntity())
+    }
 }
 
 /** Same order as the DAO queries: newest date first, then latest time. */

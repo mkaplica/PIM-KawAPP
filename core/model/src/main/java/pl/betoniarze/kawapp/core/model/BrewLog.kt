@@ -20,5 +20,6 @@ data class BrewLog(
     val recipeTitle: String,
     val grinder: Grinder,
     val grindSetting: String,
-    val tastingNotes: String
+    val tastingNotes: String,
+    val rating: Int = 0
 )

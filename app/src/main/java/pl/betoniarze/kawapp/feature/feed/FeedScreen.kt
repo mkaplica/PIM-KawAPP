@@ -88,6 +88,7 @@ fun FeedScreenContent(
                             onKavosClick = { onKavosClick(item.post.id) },
                             onCommentsClick = { onCommentsClick(item.post.id) },
                             onShareClick = { onShareClick(item.post.id) },
+                            brew = item.brew
                         )
                     }
                 }

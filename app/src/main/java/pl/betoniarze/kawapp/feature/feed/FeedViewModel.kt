@@ -13,8 +13,10 @@ import kotlinx.coroutines.flow.update
 import java.time.LocalDate
 import pl.betoniarze.kawapp.core.data.repository.BrewLogRepository
 import pl.betoniarze.kawapp.core.data.repository.FeedRepository
+import pl.betoniarze.kawapp.core.model.BrewLog
 import pl.betoniarze.kawapp.core.model.FeedPost
 import pl.betoniarze.kawapp.feature.journal.calculateStreak
+import kotlin.collections.mutableSetOf
 
 /**
  * A feed post together with the current user's Kawos state.
@@ -25,6 +27,7 @@ data class FeedPostItem(
     val post: FeedPost,
     val kavosGiven: Boolean,
     val kavosCount: Int,
+    val brew: BrewLog? = null
 )
 
 /** State of the Feed screen. */
@@ -66,17 +69,19 @@ class FeedViewModel @Inject constructor(
     val uiState: StateFlow<FeedUiState> = combine(
         feedRepository.getFeedPosts(),
         givenKavos,
-        brewLogRepository.getDatesWithBrews(),
-    ) { posts, given, datesWithBrews ->
+        brewLogRepository.getAllBrewLogs(),
+    ) { posts, given, brewLogs ->
+        val brewsById = brewLogs.associateBy { it.id }
         FeedUiState.Success(
             userName = userName,
-            streakDays = calculateStreak(datesWithBrews, LocalDate.now()),
+            streakDays = calculateStreak(brewLogs.mapTo(mutableSetOf()) { it.date }, LocalDate.now()),
             posts = posts.map { post ->
                 val isGiven = post.id in given
                 FeedPostItem(
                     post = post,
                     kavosGiven = isGiven,
                     kavosCount = post.kavosCount + if (isGiven) 1 else 0,
+                    brew = post.brewLogId?.let(brewsById::get),
                 )
             }
         )

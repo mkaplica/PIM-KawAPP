@@ -14,4 +14,6 @@ data class FeedPost(
     val imageUrls: List<String>,
     var kavosCount: Int,
     var comments: List<String>,
+    val brewLogId: String? = null,
+    val createdAt: Long = 0L
 )

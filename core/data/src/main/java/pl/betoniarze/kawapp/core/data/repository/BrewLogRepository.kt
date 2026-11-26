@@ -12,4 +12,6 @@ interface BrewLogRepository {
     fun getBrewLogsForDate(date: LocalDate): Flow<List<BrewLog>>
     /** Every date that has at least one brew (calendar dots and streak). */
     fun getDatesWithBrews(): Flow<Set<LocalDate>>
+
+    suspend fun saveBrewLog(brewLog: BrewLog)
 }

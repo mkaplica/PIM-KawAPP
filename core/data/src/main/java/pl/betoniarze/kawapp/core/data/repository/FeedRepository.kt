@@ -7,4 +7,7 @@ import pl.betoniarze.kawapp.core.model.FeedPost
 interface FeedRepository {
     /** All feed posts. Emits again when the posts change. */
     fun getFeedPosts(): Flow<List<FeedPost>>
+
+    /** Inserts a new feed post or updates an existing one. */
+    suspend fun addFeedPost(feedPost: FeedPost)
 }

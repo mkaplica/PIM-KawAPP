@@ -1,13 +1,25 @@
 package pl.betoniarze.kawapp.feature.recipes.brew.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.LocalCafe
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -43,13 +55,17 @@ fun BrewStartFab(
     )
 }
 
-/** Bottom bar while brewing: large elapsed / total time, "step X of Y" and the timer buttons. */
+/**
+ * Bottom bar while brewing: large elapsed / total time, "step X of Y" and the timer buttons.
+ * Once the timer finishes, a full-width "Zapisz parzenie" button slides in above the controls.
+ */
 @Composable
 fun BrewTimerBottomBar(
     state: BrewTimerState,
     onToggle: () -> Unit,
     onReset: () -> Unit,
     onSkip: () -> Unit,
+    onSaveBrew: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val elapsedSec = (state.elapsedMs / 1000).toInt()
@@ -103,6 +119,13 @@ fun BrewTimerBottomBar(
                     )
                 }
             }
+            AnimatedVisibility(
+                visible = state.isFinished,
+                enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
+                exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut(),
+            ) {
+                SaveBrewButton(onClick = onSaveBrew)
+            }
             TimerControls(
                 state = state,
                 onToggle = onToggle,
@@ -110,5 +133,35 @@ fun BrewTimerBottomBar(
                 onSkip = onSkip,
             )
         }
+    }
+}
+
+/** Primary action after the timer ends — the most important thing on screen at that moment. */
+@Composable
+private fun SaveBrewButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(56.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+        ),
+        contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Check,
+            contentDescription = null,
+            modifier = Modifier.size(ButtonDefaults.IconSize),
+        )
+        Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+        Text(
+            text = stringResource(R.string.save_brew),
+            style = MaterialTheme.typography.titleMedium,
+        )
     }
 }

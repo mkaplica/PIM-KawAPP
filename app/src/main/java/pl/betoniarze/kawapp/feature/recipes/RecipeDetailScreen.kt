@@ -76,7 +76,8 @@ fun RecipeDetailScreen(
     timerVm: BrewTimerViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
     onEditClick: (recipeId: String) -> Unit = {},
-    onRecipeDeleted: () -> Unit = {}
+    onRecipeDeleted: () -> Unit = {},
+    onSaveBrewClick: (recipeId: String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val timerState by timerVm.state.collectAsStateWithLifecycle()
@@ -98,6 +99,11 @@ fun RecipeDetailScreen(
         onToggleTimer = timerVm::toggle,
         onResetTimer = timerVm::reset,
         onSkipStep = timerVm::skipToNextStep,
+        onSaveBrew = {
+            (uiState as? RecipeDetailUiState.Success)?.let{ success ->
+                onSaveBrewClick(success.recipe.id)
+            }
+        }
     )
 }
 
@@ -119,6 +125,7 @@ fun RecipeDetailScreenContent(
     onToggleTimer: () -> Unit = {},
     onResetTimer: () -> Unit = {},
     onSkipStep: () -> Unit = {},
+    onSaveBrew: () -> Unit = {}
 ) {
     val isRecipeLoaded = uiState is RecipeDetailUiState.Success
     val wantFab = isRecipeLoaded && timerState.isIdle && timerState.hasSteps
@@ -203,6 +210,7 @@ fun RecipeDetailScreenContent(
                         onToggle = onToggleTimer,
                         onReset = onResetTimer,
                         onSkip = onSkipStep,
+                        onSaveBrew = onSaveBrew,
                     )
                 }
             },

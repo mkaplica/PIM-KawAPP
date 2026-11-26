@@ -13,7 +13,9 @@ data class FeedPostEntity(
     val content: String,
     val imageUrls: List<String>,
     var kavosCount: Int,
-    var comments: List<String>
+    var comments: List<String>,
+    val brewLogId: String?,
+    val createdAt: Long
 )
 
 /** Maps the row to the domain [FeedPost]. */
@@ -24,5 +26,17 @@ fun FeedPostEntity.asExternalModel() = FeedPost(
     content = content,
     imageUrls = imageUrls,
     kavosCount = kavosCount,
-    comments = comments
+    comments = comments,
+)
+
+fun FeedPost.asEntity() = FeedPostEntity(
+    id = id,
+    authorName = authorName,
+    authorAvatarUrl = authorAvatarUrl,
+    content = content,
+    imageUrls = imageUrls,
+    kavosCount = kavosCount,
+    comments = comments,
+    brewLogId = brewLogId,
+    createdAt = createdAt
 )

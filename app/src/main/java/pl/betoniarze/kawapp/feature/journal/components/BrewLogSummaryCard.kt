@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +19,7 @@ import pl.betoniarze.kawapp.core.ui.R
 import pl.betoniarze.kawapp.core.ui.components.KawCard
 import pl.betoniarze.kawapp.core.ui.components.KawTag
 import pl.betoniarze.kawapp.core.ui.components.KawTagDefaults
+import pl.betoniarze.kawapp.ui.components.RatingLabel
 
 /**
  * Summary of one brew in the Journal list: method, time, beans, recipe, grinder and roast date.
@@ -39,6 +41,9 @@ internal fun BrewLogSummaryCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             KawTag(text = brewLog.brewMethod.displayName, colors = neutral)
+            if (brewLog.rating > 0){
+                RatingLabel(rating = brewLog.rating, modifier = Modifier.padding(start = 10.dp))
+            }
             Text(
                 text = brewLog.time,
                 style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Normal),

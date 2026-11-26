@@ -20,7 +20,7 @@ import pl.betoniarze.kawapp.core.database.utils.Converters
         BrewStepEntity::class,
         BrewLogEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 

@@ -108,4 +108,25 @@
         <item quantity="one">%d Kavos</item>
         <item quantity="other">%d Kavos</item>
     </plurals>
+
+    <string name="save_brew_title">New brew</string>
+    <string name="rating_title">How did it taste?</string>
+    <string name="rating_hint">Tap a star or slide across them</string>
+    <string name="rating_value">Rating: %1$d of %2$d</string>
+    <string name="rating_fraction">%1$d/%2$d</string>
+    <string name="section_method">Method</string>
+    <string name="section_coffee">Coffee</string>
+    <string name="section_grind">Grind</string>
+    <string name="recent_coffees">Recently brewed</string>
+    <string name="roaster_name">Roaster</string>
+    <string name="bean_name">Beans</string>
+    <string name="coffee_origin">Origin (optional)</string>
+    <string name="roast_date_label">Roast date</string>
+    <string name="choose_date">Choose date</string>
+    <string name="grind_setting">Setting (e.g. 22 clicks)</string>
+    <string name="brew_description">Description</string>
+    <string name="brew_description_hint">Taste, aroma, what you\'d change next time</string>
+    <string name="save_brew_hint_rating">Pick a rating to log this brew</string>
+    <string name="save_brew_hint_coffee">Add the roaster, beans and roast date</string>
+    <string name="ok">OK</string>
 </resources>

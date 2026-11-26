@@ -38,12 +38,14 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import pl.betoniarze.kawapp.core.model.BrewLog
 import pl.betoniarze.kawapp.core.model.FeedPost
 import pl.betoniarze.kawapp.core.ui.R
 import pl.betoniarze.kawapp.core.ui.components.KawTag
 import pl.betoniarze.kawapp.core.ui.components.KawTagColors
 import pl.betoniarze.kawapp.core.ui.components.KawTagDefaults
 import pl.betoniarze.kawapp.core.ui.theme.KawTheme
+import pl.betoniarze.kawapp.ui.components.RatingLabel
 
 /**
  * A post in the feed: author, text, photos and the Kawos / comments / share actions.
@@ -61,6 +63,7 @@ fun FeedPostCard(
     modifier: Modifier = Modifier,
     onCommentsClick: () -> Unit = {},
     onShareClick: () -> Unit = {},
+    brew: BrewLog? = null
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -93,11 +96,15 @@ fun FeedPostCard(
 
             // TODO: brew title and stats (KawStatRow) once FeedPost carries brew data.
 
-            Text(
-                text = post.content,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(start = 14.dp, end = 14.dp, bottom = 10.dp),
-            )
+            if (brew != null) BrewSummary(brew)
+
+            if (post.content.isNotBlank()) {
+                Text(
+                    text = post.content,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(start = 14.dp, end = 14.dp, bottom = 10.dp),
+                )
+            }
 
             if (post.imageUrls.isNotEmpty()) {
                 PostImages(urls = post.imageUrls)
@@ -211,5 +218,32 @@ private fun PostImages(urls: List<String>) {
                 }
             }
         }
+    }
+}
+
+/** Brew shared in the post: method, rating, coffee and roaster / recipe. Neutral colors only. */
+@Composable
+private fun BrewSummary(brew: BrewLog) {
+    Column(
+        modifier = Modifier.padding(start = 14.dp, end = 14.dp, bottom = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            KawTag(text = brew.brewMethod.displayName, colors = KawTagDefaults.neutral())
+            if (brew.rating > 0) RatingLabel(rating = brew.rating)
+        }
+        Text(
+            text = "${brew.coffeeBag.origin} ${brew.coffeeBag.beanName}".trim(),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Text(
+            text = if (brew.recipeTitle.isBlank()) brew.coffeeBag.roasterName
+            else stringResource(R.string.brew_log_subtitle, brew.coffeeBag.roasterName, brew.recipeTitle),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }

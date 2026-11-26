@@ -11,7 +11,7 @@ import pl.betoniarze.kawapp.core.database.model.FeedPostEntity
 @Dao
 interface FeedPostDao {
     /** All feed posts stored on the device. Emits again whenever the table changes. */
-    @Query("SELECT * FROM feed_posts")
+    @Query("SELECT * FROM feed_posts ORDER BY createdAt DESC")
     fun getAllFeedPosts(): Flow<List<FeedPostEntity>>
 
     /** The post with [id], or null if it does not exist. */

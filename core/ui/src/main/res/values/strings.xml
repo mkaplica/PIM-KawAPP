@@ -116,4 +116,26 @@
         <item quantity="many">%d Kawosów</item>
         <item quantity="other">%d Kawosa</item>
     </plurals>
+
+    <!-- Save brew -->
+    <string name="save_brew_title">Nowe parzenie</string>
+    <string name="rating_title">Jak smakowało?</string>
+    <string name="rating_hint">Dotknij gwiazdki albo przesuń po nich palcem</string>
+    <string name="rating_value">Ocena: %1$d z %2$d</string>
+    <string name="rating_fraction">%1$d/%2$d</string>
+    <string name="section_method">Metoda</string>
+    <string name="section_coffee">Kawa</string>
+    <string name="section_grind">Mielenie</string>
+    <string name="recent_coffees">Ostatnio parzone</string>
+    <string name="roaster_name">Palarnia</string>
+    <string name="bean_name">Ziarno</string>
+    <string name="coffee_origin">Pochodzenie (opcjonalnie)</string>
+    <string name="roast_date_label">Data wypału</string>
+    <string name="choose_date">Wybierz datę</string>
+    <string name="grind_setting">Ustawienie (np. 22 kliki)</string>
+    <string name="brew_description">Opis</string>
+    <string name="brew_description_hint">Smak, aromat, co zmienisz następnym razem</string>
+    <string name="save_brew_hint_rating">Wybierz ocenę, żeby zapisać parzenie</string>
+    <string name="save_brew_hint_coffee">Uzupełnij palarnię, ziarno i datę wypału</string>
+    <string name="ok">OK</string>
 </resources>

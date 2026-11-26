@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.map
 import pl.betoniarze.kawapp.core.data.BuildConfig
 import pl.betoniarze.kawapp.core.data.fake.FakeCoffeeData
 import pl.betoniarze.kawapp.core.database.dao.FeedPostDao
+import pl.betoniarze.kawapp.core.database.model.asEntity
 import pl.betoniarze.kawapp.core.database.model.asExternalModel
 import pl.betoniarze.kawapp.core.model.FeedPost
 
@@ -25,4 +26,8 @@ class LocalFeedRepository @Inject constructor(
         feedPostDao.getAllFeedPosts()
             .map { list -> list.map { it.asExternalModel() } + samplePosts }
             .withDebugDelay()
+
+    override suspend fun addFeedPost(feedPost: FeedPost) {
+        feedPostDao.insertFeedPost(feedPost.asEntity())
+    }
 }

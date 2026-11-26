@@ -14,6 +14,10 @@ import pl.betoniarze.kawapp.feature.profile.ProfileScreen
 import pl.betoniarze.kawapp.feature.recipes.RecipeAddScreen
 import pl.betoniarze.kawapp.feature.recipes.RecipeDetailScreen
 import pl.betoniarze.kawapp.feature.recipes.RecipesScreen
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import pl.betoniarze.kawapp.feature.journal.save.SaveBrewScreen
 
 /** Crossfade duration between screens (the NavHost default is 700 ms). */
 private const val SCREEN_FADE_MS = 1_000
@@ -69,6 +73,9 @@ fun AppNavHost(
                 },
                 onRecipeDeleted = {
                     navController.popBackStack()
+                },
+                onSaveBrewClick = { recipeId ->
+                    navController.navigate("save_brew?recipeId=$recipeId")
                 }
             )
         }
@@ -83,6 +90,30 @@ fun AppNavHost(
         composable(route = "edit_recipe/{recipeId}") {
             RecipeAddScreen(
                 onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable(route = TopLevelDestination.JOURNAL.route) {
+            JournalScreen(onAddBrewClick = { navController.navigate("save_brew") })
+        }
+
+        composable(
+            route = "save_brew?recipeId={recipeId}",
+            arguments = listOf(navArgument("recipeId") {
+                type = NavType.StringType
+                nullable = true
+                defaultValue = null
+            }),
+        ) {
+            SaveBrewScreen(
+                onBackClick = { navController.popBackStack() },
+                onSaved = {
+                    // Feed shows the new post right away; the finished timer is dropped from the back stack.
+                    navController.navigate(TopLevelDestination.FEED.route) {
+                        popUpTo(navController.graph.findStartDestination().id)
+                        launchSingleTop = true
+                    }
+                },
             )
         }
     }
