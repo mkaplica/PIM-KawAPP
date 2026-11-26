@@ -116,7 +116,7 @@ fun SaveBrewScreenContent(
     uiState: SaveBrewUiState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    onSaveClick: () -> Unit = {},
+    onSaveClick: (autoDescription: String) -> Unit = {},
     onRatingChange: (Int) -> Unit = {},
     onBrewMethodChange: (BrewMethod) -> Unit = {},
     onCoffeeBagSelected: (CoffeeBag) -> Unit = {},
@@ -128,6 +128,8 @@ fun SaveBrewScreenContent(
     onGrindSettingChange: (String) -> Unit = {},
     onDescriptionChange: (String) -> Unit = {},
 ) {
+    val autoDescription = buildAutoDescription(uiState)
+
     Box(modifier = modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -145,7 +147,7 @@ fun SaveBrewScreenContent(
                 )
             },
             bottomBar = {
-                SaveBrewBar(uiState = uiState, onSaveClick = onSaveClick)
+                SaveBrewBar(uiState = uiState, onSaveClick = { onSaveClick(autoDescription) })
             },
         ) { innerPadding ->
             LazyColumn(
@@ -173,6 +175,14 @@ fun SaveBrewScreenContent(
                 }
 
                 item {
+                    DescriptionField(
+                        value = uiState.description,
+                        autoDescription = autoDescription,
+                        onValueChange = onDescriptionChange,
+                    )
+                }
+
+                item {
                     CoffeeSection(
                         uiState = uiState,
                         onCoffeeBagSelected = onCoffeeBagSelected,
@@ -190,19 +200,6 @@ fun SaveBrewScreenContent(
                         grindSetting = uiState.grindSetting,
                         onGrinderChange = onGrinderChange,
                         onGrindSettingChange = onGrindSettingChange,
-                    )
-                }
-
-                item {
-                    OutlinedTextField(
-                        value = uiState.description,
-                        onValueChange = onDescriptionChange,
-                        label = { Text(text = stringResource(R.string.brew_description)) },
-                        placeholder = { Text(text = stringResource(R.string.brew_description_hint)) },
-                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-                        shape = KawFieldShape,
-                        minLines = 4,
-                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
@@ -464,6 +461,63 @@ private fun SaveBrewBar(uiState: SaveBrewUiState, onSaveClick: () -> Unit) {
             }
         }
     }
+}
+
+/**
+ * Description field. While it is empty, the supporting text previews the summary that will be
+ * posted instead, so nobody is surprised by text they did not write.
+ */
+@Composable
+private fun DescriptionField(
+    value: String,
+    autoDescription: String,
+    onValueChange: (String) -> Unit,
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(text = stringResource(R.string.brew_description)) },
+        placeholder = { Text(text = stringResource(R.string.brew_description_hint)) },
+        supportingText = if (value.isBlank()) {
+            { Text(text = stringResource(R.string.brew_description_auto_preview, autoDescription)) }
+        } else {
+            null
+        },
+        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+        shape = KawFieldShape,
+        minLines = 3,
+        modifier = Modifier.fillMaxWidth(),
+    )
+}
+
+/**
+ * Summary used when the description is left empty, e.g. "Hario V60 według przepisu „Hoffmann”.
+ * Kawa: Etiopia Guji z palarni Coffeelab. Ocena: 8/10." Parts the user has not filled in yet
+ * (coffee, rating) are skipped.
+ */
+@Composable
+private fun buildAutoDescription(uiState: SaveBrewUiState): String {
+    val method = (uiState.recipe?.brewMethod ?: uiState.brewMethod).displayName
+    val recipeTitle = uiState.recipe?.title
+    val coffee = "${uiState.origin.trim()} ${uiState.beanName.trim()}".trim()
+    val roaster = uiState.roasterName.trim()
+
+    val parts = buildList {
+        add(
+            if (recipeTitle != null) stringResource(R.string.auto_desc_recipe, method, recipeTitle)
+            else stringResource(R.string.auto_desc_method, method)
+        )
+        if (uiState.beanName.isNotBlank()) {
+            add(
+                if (roaster.isNotEmpty()) stringResource(R.string.auto_desc_coffee, coffee, roaster)
+                else stringResource(R.string.auto_desc_coffee_no_roaster, coffee)
+            )
+        }
+        if (uiState.hasRating) {
+            add(stringResource(R.string.auto_desc_rating, uiState.rating, MAX_RATING))
+        }
+    }
+    return parts.joinToString(separator = " ")
 }
 
 @Composable

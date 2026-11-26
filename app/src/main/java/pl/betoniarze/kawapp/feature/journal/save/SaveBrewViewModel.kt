@@ -170,8 +170,14 @@ class SaveBrewViewModel @Inject constructor(
     fun onGrindSettingChange(value: String) = _uiState.update { it.copy(grindSetting = value) }
     fun onDescriptionChange(value: String) = _uiState.update { it.copy(description = value) }
 
-    /** Saves the brew to the Journal and publishes it on the Feed. Ignored while invalid or saving. */
-    fun saveBrew() {
+    /**
+     * Saves the brew to the Journal and publishes it on the Feed. Ignored while invalid or saving.
+     *
+     * @param autoDescription Used when the description field is left empty: a short summary of the
+     * recipe, coffee and rating, built by the screen from string resources (so it follows the app
+     * language).
+     */
+    fun saveBrew(autoDescription: String) {
         val state = _uiState.value
         val roastDate = state.roastDate
         if (!state.canSave || roastDate == null) return
@@ -180,7 +186,7 @@ class SaveBrewViewModel @Inject constructor(
             _uiState.update { it.copy(isSaving = true) }
 
             val now = LocalDateTime.now()
-            val description = state.description.trim()
+            val description = state.description.trim().ifBlank { autoDescription.trim() }
             val brewLog = BrewLog(
                 id = UUID.randomUUID().toString(),
                 brewMethod = state.recipe?.brewMethod ?: state.brewMethod,

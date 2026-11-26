@@ -157,4 +157,11 @@
     <string name="undo">Undo</string>
     <string name="feed_greeting_no_name">Hi!</string>
     <string name="save_brew_no_grinders">Add a grinder in your profile to pick it here</string>
+
+    <string name="brew_description_auto_preview">If left empty, we\'ll post: %1$s</string>
+    <string name="auto_desc_recipe">%1$s, recipe “%2$s”.</string>
+    <string name="auto_desc_method">Brewed with %1$s.</string>
+    <string name="auto_desc_coffee">Coffee: %1$s from %2$s.</string>
+    <string name="auto_desc_coffee_no_roaster">Coffee: %1$s.</string>
+    <string name="auto_desc_rating">Rating: %1$d/%2$d.</string>
 </resources>
