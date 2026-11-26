@@ -27,6 +27,8 @@ fun FeedPostEntity.asExternalModel() = FeedPost(
     imageUrls = imageUrls,
     kavosCount = kavosCount,
     comments = comments,
+    brewLogId = brewLogId,
+    createdAt = createdAt,
 )
 
 fun FeedPost.asEntity() = FeedPostEntity(

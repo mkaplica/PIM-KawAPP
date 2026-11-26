@@ -174,4 +174,18 @@
     <string name="auto_desc_coffee">Kawa: %1$s z palarni %2$s.</string>
     <string name="auto_desc_coffee_no_roaster">Kawa: %1$s.</string>
     <string name="auto_desc_rating">Ocena: %1$d/%2$d.</string>
+
+    <!-- Photos -->
+    <string name="photos_title">Zdjęcia</string>
+    <string name="photos_count">%1$d/%2$d</string>
+    <string name="photo_number">Zdjęcie %1$d</string>
+    <string name="add_photo">Dodaj zdjęcie</string>
+    <string name="remove_photo">Usuń zdjęcie</string>
+    <string name="photo_source_camera">Zrób zdjęcie</string>
+    <string name="photo_source_gallery">Wybierz z galerii</string>
+    <string name="no_camera_app">Nie znaleziono aplikacji aparatu</string>
+    <string name="profile_photo_title">Zdjęcie profilowe</string>
+    <string name="profile_photo_change">Zmień zdjęcie profilowe</string>
+
+    <string name="yesterday">Wczoraj</string>
 </resources>

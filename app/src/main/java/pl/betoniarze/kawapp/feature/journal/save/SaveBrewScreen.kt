@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,13 +34,20 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -53,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import java.time.LocalDate
+import kotlinx.coroutines.launch
 import pl.betoniarze.kawapp.core.model.BrewMethod
 import pl.betoniarze.kawapp.core.model.CoffeeBag
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
@@ -70,6 +79,11 @@ import pl.betoniarze.kawapp.ui.components.KawFieldShape
 import pl.betoniarze.kawapp.ui.components.MAX_RATING
 import pl.betoniarze.kawapp.ui.components.RatingPicker
 import pl.betoniarze.kawapp.ui.components.RoastDateField
+import pl.betoniarze.kawapp.ui.photos.AddPhotoTile
+import pl.betoniarze.kawapp.ui.photos.PhotoCallbacks
+import pl.betoniarze.kawapp.ui.photos.PhotoSourceSheet
+import pl.betoniarze.kawapp.ui.photos.PhotoThumbnail
+import pl.betoniarze.kawapp.ui.photos.rememberPhotoPicker
 
 /**
  * "Save brew" form connected to [SaveBrewViewModel]: rating, coffee, grind and a description.
@@ -103,6 +117,15 @@ fun SaveBrewScreen(
         onGrinderChange = viewModel::onGrinderChange,
         onGrindSettingChange = viewModel::onGrindSettingChange,
         onDescriptionChange = viewModel::onDescriptionChange,
+        photoCallbacks = remember(viewModel) {
+            PhotoCallbacks(
+                newCameraUri = viewModel::newCameraUri,
+                onPhotoTaken = viewModel::onPhotoTaken,
+                onCameraCancelled = viewModel::onCameraCancelled,
+                onPhotosPicked = viewModel::onPhotosPicked,
+            )
+        },
+        onRemovePhoto = viewModel::onRemovePhoto,
     )
 }
 
@@ -127,8 +150,29 @@ fun SaveBrewScreenContent(
     onGrinderChange: (Grinder) -> Unit = {},
     onGrindSettingChange: (String) -> Unit = {},
     onDescriptionChange: (String) -> Unit = {},
+    photoCallbacks: PhotoCallbacks = PhotoCallbacks.None,
+    onRemovePhoto: (String) -> Unit = {},
 ) {
     val autoDescription = buildAutoDescription(uiState)
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val noCameraText = stringResource(R.string.no_camera_app)
+    var showPhotoSheet by rememberSaveable { mutableStateOf(false) }
+    val photoPicker = rememberPhotoPicker(
+        maxItems = uiState.remainingPhotos,
+        callbacks = photoCallbacks,
+        onNoCameraApp = { scope.launch { snackbarHostState.showSnackbar(noCameraText) } },
+    )
+
+    if (showPhotoSheet) {
+        PhotoSourceSheet(
+            title = stringResource(R.string.add_photo),
+            onCamera = photoPicker::openCamera,
+            onGallery = photoPicker::openGallery,
+            onDismiss = { showPhotoSheet = false },
+        )
+    }
 
     Box(modifier = modifier.fillMaxSize()) {
         Scaffold(
@@ -146,6 +190,7 @@ fun SaveBrewScreenContent(
                     },
                 )
             },
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             bottomBar = {
                 SaveBrewBar(uiState = uiState, onSaveClick = { onSaveClick(autoDescription) })
             },
@@ -179,6 +224,14 @@ fun SaveBrewScreenContent(
                         value = uiState.description,
                         autoDescription = autoDescription,
                         onValueChange = onDescriptionChange,
+                    )
+                }
+
+                item {
+                    PhotosSection(
+                        photos = uiState.photos,
+                        onAddClick = { showPhotoSheet = true },
+                        onRemove = onRemovePhoto,
                     )
                 }
 
@@ -518,6 +571,63 @@ private fun buildAutoDescription(uiState: SaveBrewUiState): String {
         }
     }
     return parts.joinToString(separator = " ")
+}
+
+/**
+ * Up to [MAX_BREW_PHOTOS] square slots: the photos, then one "add" tile while there is room.
+ * Fixed slots keep the row from jumping as photos are added.
+ */
+@Composable
+private fun PhotosSection(
+    photos: List<String>,
+    onAddClick: () -> Unit,
+    onRemove: (String) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = stringResource(R.string.photos_title),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.weight(1f),
+            )
+            Text(
+                text = stringResource(R.string.photos_count, photos.size, MAX_BREW_PHOTOS),
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Normal),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            repeat(MAX_BREW_PHOTOS) { index ->
+                val slot = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                when {
+                    index < photos.size -> {
+                        val photo = photos[index]
+                        key(photo) {
+                            PhotoThumbnail(
+                                model = photo,
+                                contentDescription = stringResource(R.string.photo_number, index + 1),
+                                removeDescription = stringResource(R.string.remove_photo),
+                                onRemove = { onRemove(photo) },
+                                modifier = slot,
+                            )
+                        }
+                    }
+                    index == photos.size -> AddPhotoTile(
+                        label = stringResource(R.string.add_photo),
+                        onClick = onAddClick,
+                        modifier = slot,
+                    )
+                    else -> Spacer(modifier = slot)
+                }
+            }
+        }
+    }
 }
 
 @Composable

@@ -1,5 +1,6 @@
 package pl.betoniarze.kawapp.feature.journal.save
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,8 +28,13 @@ import pl.betoniarze.kawapp.core.model.CoffeeBag
 import pl.betoniarze.kawapp.core.model.CoffeeRecipe
 import pl.betoniarze.kawapp.core.model.FeedPost
 import pl.betoniarze.kawapp.core.model.Grinder
+import pl.betoniarze.kawapp.feature.profile.ProfilePhotoStore
 import pl.betoniarze.kawapp.feature.profile.UserNameStore
 import pl.betoniarze.kawapp.ui.components.MAX_RATING
+import pl.betoniarze.kawapp.ui.photos.PhotoStorage
+
+/** Most photos one post can have. */
+const val MAX_BREW_PHOTOS = 4
 
 /** How many coffees are offered as quick picks. */
 private const val RECENT_BAGS_LIMIT = 8
@@ -42,6 +48,7 @@ private const val RECENT_BAGS_LIMIT = 8
  * @property rating 1–10, 0 until the user picks one.
  * @property grinders The user's grinders from the Profile; [grinder] is one of them or null.
  * @property recentBags Coffees from the Profile, then from earlier brews, for one-tap filling.
+ * @property photos Photos for the post as file:// URIs, at most [MAX_BREW_PHOTOS].
  * @property isSaved Set after saving; the screen then navigates away.
  */
 data class SaveBrewUiState(
@@ -58,6 +65,7 @@ data class SaveBrewUiState(
     val grindSetting: String = "",
     val description: String = "",
     val recentBags: List<CoffeeBag> = emptyList(),
+    val photos: List<String> = emptyList(),
     val isLoading: Boolean = true,
     val isSaving: Boolean = false,
     val isSaved: Boolean = false,
@@ -69,6 +77,9 @@ data class SaveBrewUiState(
         get() = roasterName.isNotBlank() && beanName.isNotBlank() && roastDate != null
 
     val canSave: Boolean get() = hasRating && hasCoffee && !isSaving && !isLoading
+
+    /** How many more photos fit in the post. */
+    val remainingPhotos: Int get() = (MAX_BREW_PHOTOS - photos.size).coerceAtLeast(0)
 
     /** Whether [bag] is the coffee currently filled in (highlights its quick-pick chip). */
     fun isSelected(bag: CoffeeBag): Boolean =
@@ -91,6 +102,8 @@ class SaveBrewViewModel @Inject constructor(
     private val coffeeBagRepository: CoffeeBagRepository,
     private val userNameStore: UserNameStore,
     private val brewMethodRepository: BrewMethodRepository,
+    private val photoStorage: PhotoStorage,
+    private val profilePhotoStore: ProfilePhotoStore,
 ) : ViewModel() {
 
     private val recipeId: String? = savedStateHandle.get<String>("recipeId")?.takeIf { it.isNotBlank() }
@@ -170,6 +183,42 @@ class SaveBrewViewModel @Inject constructor(
     fun onGrindSettingChange(value: String) = _uiState.update { it.copy(grindSetting = value) }
     fun onDescriptionChange(value: String) = _uiState.update { it.copy(description = value) }
 
+    /** Empty file for the camera app (see [PhotoStorage.newCameraUri]). */
+    fun newCameraUri(): Uri = photoStorage.newCameraUri()
+
+    /** The camera saved a photo; it is added unless the post is already full. */
+    fun onPhotoTaken(uri: Uri) {
+        val stored = photoStorage.storedUri(uri)
+        if (_uiState.value.remainingPhotos > 0) {
+            _uiState.update { it.copy(photos = it.photos + stored) }
+        } else {
+            photoStorage.delete(stored)
+        }
+    }
+
+    /** The camera was closed without a photo: drop the empty file. */
+    fun onCameraCancelled(uri: Uri) {
+        photoStorage.delete(uri.toString())
+    }
+
+    /** Copies images chosen in the Photo Picker into app storage and adds them. */
+    fun onPhotosPicked(uris: List<Uri>) {
+        viewModelScope.launch {
+            val imported = uris.take(_uiState.value.remainingPhotos)
+                .mapNotNull { photoStorage.importFromPicker(it) }
+            // Another photo may have arrived meanwhile; never go over the limit.
+            val fitting = imported.take(_uiState.value.remainingPhotos)
+            imported.drop(fitting.size).forEach(photoStorage::delete)
+            _uiState.update { it.copy(photos = it.photos + fitting) }
+        }
+    }
+
+    /** Removes a photo from the post and deletes its file. */
+    fun onRemovePhoto(uri: String) {
+        _uiState.update { it.copy(photos = it.photos - uri) }
+        photoStorage.delete(uri)
+    }
+
     /**
      * Saves the brew to the Journal and publishes it on the Feed. Ignored while invalid or saving.
      *
@@ -211,9 +260,9 @@ class SaveBrewViewModel @Inject constructor(
                 FeedPost(
                     id = UUID.randomUUID().toString(),
                     authorName = userNameStore.authorName,
-                    authorAvatarUrl = "",
+                    authorAvatarUrl = profilePhotoStore.photoUri.value,
                     content = description,
-                    imageUrls = emptyList(),
+                    imageUrls = state.photos,
                     kavosCount = 0,
                     comments = emptyList(),
                     brewLogId = brewLog.id,
@@ -223,6 +272,12 @@ class SaveBrewViewModel @Inject constructor(
 
             _uiState.update { it.copy(isSaving = false, isSaved = true) }
         }
+    }
+
+    /** Leaving without saving: the photos taken for this post are not needed any more. */
+    override fun onCleared() {
+        val state = _uiState.value
+        if (!state.isSaved) state.photos.forEach(photoStorage::delete)
     }
 
     private companion object {

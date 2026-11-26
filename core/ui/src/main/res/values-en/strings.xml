@@ -164,4 +164,17 @@
     <string name="auto_desc_coffee">Coffee: %1$s from %2$s.</string>
     <string name="auto_desc_coffee_no_roaster">Coffee: %1$s.</string>
     <string name="auto_desc_rating">Rating: %1$d/%2$d.</string>
+
+    <string name="photos_title">Photos</string>
+    <string name="photos_count">%1$d/%2$d</string>
+    <string name="photo_number">Photo %1$d</string>
+    <string name="add_photo">Add photo</string>
+    <string name="remove_photo">Remove photo</string>
+    <string name="photo_source_camera">Take a photo</string>
+    <string name="photo_source_gallery">Choose from gallery</string>
+    <string name="no_camera_app">No camera app found</string>
+    <string name="profile_photo_title">Profile photo</string>
+    <string name="profile_photo_change">Change profile photo</string>
+
+    <string name="yesterday">Yesterday</string>
 </resources>

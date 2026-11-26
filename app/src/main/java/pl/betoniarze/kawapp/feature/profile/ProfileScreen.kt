@@ -1,6 +1,8 @@
 package pl.betoniarze.kawapp.feature.profile
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -21,6 +24,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.LocalCafe
+import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,6 +39,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,7 +49,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -52,6 +61,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import java.time.LocalDate
 import kotlinx.coroutines.launch
 import pl.betoniarze.kawapp.core.model.AppLanguage
@@ -67,6 +77,9 @@ import pl.betoniarze.kawapp.feature.chime_generator.ChimeTone
 import pl.betoniarze.kawapp.feature.profile.components.AddCoffeeBagSheet
 import pl.betoniarze.kawapp.feature.profile.components.TextInputDialog
 import pl.betoniarze.kawapp.ui.components.rememberRoastDateFormatter
+import pl.betoniarze.kawapp.ui.photos.PhotoCallbacks
+import pl.betoniarze.kawapp.ui.photos.PhotoSourceSheet
+import pl.betoniarze.kawapp.ui.photos.rememberPhotoPicker
 
 /**
  * Profile tab connected to [ProfileViewModel]: user name, grinders, coffees and the app settings.
@@ -78,6 +91,15 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val userName by viewModel.userName.collectAsStateWithLifecycle()
+    val profilePhotoUri by viewModel.profilePhotoUri.collectAsStateWithLifecycle()
+    val photoCallbacks = remember(viewModel) {
+        PhotoCallbacks(
+            newCameraUri = viewModel::newCameraUri,
+            onPhotoTaken = viewModel::onProfilePhotoTaken,
+            onCameraCancelled = viewModel::onCameraCancelled,
+            onPhotosPicked = viewModel::onProfilePhotoPicked,
+        )
+    }
     val grinders by viewModel.grinders.collectAsStateWithLifecycle()
     val coffeeBags by viewModel.coffeeBags.collectAsStateWithLifecycle()
     val brewMethods by viewModel.brewMethods.collectAsStateWithLifecycle()
@@ -108,6 +130,9 @@ fun ProfileScreen(
 
     ProfileScreenContent(
         userName = userName,
+        profilePhotoUri = profilePhotoUri,
+        photoCallbacks = photoCallbacks,
+        onRemoveProfilePhoto = viewModel::removeProfilePhoto,
         brewMethods = brewMethods,
         grinders = grinders,
         coffeeBags = coffeeBags,
@@ -140,8 +165,8 @@ fun ProfileScreen(
 }
 
 /**
- * Stateless Profile UI: a header with the user's monogram and name, then the grinders, coffees and
- * settings. The monogram is the one honey element on this screen.
+ * Stateless Profile UI: a header with the user's photo (or monogram) and name, then the brew
+ * methods, grinders, coffees and settings. The avatar ring is the one honey element on this screen.
  *
  * @param grinders Null while loading (nothing is shown instead of a flashing empty state).
  * @param isApplyingSettings True while a language/theme change is being applied; shows the loading
@@ -160,6 +185,9 @@ fun ProfileScreenContent(
     selectedChimeTone: ChimeTone = ChimeTone.FIRST,
     isApplyingSettings: Boolean = false,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    profilePhotoUri: String = "",
+    photoCallbacks: PhotoCallbacks = PhotoCallbacks.None,
+    onRemoveProfilePhoto: () -> Unit = {},
     onUserNameChange: (String) -> Unit = {},
     onAddBrewMethod: (String) -> Unit = {},
     onDeleteBrewMethod: (BrewMethod) -> Unit = {},
@@ -174,6 +202,25 @@ fun ProfileScreenContent(
     var showGrinderDialog by rememberSaveable { mutableStateOf(false) }
     var showCoffeeSheet by rememberSaveable { mutableStateOf(false) }
     var showBrewMethodDialog by rememberSaveable { mutableStateOf(false) }
+    var showPhotoSheet by rememberSaveable { mutableStateOf(false) }
+
+    val scope = rememberCoroutineScope()
+    val noCameraText = stringResource(R.string.no_camera_app)
+    val photoPicker = rememberPhotoPicker(
+        maxItems = 1,
+        callbacks = photoCallbacks,
+        onNoCameraApp = { scope.launch { snackbarHostState.showSnackbar(noCameraText) } },
+    )
+
+    if (showPhotoSheet) {
+        PhotoSourceSheet(
+            title = stringResource(R.string.profile_photo_title),
+            onCamera = photoPicker::openCamera,
+            onGallery = photoPicker::openGallery,
+            onDismiss = { showPhotoSheet = false },
+            onRemove = if (profilePhotoUri.isNotEmpty()) onRemoveProfilePhoto else null,
+        )
+    }
 
     if (showNameDialog) {
         TextInputDialog(
@@ -227,7 +274,12 @@ fun ProfileScreenContent(
 
     Box(modifier = modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
-            ProfileHeader(userName = userName, onEditName = { showNameDialog = true })
+            ProfileHeader(
+                userName = userName,
+                photoUri = profilePhotoUri,
+                onPhotoClick = { showPhotoSheet = true },
+                onEditName = { showNameDialog = true },
+            )
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -371,12 +423,14 @@ fun ProfileScreenContent(
 }
 
 /**
- * Header in the Feed / Journal style, drawn behind the status bar: a honey monogram (the photo
- * goes here later) and the name. The whole row edits the name.
+ * Header in the Feed / Journal style, drawn behind the status bar: the avatar (tap to change the
+ * photo) and the name (tap to edit it).
  */
 @Composable
 private fun ProfileHeader(
     userName: String,
+    photoUri: String,
+    onPhotoClick: () -> Unit,
     onEditName: () -> Unit,
 ) {
     val hasName = userName.isNotBlank()
@@ -387,35 +441,40 @@ private fun ProfileHeader(
         shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp),
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Surface(
-            onClick = onEditName,
-            color = MaterialTheme.colorScheme.surfaceContainer,
+        Row(
             modifier = Modifier
                 .statusBarsPadding()
-                .padding(start = 8.dp, end = 4.dp, top = 12.dp, bottom = 12.dp),
-            shape = RoundedCornerShape(16.dp),
+                .padding(start = 14.dp, end = 4.dp, top = 14.dp, bottom = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                modifier = Modifier.padding(start = 4.dp, top = 4.dp, bottom = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
+            ProfileAvatar(name = userName, photoUri = photoUri, onClick = onPhotoClick)
+            Spacer(Modifier.width(8.dp))
+            Surface(
+                onClick = onEditName,
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.weight(1f),
             ) {
-                Monogram(name = userName)
-                Spacer(Modifier.width(14.dp))
-                Text(
-                    text = if (hasName) userName else stringResource(R.string.profile_add_name),
-                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Normal),
-                    color = if (hasName) MaterialTheme.colorScheme.onSurface
-                    else MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f),
-                )
-                Box(modifier = Modifier.size(48.dp), contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Outlined.Edit,
-                        contentDescription = editLabel,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                Row(
+                    modifier = Modifier.padding(start = 8.dp, top = 4.dp, bottom = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = if (hasName) userName else stringResource(R.string.profile_add_name),
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Normal),
+                        color = if (hasName) MaterialTheme.colorScheme.onSurface
+                        else MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f),
                     )
+                    Box(modifier = Modifier.size(48.dp), contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Outlined.Edit,
+                            contentDescription = editLabel,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 }
             }
         }
@@ -423,29 +482,72 @@ private fun ProfileHeader(
 }
 
 /**
- * First letter of [name] in a honey circle, built from the same colors as the accent KawTag.
- * A placeholder for the profile photo that comes with the camera feature.
+ * Profile photo in a honey ring (the one honey element on this screen), or the first letter of
+ * [name] when there is no photo. A small camera badge shows that it can be tapped.
  */
 @Composable
-private fun Monogram(name: String) {
-    Surface(
-        shape = CircleShape,
-        color = KawTheme.colors.tagContainer,
-        contentColor = KawTheme.colors.onTag,
-        border = BorderStroke(1.5.dp, KawTheme.colors.tagBorder),
-        modifier = Modifier.size(56.dp),
+private fun ProfileAvatar(
+    name: String,
+    photoUri: String,
+    onClick: () -> Unit,
+) {
+    val description = stringResource(R.string.profile_photo_change)
+
+    Box(
+        modifier = Modifier
+            .size(62.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = ripple(bounded = false, radius = 34.dp),
+                role = Role.Button,
+                onClick = onClick,
+            )
+            .semantics { contentDescription = description },
     ) {
-        Box(contentAlignment = Alignment.Center) {
-            val initial = name.trim().firstOrNull()?.uppercase()
-            if (initial != null) {
-                Text(
-                    text = initial,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Medium,
-                )
-            } else {
-                Icon(Icons.Outlined.LocalCafe, contentDescription = null, modifier = Modifier.size(26.dp))
+        Surface(
+            shape = CircleShape,
+            color = KawTheme.colors.tagContainer,
+            contentColor = KawTheme.colors.onTag,
+            border = BorderStroke(1.5.dp, KawTheme.colors.tagBorder),
+            modifier = Modifier
+                .size(58.dp)
+                .align(Alignment.Center),
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                val initial = name.trim().firstOrNull()?.uppercase()
+                when {
+                    photoUri.isNotEmpty() -> AsyncImage(
+                        model = photoUri,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(2.dp)
+                            .clip(CircleShape),
+                    )
+                    initial != null -> Text(
+                        text = initial,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Medium,
+                    )
+                    else -> Icon(Icons.Outlined.LocalCafe, contentDescription = null, modifier = Modifier.size(26.dp))
+                }
             }
+        }
+        Surface(
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.surfaceContainerHighest,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            border = BorderStroke(2.dp, MaterialTheme.colorScheme.surfaceContainer),
+            modifier = Modifier
+                .size(24.dp)
+                .align(Alignment.BottomEnd),
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.PhotoCamera,
+                contentDescription = null,
+                modifier = Modifier.padding(4.dp),
+            )
         }
     }
 }
@@ -525,7 +627,13 @@ private fun ItemRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 14.dp, end = 2.dp, top = 6.dp, bottom = 6.dp),
+            .heightIn(min = 52.dp)
+            .padding(
+                start = 14.dp,
+                end = if (onDelete != null) 2.dp else 14.dp,
+                top = 2.dp,
+                bottom = 2.dp,
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {

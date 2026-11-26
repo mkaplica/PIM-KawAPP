@@ -24,8 +24,8 @@ object FakeCoffeeData {
                 "Brzmi sztos! Jaka temperatura wody?",
                 "22 kliki to pod V60 czy Kalitę?",
                 "Też mam te ziarna, spróbuję dzisiaj tego ustawienia!"
-            )
-
+            ),
+            brewLogId = "log_1",
         ),
         FeedPost(
             id = "post_2",
@@ -39,7 +39,8 @@ object FakeCoffeeData {
             comments = listOf(
                 "AeroPress w terenie to najlepsza rzecz na świecie 😍",
                 "Standardowa metoda > odwrócona, zmieniłem zdanie w zeszłym roku."
-            )
+            ),
+            brewLogId = "log_2",
         ),
         FeedPost(
             id = "post_3",
@@ -52,7 +53,8 @@ object FakeCoffeeData {
                 "Metoda 4:6 uratowała mi już niejedną Kenię!",
                 "Dla mnie za dużo zabawy z wagą z rana, ale efekty szanuję.",
                 "Próbowałem, ale przy drobniejszym mieleniu mocno mi zatykało filtr."
-            )
+            ),
+            brewLogId = "log_11",
         ),
         FeedPost(
             id = "post_4",
@@ -69,7 +71,8 @@ object FakeCoffeeData {
                 "Z jakiej palarni te ziarna?",
                 "Anaerobiki to ostatnio mój ulubiony profil 🍓",
                 "Wyślij trochę na spróbowanie!"
-            )
+            ),
+            brewLogId = "log_28",
         ),
         FeedPost(
             id = "post_5",
@@ -83,7 +86,8 @@ object FakeCoffeeData {
             comments = listOf(
                 "Dzięki za test, od dawna podejrzewałem, że te holenderskie są wolniejsze.",
                 "Przepłukujesz je wrzątkiem przed zasypaniem?"
-            )
+            ),
+            brewLogId = "log_5",
         )
     )
 

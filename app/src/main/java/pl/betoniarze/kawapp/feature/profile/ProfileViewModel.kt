@@ -1,5 +1,6 @@
 package pl.betoniarze.kawapp.feature.profile
 
+import android.net.Uri
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
@@ -28,6 +29,7 @@ import pl.betoniarze.kawapp.feature.chime_generator.ChimeTone
 import pl.betoniarze.kawapp.feature.chime_generator.ChimeToneStore
 import pl.betoniarze.kawapp.feature.chime_generator.playRepeaterChime
 import pl.betoniarze.kawapp.ui.ThemeModeStore
+import pl.betoniarze.kawapp.ui.photos.PhotoStorage
 
 /** How long the overlay stays after a language or theme change (debug and release builds). */
 internal const val SETTINGS_CHANGE_DELAY_MS = 2_000L
@@ -36,7 +38,7 @@ internal const val SETTINGS_CHANGE_DELAY_MS = 2_000L
 private const val OVERLAY_COVER_MS = 600L
 
 /**
- * ViewModel of the Profile: user name, the user's grinders and coffees, and the app settings
+ * ViewModel of the Profile: user name and photo, the user's grinders and coffees, and the app settings
  * (language, theme, brew step chime). Applies language and theme changes behind the loading overlay.
  */
 @HiltViewModel
@@ -46,11 +48,16 @@ class ProfileViewModel @Inject constructor(
     private val userNameStore: UserNameStore,
     private val grinderRepository: GrinderRepository,
     private val coffeeBagRepository: CoffeeBagRepository,
-    private val brewMethodRepository: BrewMethodRepository
+    private val brewMethodRepository: BrewMethodRepository,
+    private val photoStorage: PhotoStorage,
+    private val profilePhotoStore: ProfilePhotoStore,
 ) : ViewModel() {
 
     /** Name shown in the header and used as the author of the user's posts; empty until set. */
     val userName: StateFlow<String> = userNameStore.userName
+
+    /** Profile photo as a file:// URI; empty when there is none (the header shows the monogram). */
+    val profilePhotoUri: StateFlow<String> = profilePhotoStore.photoUri
 
     val brewMethods: StateFlow<List<BrewMethod>?> = brewMethodRepository.getBrewMethods()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), initialValue = null)
@@ -82,6 +89,35 @@ class ProfileViewModel @Inject constructor(
     /** Saves the user name; a blank name clears it. */
     fun saveUserName(name: String) {
         userNameStore.setUserName(name)
+    }
+
+    /** Empty file for the camera app (see [PhotoStorage.newCameraUri]). */
+    fun newCameraUri(): Uri = photoStorage.newCameraUri()
+
+    /** The camera saved a new profile photo. */
+    fun onProfilePhotoTaken(uri: Uri) {
+        profilePhotoStore.setPhotoUri(photoStorage.storedUri(uri))
+    }
+
+    /** The camera was closed without a photo: drop the empty file. */
+    fun onCameraCancelled(uri: Uri) {
+        photoStorage.delete(uri.toString())
+    }
+
+    /** Copies the image chosen in the Photo Picker and makes it the profile photo. */
+    fun onProfilePhotoPicked(uris: List<Uri>) {
+        val source = uris.firstOrNull() ?: return
+        viewModelScope.launch {
+            photoStorage.importFromPicker(source)?.let(profilePhotoStore::setPhotoUri)
+        }
+    }
+
+    /**
+     * Goes back to the monogram. The old file is kept on purpose: posts published earlier still
+     * use it as their author avatar.
+     */
+    fun removeProfilePhoto() {
+        profilePhotoStore.setPhotoUri("")
     }
 
     /** Adds a brew method called [name]. Blank names are ignored. */
