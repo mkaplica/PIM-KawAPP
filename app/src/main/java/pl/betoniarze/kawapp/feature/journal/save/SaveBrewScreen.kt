@@ -160,7 +160,11 @@ fun SaveBrewScreenContent(
                     if (recipe != null) {
                         RecipeHero(recipe = recipe)
                     } else {
-                        MethodSection(selected = uiState.brewMethod, onSelect = onBrewMethodChange)
+                        MethodSection(
+                            methods = uiState.brewMethods,
+                            selected = uiState.brewMethod,
+                            onSelect = onBrewMethodChange,
+                        )
                     }
                 }
 
@@ -234,14 +238,22 @@ private fun RecipeHero(recipe: CoffeeRecipe) {
 }
 
 /** Method choice, shown only when the brew is not tied to a recipe (opened from the Journal). */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun MethodSection(selected: BrewMethod, onSelect: (BrewMethod) -> Unit) {
+private fun MethodSection(
+    methods: List<BrewMethod>,
+    selected: BrewMethod,
+    onSelect: (BrewMethod) -> Unit,
+) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionTitle(text = stringResource(R.string.section_method))
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            BrewMethod.entries.forEach { method ->
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            methods.forEach { method ->
                 FilterChip(
-                    selected = selected == method,
+                    selected = selected.id == method.id,
                     onClick = { onSelect(method) },
                     label = { Text(method.displayName) },
                 )

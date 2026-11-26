@@ -15,14 +15,6 @@ class Converters {
     @TypeConverter
     fun toLocalDate(dateString: String?): LocalDate? = dateString?.let { LocalDate.parse(it) }
 
-    /** Stores the enum by its name. */
-    @TypeConverter
-    fun fromBrewMethod(method: BrewMethod): String = method.name
-
-    /** Reads an enum stored by [fromBrewMethod]. */
-    @TypeConverter
-    fun toBrewMethod(methodString: String): BrewMethod = BrewMethod.valueOf(methodString)
-
     /** Stores a list of strings as a JSON array. */
     @TypeConverter
     fun fromStringList(list: List<String>): String {

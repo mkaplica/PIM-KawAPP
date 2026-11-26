@@ -3,6 +3,8 @@ package pl.betoniarze.kawapp.feature.recipes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -77,7 +79,7 @@ fun RecipeAddScreen(
  * Stateless recipe form: title, brew method, dose, water, notes and an editable list of steps.
  * Shows the loading overlay while a recipe to edit is loading.
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun RecipeAddScreenContent(
     modifier: Modifier = Modifier,
@@ -148,10 +150,14 @@ fun RecipeAddScreenContent(
                 }
 
                 item {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        BrewMethod.entries.forEach { method ->
+                    // FlowRow: with methods from the Profile the chips may not fit in one line.
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        uiState.methodOptions.forEach { method ->
                             FilterChip(
-                                selected = uiState.brewMethod == method,
+                                selected = uiState.brewMethod.id == method.id,
                                 onClick = { onBrewMethodChange(method) },
                                 label = { Text(method.displayName) }
                             )

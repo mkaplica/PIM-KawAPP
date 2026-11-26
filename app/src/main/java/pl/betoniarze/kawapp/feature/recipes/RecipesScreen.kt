@@ -125,10 +125,10 @@ fun RecipesScreenContent(
                                     onClick = { onBrewMethodChange(null) },
                                 )
                             }
-                            items(BrewMethod.entries) { method ->
+                            items(uiState.brewMethods, key = { it.id }) { method ->
                                 MethodChip(
                                     label = method.displayName,
-                                    selected = uiState.selectedBrewMethod == method,
+                                    selected = uiState.selectedBrewMethod?.id == method.id,
                                     onClick = { onBrewMethodChange(method) },
                                 )
                             }

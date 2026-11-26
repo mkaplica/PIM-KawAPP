@@ -15,7 +15,8 @@ import pl.betoniarze.kawapp.core.model.CoffeeRecipe
 data class CoffeeRecipeEntity (
     @PrimaryKey val id: String,
     val title: String,
-    val brewMethod: BrewMethod,
+    val brewMethodId: String,
+    val brewMethodName: String,
     val coffeeGrams: Int,
     val totalWaterMl: Int,
     val notes: String
@@ -65,7 +66,10 @@ fun BrewStepEntity.asExternalModel() = BrewStep(
 fun CoffeeRecipeWithSteps.asExternalModel() = CoffeeRecipe(
     id = recipe.id,
     title = recipe.title,
-    brewMethod = recipe.brewMethod,
+    brewMethod = BrewMethod(
+        id = recipe.brewMethodId,
+        displayName = recipe.brewMethodName,
+    ),
     coffeeGrams = recipe.coffeeGrams,
     totalWaterMl = recipe.totalWaterMl,
     notes = recipe.notes,

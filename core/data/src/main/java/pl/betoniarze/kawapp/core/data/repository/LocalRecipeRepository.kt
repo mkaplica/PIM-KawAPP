@@ -55,7 +55,8 @@ class LocalRecipeRepository @Inject constructor(
 private fun CoffeeRecipe.asEntity() = CoffeeRecipeEntity(
     id = id,
     title = title,
-    brewMethod = brewMethod,
+    brewMethodId = brewMethod.id,
+    brewMethodName = brewMethod.displayName,
     coffeeGrams = coffeeGrams,
     totalWaterMl = totalWaterMl,
     notes = notes

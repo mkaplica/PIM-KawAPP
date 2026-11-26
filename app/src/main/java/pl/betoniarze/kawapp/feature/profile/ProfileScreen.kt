@@ -57,6 +57,7 @@ import kotlinx.coroutines.launch
 import pl.betoniarze.kawapp.core.model.AppLanguage
 import pl.betoniarze.kawapp.core.model.CoffeeBag
 import pl.betoniarze.kawapp.core.model.Grinder
+import pl.betoniarze.kawapp.core.model.BrewMethod
 import pl.betoniarze.kawapp.core.model.ThemeMode
 import pl.betoniarze.kawapp.core.ui.R
 import pl.betoniarze.kawapp.core.ui.components.KawCard
@@ -79,6 +80,7 @@ fun ProfileScreen(
     val userName by viewModel.userName.collectAsStateWithLifecycle()
     val grinders by viewModel.grinders.collectAsStateWithLifecycle()
     val coffeeBags by viewModel.coffeeBags.collectAsStateWithLifecycle()
+    val brewMethods by viewModel.brewMethods.collectAsStateWithLifecycle()
     val selectedLanguage by viewModel.selectedLanguage.collectAsStateWithLifecycle()
     val selectedThemeMode by viewModel.selectedThemeMode.collectAsStateWithLifecycle()
     val selectedChimeTone by viewModel.selectedChimeTone.collectAsStateWithLifecycle()
@@ -89,6 +91,7 @@ fun ProfileScreen(
     val undoLabel = stringResource(R.string.undo)
     val grinderDeletedText = stringResource(R.string.grinder_deleted)
     val coffeeDeletedText = stringResource(R.string.coffee_deleted)
+    val brewMethodDeletedText = stringResource(R.string.brewMethod_deleted)
 
     // Shows "<item> deleted · Undo" and runs [restore] if the user taps Undo.
     fun showUndo(message: String, restore: () -> Unit) {
@@ -105,6 +108,7 @@ fun ProfileScreen(
 
     ProfileScreenContent(
         userName = userName,
+        brewMethods = brewMethods,
         grinders = grinders,
         coffeeBags = coffeeBags,
         selectedLanguage = selectedLanguage,
@@ -113,6 +117,11 @@ fun ProfileScreen(
         isApplyingSettings = isApplyingSettings,
         snackbarHostState = snackbarHostState,
         onUserNameChange = viewModel::saveUserName,
+        onAddBrewMethod = viewModel::addBrewMethod,
+        onDeleteBrewMethod = { brewMethod ->
+            viewModel.deleteBrewMethod(brewMethod)
+            showUndo(brewMethodDeletedText.format(brewMethod.displayName)) { viewModel.restoreBrewMethod(brewMethod)}
+        },
         onAddGrinder = viewModel::addGrinder,
         onDeleteGrinder = { grinder ->
             viewModel.deleteGrinder(grinder)
@@ -141,6 +150,7 @@ fun ProfileScreen(
 @Composable
 fun ProfileScreenContent(
     userName: String,
+    brewMethods: List<BrewMethod>?,
     grinders: List<Grinder>?,
     coffeeBags: List<CoffeeBag>?,
     selectedLanguage: AppLanguage,
@@ -151,6 +161,8 @@ fun ProfileScreenContent(
     isApplyingSettings: Boolean = false,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     onUserNameChange: (String) -> Unit = {},
+    onAddBrewMethod: (String) -> Unit = {},
+    onDeleteBrewMethod: (BrewMethod) -> Unit = {},
     onAddGrinder: (String) -> Unit = {},
     onDeleteGrinder: (Grinder) -> Unit = {},
     onAddCoffeeBag: (String, String, String, LocalDate) -> Unit = { _, _, _, _ -> },
@@ -161,6 +173,7 @@ fun ProfileScreenContent(
     var showNameDialog by rememberSaveable { mutableStateOf(false) }
     var showGrinderDialog by rememberSaveable { mutableStateOf(false) }
     var showCoffeeSheet by rememberSaveable { mutableStateOf(false) }
+    var showBrewMethodDialog by rememberSaveable { mutableStateOf(false) }
 
     if (showNameDialog) {
         TextInputDialog(
@@ -174,6 +187,19 @@ fun ProfileScreenContent(
                 showNameDialog = false
             },
             onDismiss = { showNameDialog = false },
+        )
+    }
+    if (showBrewMethodDialog) {
+        TextInputDialog(
+            title = stringResource(R.string.add_brewMethod_title),
+            label = stringResource(R.string.brewMethod_name),
+            placeholder = stringResource(R.string.brewMethod_name_hint),
+            confirmText = stringResource(R.string.add),
+            onConfirm = {
+                onAddBrewMethod(it)
+                showBrewMethodDialog = false
+            },
+            onDismiss = { showBrewMethodDialog = false },
         )
     }
     if (showGrinderDialog) {
@@ -208,6 +234,25 @@ fun ProfileScreenContent(
                 contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 16.dp, bottom = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
+                item {
+                    SectionHeader(
+                        title = stringResource(R.string.profile_brewMethods),
+                        onAdd = { showBrewMethodDialog = true },
+                    )
+                }
+                if (brewMethods != null) item {
+                    ItemListCard(
+                        items = brewMethods,
+                        emptyText = stringResource(R.string.brewMethods_empty),
+                        key = { it.id },
+                    ) { brewMethod ->
+                        ItemRow(
+                            title = brewMethod.displayName,
+                            deleteDescription = stringResource(R.string.delete_item, brewMethod.displayName),
+                            onDelete = if (brewMethod.isBuiltIn) null else { { onDeleteBrewMethod(brewMethod) } },
+                        )
+                    }
+                }
                 item {
                     SectionHeader(
                         title = stringResource(R.string.profile_grinders),
@@ -474,7 +519,7 @@ private fun <T> ItemListCard(
 private fun ItemRow(
     title: String,
     deleteDescription: String,
-    onDelete: () -> Unit,
+    onDelete: (() -> Unit)?,
     subtitle: String? = null,
 ) {
     Row(
@@ -493,12 +538,14 @@ private fun ItemRow(
                 )
             }
         }
-        IconButton(onClick = onDelete) {
-            Icon(
-                imageVector = Icons.Outlined.Delete,
-                contentDescription = deleteDescription,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+        if (onDelete != null) {
+            IconButton(onClick = onDelete) {
+                Icon(
+                    imageVector = Icons.Outlined.Delete,
+                    contentDescription = deleteDescription,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }

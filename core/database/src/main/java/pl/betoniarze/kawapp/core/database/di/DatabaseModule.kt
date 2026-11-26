@@ -9,6 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import pl.betoniarze.kawapp.core.database.KawAppDatabase
 import pl.betoniarze.kawapp.core.database.dao.BrewLogDao
+import pl.betoniarze.kawapp.core.database.dao.BrewMethodDao
 import pl.betoniarze.kawapp.core.database.dao.CoffeeBagDao
 import pl.betoniarze.kawapp.core.database.dao.CoffeeRecipeDao
 import pl.betoniarze.kawapp.core.database.dao.FeedPostDao
@@ -58,4 +59,7 @@ object DatabaseModule {
 
     @Provides
     fun provideCoffeeBagDao(database: KawAppDatabase): CoffeeBagDao = database.coffeeBagDao()
+
+    @Provides
+    fun provideBrewMethodDao(database: KawAppDatabase): BrewMethodDao = database.brewMethodDao()
 }

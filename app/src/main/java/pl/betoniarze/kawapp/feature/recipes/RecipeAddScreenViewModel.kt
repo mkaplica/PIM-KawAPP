@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import pl.betoniarze.kawapp.core.data.repository.BrewMethodRepository
 import pl.betoniarze.kawapp.core.data.repository.RecipeRepository
 import pl.betoniarze.kawapp.core.model.BrewMethod
 import pl.betoniarze.kawapp.core.model.BrewStep
@@ -22,6 +23,7 @@ import javax.inject.Inject
  * @property isSaveSuccess Set after saving; the screen then navigates back.
  * @property isEditMode True when editing an existing recipe instead of adding a new one.
  * @property isLoading True while the recipe to edit is being loaded.
+ * @property brewMethods Built-in and Profile methods offered as chips.
  */
 data class RecipeAddUiState(
     val title: String = "",
@@ -33,8 +35,16 @@ data class RecipeAddUiState(
     val isSaving: Boolean = false,
     val isSaveSuccess: Boolean = false,
     val isEditMode: Boolean = false,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val brewMethods: List<BrewMethod> = BrewMethod.BUILT_IN,
 ) {
+    /**
+     * Chips to show: [brewMethods], plus the edited recipe's method if it was deleted from the
+     * Profile in the meantime, so the current choice is always visible.
+     */
+    val methodOptions: List<BrewMethod>
+        get() = if (brewMethods.any { it.id == brewMethod.id }) brewMethods else brewMethods + brewMethod
+
     /**
      * Whether the recipe can be saved: a title, a dose and water above 0, and every step described.
      */
@@ -58,7 +68,8 @@ data class BrewStepInput(
 @HiltViewModel
 class RecipeAddScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val recipeRepository: RecipeRepository
+    private val recipeRepository: RecipeRepository,
+    private val brewMethodRepository: BrewMethodRepository,
 ) : ViewModel() {
     // Present only when opened via the edit_recipe/{recipeId} route.
     private val editedRecipeId: String? = savedStateHandle.get<String>("recipeId")
@@ -70,6 +81,16 @@ class RecipeAddScreenViewModel @Inject constructor(
 
     init {
         editedRecipeId?.let(::loadRecipe)
+        observeBrewMethods()
+    }
+
+    /** Keeps the method chips in sync with the Profile. */
+    private fun observeBrewMethods() {
+        viewModelScope.launch {
+            brewMethodRepository.getBrewMethods().collect { methods ->
+                _uiState.update { it.copy(brewMethods = methods) }
+            }
+        }
     }
 
     /** Fills the form with the recipe [id] being edited. */

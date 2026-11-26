@@ -13,7 +13,8 @@ import java.time.LocalDate
 @Entity(tableName = "brew_logs")
 data class BrewLogEntity(
     @PrimaryKey val id: String,
-    val brewMethod: BrewMethod,
+    val brewMethodId: String,
+    val brewMethodName: String,
     val date: LocalDate,
     val time: String,
     @Embedded val coffeeBag: CoffeeBagEntity,
@@ -45,7 +46,7 @@ fun CoffeeBagEntity.asExternalModel() = CoffeeBag(
 /** Maps the row to the domain [BrewLog]. */
 fun BrewLogEntity.asExternalModel() = BrewLog(
     id = id,
-    brewMethod = brewMethod,
+    brewMethod = BrewMethod(brewMethodId, brewMethodName),
     date = date,
     time = time,
     coffeeBag = coffeeBag.asExternalModel(),
@@ -66,7 +67,8 @@ fun CoffeeBag.asEntity() = CoffeeBagEntity(
 
 fun BrewLog.asEntity() = BrewLogEntity(
     id = id,
-    brewMethod = brewMethod,
+    brewMethodId = brewMethod.id,
+    brewMethodName = brewMethod.displayName,
     date = date,
     time = time,
     coffeeBag = coffeeBag.asEntity(),

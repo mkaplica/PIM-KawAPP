@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pl.betoniarze.kawapp.core.data.repository.BrewLogRepository
+import pl.betoniarze.kawapp.core.data.repository.BrewMethodRepository
 import pl.betoniarze.kawapp.core.data.repository.CoffeeBagRepository
 import pl.betoniarze.kawapp.core.data.repository.FeedRepository
 import pl.betoniarze.kawapp.core.data.repository.GrinderRepository
@@ -37,6 +38,7 @@ private const val RECENT_BAGS_LIMIT = 8
  *
  * @property recipe Recipe that was just brewed; null when the form was opened from the Journal.
  * @property brewMethod Used only when [recipe] is null (otherwise the recipe's method wins).
+ * @property brewMethods Built-in and Profile methods, offered when there is no [recipe].
  * @property rating 1–10, 0 until the user picks one.
  * @property grinders The user's grinders from the Profile; [grinder] is one of them or null.
  * @property recentBags Coffees from the Profile, then from earlier brews, for one-tap filling.
@@ -45,6 +47,7 @@ private const val RECENT_BAGS_LIMIT = 8
 data class SaveBrewUiState(
     val recipe: CoffeeRecipe? = null,
     val brewMethod: BrewMethod = BrewMethod.V60,
+    val brewMethods: List<BrewMethod> = BrewMethod.BUILT_IN,
     val rating: Int = 0,
     val roasterName: String = "",
     val beanName: String = "",
@@ -87,6 +90,7 @@ class SaveBrewViewModel @Inject constructor(
     private val grinderRepository: GrinderRepository,
     private val coffeeBagRepository: CoffeeBagRepository,
     private val userNameStore: UserNameStore,
+    private val brewMethodRepository: BrewMethodRepository,
 ) : ViewModel() {
 
     private val recipeId: String? = savedStateHandle.get<String>("recipeId")?.takeIf { it.isNotBlank() }
@@ -108,13 +112,18 @@ class SaveBrewViewModel @Inject constructor(
             val logs = brewLogRepository.getAllBrewLogs().first()
             val grinders = grinderRepository.getGrinders().first()
             val savedBags = coffeeBagRepository.getCoffeeBags().first()
+            val brewMethods = brewMethodRepository.getBrewMethods().first()
             val previous = logs.firstOrNull { recipeId != null && it.recipeId == recipeId }
                 ?: logs.firstOrNull()
+            // Last used method if it is still available, otherwise the first one (Hario V60).
+            val defaultMethod = brewMethods.firstOrNull { it.id == previous?.brewMethod?.id }
+                ?: brewMethods.firstOrNull()
 
             _uiState.update { state ->
                 state.copy(
                     recipe = recipe,
-                    brewMethod = recipe?.brewMethod ?: previous?.brewMethod ?: state.brewMethod,
+                    brewMethods = brewMethods,
+                    brewMethod = recipe?.brewMethod ?: defaultMethod ?: state.brewMethod,
                     roasterName = previous?.coffeeBag?.roasterName.orEmpty(),
                     beanName = previous?.coffeeBag?.beanName.orEmpty(),
                     origin = previous?.coffeeBag?.origin.orEmpty(),

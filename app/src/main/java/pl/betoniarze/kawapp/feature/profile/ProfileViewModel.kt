@@ -16,9 +16,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import pl.betoniarze.kawapp.core.data.repository.BrewMethodRepository
 import pl.betoniarze.kawapp.core.data.repository.CoffeeBagRepository
 import pl.betoniarze.kawapp.core.data.repository.GrinderRepository
 import pl.betoniarze.kawapp.core.model.AppLanguage
+import pl.betoniarze.kawapp.core.model.BrewMethod
 import pl.betoniarze.kawapp.core.model.CoffeeBag
 import pl.betoniarze.kawapp.core.model.Grinder
 import pl.betoniarze.kawapp.core.model.ThemeMode
@@ -44,10 +46,14 @@ class ProfileViewModel @Inject constructor(
     private val userNameStore: UserNameStore,
     private val grinderRepository: GrinderRepository,
     private val coffeeBagRepository: CoffeeBagRepository,
+    private val brewMethodRepository: BrewMethodRepository
 ) : ViewModel() {
 
     /** Name shown in the header and used as the author of the user's posts; empty until set. */
     val userName: StateFlow<String> = userNameStore.userName
+
+    val brewMethods: StateFlow<List<BrewMethod>?> = brewMethodRepository.getBrewMethods()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), initialValue = null)
 
     /** The user's grinders, oldest first; null until the first load, so no empty state flashes. */
     val grinders: StateFlow<List<Grinder>?> = grinderRepository.getGrinders()
@@ -76,6 +82,25 @@ class ProfileViewModel @Inject constructor(
     /** Saves the user name; a blank name clears it. */
     fun saveUserName(name: String) {
         userNameStore.setUserName(name)
+    }
+
+    /** Adds a brew method called [name]. Blank names are ignored. */
+    fun addBrewMethod(name: String) {
+        val trimmed = name.trim()
+        if (trimmed.isEmpty()) return
+        viewModelScope.launch {
+            brewMethodRepository.addBrewMethod(BrewMethod(id = UUID.randomUUID().toString(), displayName = trimmed))
+        }
+    }
+
+    /** Deletes [brewMethod]. Brew logs keep their copy; [restoreBrewMethod] undoes it. */
+    fun deleteBrewMethod(brewMethod: BrewMethod) {
+        viewModelScope.launch { brewMethodRepository.deleteBrewMethod(brewMethod.id) }
+    }
+
+    /** Puts back a grinder removed with [deleteGrinder] (the "Undo" action). */
+    fun restoreBrewMethod(brewMethod: BrewMethod) {
+        viewModelScope.launch { brewMethodRepository.addBrewMethod(brewMethod) }
     }
 
     /** Adds a grinder called [name]. Blank names are ignored. */
